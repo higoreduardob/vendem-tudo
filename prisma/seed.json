@@ -1,0 +1,144 @@
+{
+  "users": [
+    {
+      "id": "cm7v14qp8000cvvmeig85vqmo",
+      "name": "Higor Eduardo",
+      "email": "higoreduardo97@gmail.com",
+      "password": "$2a$10$Y.HCUGYJwgHjKoYNkKjN.uEzfSTR9On.gbjyOx2vaRxp9v1VEKQfa",
+      "whatsApp": "27998311970",
+      "cpfCnpj": "13620787786",
+      "rgIe": "3551109",
+      "role": "OWNER",
+      "status": true,
+      "hasAcceptedTerms": true,
+      "isTwoFactorEnabled": false,
+      "emailVerified": "2025-03-04T21:57:27.774Z",
+      "completedAccount": "2025-03-04T21:57:42.446Z",
+      "completedStore": "2025-03-04T21:57:57.070Z",
+      "createdAt": "2025-03-04T21:57:18.764Z",
+      "updatedAt": "2025-03-04T22:05:31.844Z",
+      "ownerId": null,
+      "selectedStore": "bd00mj3xbmaokyjaq7apgpmx"
+    }
+  ],
+  "stores": [
+    {
+      "id": "bd00mj3xbmaokyjaq7apgpmx",
+      "name": "Loja",
+      "slug": "loja",
+      "email": "loja@email.com",
+      "cpfCnpj": "13620787786",
+      "whatsApp": "27998311970",
+      "role": [
+        "FOOD"
+      ],
+      "status": true,
+      "createdAt": "2025-03-04T21:57:57.069Z",
+      "updatedAt": "2025-03-04T21:57:57.069Z",
+      "ownerId": "cm7v14qp8000cvvmeig85vqmo"
+    }
+  ],
+  "addresses": [
+    {
+      "id": "cm7v158z3000fvvmexrour076",
+      "zipCode": "29700857",
+      "street": "Rua F",
+      "neighborhood": "Bela Vista",
+      "city": "Colatina",
+      "state": "ES",
+      "number": "",
+      "complement": "",
+      "userId": "cm7v14qp8000cvvmeig85vqmo",
+      "storeId": null
+    },
+    {
+      "id": "cm7v15k98000hvvmebph9m4ek",
+      "zipCode": "29700857",
+      "street": "Rua F",
+      "neighborhood": "Bela Vista",
+      "city": "Colatina",
+      "state": "ES",
+      "number": "",
+      "complement": "",
+      "userId": null,
+      "storeId": "bd00mj3xbmaokyjaq7apgpmx"
+    }
+  ],
+  "foods": [
+    {
+      "id": "dpffnoko8jpsl9uf9heidmfy",
+      "name": "Hamburguer",
+      "description": "<p class=\"text-node\">Hamburguer</p>",
+      "price": 25000,
+      "promotion": 20000,
+      "status": true,
+      "createdAt": "2025-03-04T22:17:39.319Z",
+      "updatedAt": "2025-03-04T22:17:39.319Z",
+      "storeId": "bd00mj3xbmaokyjaq7apgpmx",
+      "categoryId": "s6hueu05gwziaezzbnlhwhte"
+    }
+  ],
+  "foodCategories": [
+    {
+      "id": "s6hueu05gwziaezzbnlhwhte",
+      "name": "Lanches",
+      "status": true,
+      "createdAt": "2025-03-04T22:16:22.313Z",
+      "updatedAt": "2025-03-04T22:16:22.313Z",
+      "storeId": "bd00mj3xbmaokyjaq7apgpmx"
+    }
+  ],
+  "foodAdditionals": [
+    {
+      "id": "n0fw6l2ozs2pj26f7d9m9a03",
+      "name": "Especiais",
+      "description": "Especiais de carnes",
+      "minRequired": 1,
+      "limit": 3,
+      "required": true,
+      "status": true,
+      "role": "MULTIPLE",
+      "createdAt": "2025-03-04T22:17:35.510Z",
+      "updatedAt": "2025-03-04T22:17:35.510Z",
+      "storeId": "bd00mj3xbmaokyjaq7apgpmx"
+    }
+  ],
+  "foodAndAdditional": [
+    {
+      "foodId": "dpffnoko8jpsl9uf9heidmfy",
+      "foodAdditionalId": "n0fw6l2ozs2pj26f7d9m9a03"
+    }
+  ],
+  "foodOptions": [
+    {
+      "id": "gv314xqr5z2jdjgaie183vku",
+      "name": "Bovino",
+      "description": "Carne bovina",
+      "price": 1000,
+      "status": true,
+      "createdAt": "2025-03-04T22:17:18.672Z",
+      "updatedAt": "2025-03-04T22:17:18.672Z",
+      "storeId": "bd00mj3xbmaokyjaq7apgpmx"
+    },
+    {
+      "id": "byhzps1hdg4rkmalhh8c63s7",
+      "name": "Frango",
+      "description": "Carne de frango",
+      "price": 1000,
+      "status": true,
+      "createdAt": "2025-03-04T22:17:30.730Z",
+      "updatedAt": "2025-03-04T22:17:30.730Z",
+      "storeId": "bd00mj3xbmaokyjaq7apgpmx"
+    }
+  ],
+  "foodAdditionalAndOption": [
+    {
+      "foodOptionId": "byhzps1hdg4rkmalhh8c63s7",
+      "foodAdditionalId": "n0fw6l2ozs2pj26f7d9m9a03"
+    },
+    {
+      "foodOptionId": "gv314xqr5z2jdjgaie183vku",
+      "foodAdditionalId": "n0fw6l2ozs2pj26f7d9m9a03"
+    }
+  ]
+}

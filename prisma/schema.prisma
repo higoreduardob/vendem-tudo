@@ -71,7 +71,11 @@ model Store {
   ownerId String
   owner   User   @relation(fields: [ownerId], references: [id])
 
-  users User[] @relation("selectedStore")
+  users           User[]           @relation("selectedStore")
+  foods           Food[]
+  foodCategories  FoodCategory[]
+  foodAdditionals FoodAdditional[]
+  foodOptions     FoodOption[]
 }
 
 model Address {
@@ -125,4 +129,100 @@ model TwoFactorConfirmation {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId])
+}
+
+model Food {
+  id          String  @id @default(cuid())
+  name        String
+  description String
+  price       Int
+  promotion   Int?
+  status      Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  storeId    String
+  store      Store        @relation(fields: [storeId], references: [id])
+  categoryId String
+  category   FoodCategory @relation(fields: [categoryId], references: [id])
+
+  additionals FoodAndAdditional[]
+}
+
+model FoodCategory {
+  id     String  @id @default(cuid())
+  name   String  @unique
+  status Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  storeId String
+  store   Store  @relation(fields: [storeId], references: [id])
+
+  foods Food[]
+}
+
+enum FoodAdditionalRole {
+  UNIQUE
+  MULTIPLE
+  QUANTITY
+}
+
+model FoodAdditional {
+  id          String  @id @default(cuid())
+  name        String
+  description String
+  minRequired Int?
+  limit       Int?
+  required    Boolean @default(false)
+  status      Boolean @default(true)
+
+  role FoodAdditionalRole @default(UNIQUE)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  storeId String
+  store   Store  @relation(fields: [storeId], references: [id])
+
+  foods   FoodAndAdditional[]
+  options FoodAdditionalAndOption[]
+}
+
+model FoodAndAdditional {
+  foodId           String
+  foodAdditionalId String
+
+  food           Food           @relation(fields: [foodId], references: [id], onDelete: Cascade)
+  foodAdditional FoodAdditional @relation(fields: [foodAdditionalId], references: [id], onDelete: Cascade)
+
+  @@id([foodId, foodAdditionalId])
+}
+
+model FoodOption {
+  id          String  @id @default(cuid())
+  name        String
+  description String
+  price       Int
+  status      Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  storeId String
+  store   Store  @relation(fields: [storeId], references: [id])
+
+  additionals FoodAdditionalAndOption[]
+}
+
+model FoodAdditionalAndOption {
+  foodOptionId     String
+  foodAdditionalId String
+
+  foodOption     FoodOption     @relation(fields: [foodOptionId], references: [id], onDelete: Cascade)
+  foodAdditional FoodAdditional @relation(fields: [foodAdditionalId], references: [id], onDelete: Cascade)
+
+  @@id([foodOptionId, foodAdditionalId])
 }

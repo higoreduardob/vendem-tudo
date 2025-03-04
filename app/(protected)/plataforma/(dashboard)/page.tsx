@@ -1,3 +1,3 @@
 export default function DashboardPage() {
-  return <section>Dashboard</section>
+  return <section className="text-white">Dashboard</section>
 }

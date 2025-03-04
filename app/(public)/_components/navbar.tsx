@@ -38,9 +38,7 @@ export const Navbar = () => {
               </Link>
             </NavigationMenuItem>
             <NavigationMenuItem>
-              <Button variant="ghost" size="sm" asChild>
-                <NavigationMenuTrigger>Recursos</NavigationMenuTrigger>
-              </Button>
+              <NavigationMenuTrigger>Recursos</NavigationMenuTrigger>
               <NavigationMenuContent>
                 <div className="p-2">
                   <Link href="/sobre">

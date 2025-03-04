@@ -17,3 +17,40 @@ export function createEnumOptions<T extends string>(
     value: key,
   }))
 }
+
+export async function getAddedAndRemoved(
+  currValues: string[] | undefined,
+  newValues: string[]
+) {
+  const [toAdd, toRemove] = await Promise.all([
+    newValues.filter((value) => !new Set(currValues).has(value)),
+    currValues?.filter((value) => !new Set(newValues).has(value)),
+  ])
+
+  return { toAdd, toRemove }
+}
+
+export function formatCurrency(value: number) {
+  return new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+    minimumFractionDigits: 2,
+  }).format(value)
+}
+
+export function convertAmountFromMiliunits(amount: number | null) {
+  if (!amount) return 0
+
+  return amount / 1000
+}
+
+export function convertAmountToMiliunits(
+  amount: number | string | undefined | null
+) {
+  if (!amount) return 0
+
+  const currAmount =
+    typeof amount === 'string' ? parseFloat(amount.replace(/,/g, '.')) : amount
+
+  return Math.round(currAmount * 1000)
+}

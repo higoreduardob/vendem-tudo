@@ -16,10 +16,7 @@ export const useGetStore = (id?: string) => {
       if (!response.ok) {
         const data = await response.json()
 
-        throw {
-          message: data.error,
-          status: response.status,
-        }
+        throw new Error(data.error)
       }
 
       const { data } = await response.json()

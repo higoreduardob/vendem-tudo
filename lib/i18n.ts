@@ -1,4 +1,4 @@
-import { StoreRole } from '@prisma/client'
+import { FoodAdditionalRole, StoreRole } from '@prisma/client'
 
 export function translatePasswordOptionsProps(option: PasswordOptionsProps) {
   switch (option) {
@@ -15,5 +15,16 @@ export function translateStoreRole(role: StoreRole) {
   switch (role) {
     default:
       return 'Alimentação'
+  }
+}
+
+export function translateFoodAdditionalRole(role: FoodAdditionalRole) {
+  switch (role) {
+    case 'MULTIPLE':
+      return 'Múltipla escolha'
+    case 'UNIQUE':
+      return 'Única escolha'
+    default:
+      return 'Quantidade númerica'
   }
 }
