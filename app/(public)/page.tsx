@@ -1,32 +1,24 @@
-import Link from 'next/link'
-
-import { Button } from '@/components/ui/button'
+import Hero from '@/app/(public)/_components/hero'
+import { SparklesCore } from '@/app/(public)/_components/sparkles'
 
 export default function HomePage() {
   return (
-    <main className="min-h-[calc(100vh-117px)]">
-      <div className="container px-4 mx-auto">
-        <div className="flex flex-col items-center justify-center min-h-[80vh] text-center space-y-8">
-          <h1 className="text-4xl sm:text-6xl md:text-7xl font-bold tracking-tighter">
-            Vendem Tudo
-            <br />
-            para seu negócio
-          </h1>
-          <p className="text-lg sm:text-xl text-muted-foreground max-w-[600px]">
-            Deixe a inteligência artificial trabalhar para você, faça mais
-            vendas no automático.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4">
-            <Link href="/cadastrar">
-              <Button size="lg">Cadastrar</Button>
-            </Link>
-            <Link href="/entrar">
-              <Button size="lg" variant="outline">
-                Entrar
-              </Button>
-            </Link>
-          </div>
-        </div>
+    <main className="min-h-[calc(100vh-117px)] bg-black/[0.96] antialiased bg-grid-white/[0.02] relative overflow-hidden">
+      {/* Ambient background with moving particles */}
+      <div className="h-full w-full absolute inset-0 z-0">
+        <SparklesCore
+          id="tsparticlesfullpage"
+          background="transparent"
+          minSize={0.6}
+          maxSize={1.4}
+          particleDensity={80}
+          className="w-full h-full"
+          particleColor="#FFFFFF"
+        />
+      </div>
+
+      <div className="relative z-10">
+        <Hero />
       </div>
     </main>
   )

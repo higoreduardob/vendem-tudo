@@ -28,7 +28,7 @@ const app = new Hono()
     const ownerId = user.role === UserRole.OWNER ? user.id : user.ownerId!
 
     const store = await db.store.findUnique({
-      where: { id: auth.token.selectedStore, ownerId },
+      where: { id: auth.token.selectedStore.id, ownerId },
     })
 
     if (!store) {
@@ -58,7 +58,7 @@ const app = new Hono()
 
       const data = await db.foodCategory.findMany({
         where: { storeId: store.id },
-        // include: { _count: true },
+        include: { _count: true },
       })
 
       return c.json({ data }, 200)
@@ -90,7 +90,7 @@ const app = new Hono()
       const ownerId = user.role === UserRole.OWNER ? user.id : user.ownerId!
 
       const store = await db.store.findUnique({
-        where: { id: auth.token.selectedStore, ownerId },
+        where: { id: auth.token.selectedStore.id, ownerId },
       })
       if (!store) {
         return c.json({ error: 'Usuário não autorizado' }, 401)
@@ -131,7 +131,7 @@ const app = new Hono()
       const ownerId = user.role === UserRole.OWNER ? user.id : user.ownerId!
 
       const store = await db.store.findUnique({
-        where: { id: auth.token.selectedStore, ownerId },
+        where: { id: auth.token.selectedStore.id, ownerId },
       })
       if (!store) {
         return c.json({ error: 'Usuário não autorizado' }, 401)
@@ -170,7 +170,7 @@ const app = new Hono()
       const ownerId = user.role === UserRole.OWNER ? user.id : user.ownerId!
 
       const store = await db.store.findUnique({
-        where: { id: auth.token.selectedStore, ownerId },
+        where: { id: auth.token.selectedStore.id, ownerId },
       })
       if (!store) {
         return c.json({ error: 'Usuário não autorizado' }, 401)
@@ -213,7 +213,7 @@ const app = new Hono()
       const ownerId = user.role === UserRole.OWNER ? user.id : user.ownerId!
 
       const store = await db.store.findUnique({
-        where: { id: auth.token.selectedStore, ownerId },
+        where: { id: auth.token.selectedStore.id, ownerId },
       })
       if (!store) {
         return c.json({ error: 'Usuário não autorizado' }, 401)
@@ -261,7 +261,7 @@ const app = new Hono()
       const ownerId = user.role === UserRole.OWNER ? user.id : user.ownerId!
 
       const store = await db.store.findUnique({
-        where: { id: auth.token.selectedStore, ownerId },
+        where: { id: auth.token.selectedStore.id, ownerId },
       })
       if (!store) {
         return c.json({ error: 'Usuário não autorizado' }, 401)
@@ -305,7 +305,7 @@ const app = new Hono()
       const ownerId = user.role === UserRole.OWNER ? user.id : user.ownerId!
 
       const store = await db.store.findUnique({
-        where: { id: auth.token.selectedStore, ownerId },
+        where: { id: auth.token.selectedStore.id, ownerId },
       })
       if (!store) {
         return c.json({ error: 'Usuário não autorizado' }, 401)

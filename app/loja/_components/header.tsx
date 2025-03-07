@@ -1,10 +1,10 @@
-import Link from 'next/link'
-import Image from 'next/image'
-
-import { Heart, ShoppingBag } from 'lucide-react'
+import { useState } from 'react'
+import { Heart, ShoppingBag, User } from 'lucide-react'
 
 import { useOpenStore } from '@/hooks/use-store'
 import { useGetStoreCategories } from '@/features/foods/categories/api/use-get-categories'
+
+import { useCartStore } from '@/features/foods/orders/schema'
 
 import {
   NavigationMenu,
@@ -14,23 +14,25 @@ import {
   NavigationMenuTrigger,
 } from '@/components/ui/navigation-menu'
 import { Button } from '@/components/ui/button'
+import { ShoppingCart } from './shopping-cart'
 
 export const Header = () => {
+  const [isCartOpen, setIsCartOpen] = useState(false)
   const { store } = useOpenStore()
+  const { cart } = useCartStore()
   const categoriesQuery = useGetStoreCategories(store?.id)
   const categories = categoriesQuery.data || []
 
   const HEADER_NAV_MAIN = [
-    { title: 'Início', url: '' },
-    { title: 'Sobre', url: 'sobre' },
     {
       title: 'Categorias',
       items: categories.map((category) => ({
         title: category.name,
-        // count: category._count.foods,
+        count: category._count.foods,
       })),
     },
-    { title: 'Contato', url: 'sobre' },
+    { title: 'Sobre' },
+    { title: 'Contato' },
   ]
 
   if (categoriesQuery.isLoading) {
@@ -38,12 +40,8 @@ export const Header = () => {
   }
 
   return (
-    <header className="fixed top-0 left-0 right-0 bg-white/70 backdrop-blur-md z-50 border-b border-red-500/50 w-full bg-none transition-transform duration-300 py-2">
+    <header className="fixed top-0 left-0 right-0 bg-white/70 backdrop-blur-md z-50 w-full bg-none transition-transform duration-300 py-2">
       <div className="flex items-center justify-between px-4 text-black">
-        <Link href="/" className="flex items-center space-x-2">
-          <Image src="/logo.svg" alt="Vendem Tudo" width={32} height={32} />
-        </Link>
-
         <NavigationMenu className="hidden md:flex mx-6">
           <NavigationMenuList>
             {HEADER_NAV_MAIN?.length > 0 &&
@@ -51,31 +49,30 @@ export const Header = () => {
                 <NavigationMenuItem key={index}>
                   {item.items ? (
                     <>
-                      <Button asChild variant="ghost">
-                        <NavigationMenuTrigger>
-                          {item.title}
-                        </NavigationMenuTrigger>
-                      </Button>
+                      <NavigationMenuTrigger className="bg-transparent hover:bg-accent hover:text-accent-foreground">
+                        {item.title}
+                      </NavigationMenuTrigger>
                       <NavigationMenuContent>
-                        {/* TODO: Fix center style */}
-                        <div>
+                        <div className="p-1">
                           {item.items.map((value, key) => (
-                            <Button key={key} variant="ghost">
+                            <Button
+                              key={key}
+                              variant="ghost"
+                              className="w-full flex items-center justify-between"
+                            >
                               {value.title}
-                              {/* <span className="text-sm opacity-50">
+                              <span className="text-sm opacity-50">
                                 {value.count}
-                              </span> */}
+                              </span>
                             </Button>
                           ))}
                         </div>
                       </NavigationMenuContent>
                     </>
                   ) : (
-                    <Link href={item.url}>
-                      <Button variant="ghost">
-                        <span>{item.title}</span>
-                      </Button>
-                    </Link>
+                    <Button variant="ghost">
+                      <span>{item.title}</span>
+                    </Button>
                   )}
                 </NavigationMenuItem>
               ))}
@@ -83,27 +80,36 @@ export const Header = () => {
         </NavigationMenu>
 
         <div className="flex items-center gap-2 text-black">
-          <Link
-            href="favoritos"
-            className="relative flex items-center justify-center w-12 h-12 rounded-full cursor-pointer hover:bg-black/[0.05] hover:text-white"
+          <Button
+            variant="ghost"
+            className="relative flex items-center justify-center w-10 h-10 rounded-full cursor-pointer hover:bg-black/[0.05]"
+            onClick={() => setIsCartOpen(true)}
           >
-            <Heart className="text-[24px]" />
-            <span className="absolute top-0 left-6 flex items-center justify-center h-[20px] min-w-[20px] text-[12px] text-white bg-red-600 rounded-full">
+            <ShoppingBag className="h-[1.2rem] w-[1.2rem]" />
+            <span className="absolute top-0 left-6 flex items-center justify-center h-[16px] min-w-[16px] text-[12px] text-white bg-red-600 rounded-full">
+              {cart?.length ?? 0}
+            </span>
+          </Button>
+
+          <Button
+            variant="ghost"
+            className="relative flex items-center justify-center w-10 h-10 rounded-full cursor-pointer hover:bg-black/[0.05]"
+          >
+            <Heart className="h-[1.2rem] w-[1.2rem]" />
+            <span className="absolute top-0 left-6 flex items-center justify-center h-[16px] min-w-[16px] text-[12px] text-white bg-red-600 rounded-full">
               5
             </span>
-          </Link>
+          </Button>
 
-          <Link
-            href="carrinho"
-            className="relative flex items-center justify-center w-12 h-12 rounded-full cursor-pointer hover:bg-black/[0.05] hover:text-white"
+          <Button
+            variant="ghost"
+            className="relative flex items-center justify-center w-10 h-10 rounded-full cursor-pointer hover:bg-black/[0.05]"
           >
-            <ShoppingBag className="text-[24px]" />
-            <span className="absolute top-0 left-6 flex items-center justify-center h-[20px] min-w-[20px] text-[12px] text-white bg-red-600 rounded-full">
-              3{/* {items?.length ?? 0} */}
-            </span>
-          </Link>
+            <User className="h-[1.2rem] w-[1.2rem]" />
+          </Button>
         </div>
       </div>
+      <ShoppingCart isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
     </header>
   )
 }

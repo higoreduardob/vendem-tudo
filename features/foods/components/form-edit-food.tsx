@@ -34,8 +34,10 @@ export const FormEditFood = () => {
 
   const defaultValues: InsertFoodFormValues = {
     name: data.name,
+    image: data.image,
     description: data.description,
     price: data.price.toString(),
+    ingredients: data.ingredients,
     promotion: data.promotion.toString(),
     categoryId: data.categoryId,
     additionals: data.additionals.map(

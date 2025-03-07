@@ -7,6 +7,7 @@ import { useStore } from '@/hooks/use-store'
 import { useOpenStore } from '@/hooks/use-store'
 
 import { Header } from '@/app/loja/_components/header'
+import { Footer } from '../_components/footer'
 
 export default function StoreLayout({
   children,
@@ -35,6 +36,7 @@ export default function StoreLayout({
     <section>
       <Header />
       {children}
+      <Footer />
     </section>
   )
 }

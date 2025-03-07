@@ -9,7 +9,7 @@ export type ExtendedUser = DefaultSession['user'] & {
   rgIe: string | null
   whatsApp: string | null
   address: any
-  selectedStore: string | null
+  selectedStore: { id: string; name: string; slug: string } | null
 }
 
 declare module 'next-auth' {
@@ -28,6 +28,6 @@ declare module '@auth/core/jwt' {
     rgIe: string | null
     whatsApp: string | null
     address: any
-    selectedStore: string | null
+    selectedStore: { id: string; name: string; slug: string } | null
   }
 }

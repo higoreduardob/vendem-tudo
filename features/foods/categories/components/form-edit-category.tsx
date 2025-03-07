@@ -32,6 +32,7 @@ export const FormEditCategory = () => {
 
   const defaultValues: InsertCategoryFormValues = {
     name: data.name,
+    image: data.image,
   }
 
   const onSubmit = (values: InsertCategoryFormValues) => {

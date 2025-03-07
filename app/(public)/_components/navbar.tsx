@@ -25,7 +25,12 @@ export const Navbar = () => {
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="flex h-16 items-center px-4">
         <Link href="/" className="flex items-center space-x-2">
-          <Image src="/logo.svg" alt="Vendem Tudo" width={32} height={32} />
+          <Image
+            src="/logo-light.svg"
+            alt="Vendem Tudo"
+            width={32}
+            height={32}
+          />
         </Link>
 
         <NavigationMenu className="hidden md:flex mx-6">
@@ -38,7 +43,9 @@ export const Navbar = () => {
               </Link>
             </NavigationMenuItem>
             <NavigationMenuItem>
-              <NavigationMenuTrigger>Recursos</NavigationMenuTrigger>
+              <NavigationMenuTrigger className="bg-transparent hover:bg-accent hover:text-accent-foreground">
+                Recursos
+              </NavigationMenuTrigger>
               <NavigationMenuContent>
                 <div className="p-2">
                   <Link href="/sobre">
@@ -131,12 +138,12 @@ export const Navbar = () => {
 
         <div className="flex items-center ml-auto space-x-4">
           <Link href="/entrar">
-            <Button variant="ghost" size="sm">
-              Entrar
-            </Button>
+            <Button size="sm">Entrar</Button>
           </Link>
           <Link href="/cadastrar">
-            <Button size="sm">Cadastrar</Button>
+            <Button size="sm" variant="purple">
+              Cadastrar
+            </Button>
           </Link>
         </div>
       </div>

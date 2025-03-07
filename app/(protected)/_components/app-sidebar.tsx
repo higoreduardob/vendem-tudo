@@ -21,16 +21,13 @@ export function AppSidebar({
   const updatedNavMain = useActiveNav({ navMain })
   const storesQuery = useGetStores()
   const stores = storesQuery.data || []
-  const storeName = stores.find(
-    (store) => store.id === user?.selectedStore
-  )?.name
 
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
         <SidebarSwitcher
           name="Vendem Tudo"
-          storeName={storeName || 'Plataforma'}
+          storeName={user.selectedStore?.name || 'Plataforma'}
         />
       </SidebarHeader>
       <SidebarContent>

@@ -56,7 +56,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
       const existingUser = await db.user.findUnique({
         where: { id: token.sub },
-        include: { address: true },
+        include: {
+          address: true,
+          store: {
+            select: {
+              id: true,
+              name: true,
+              slug: true,
+            },
+          },
+        },
       })
 
       if (!existingUser) return token
@@ -67,7 +76,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       token.rgIe = existingUser.rgIe
       token.address = existingUser.address
       token.isTwoFactorEnabled = existingUser.isTwoFactorEnabled
-      token.selectedStore = existingUser.selectedStore
+      token.selectedStore = existingUser.store
 
       return token
     },

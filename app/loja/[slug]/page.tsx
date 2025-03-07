@@ -1,31 +1,41 @@
 'use client'
 
-import Image from 'next/image'
-import { Search } from 'lucide-react'
-
 import { useOpenStore } from '@/hooks/use-store'
-import { useGetStoreCategories } from '@/features/foods/categories/api/use-get-categories'
+import { useGetStoreFoods } from '@/features/foods/api/use-get-foods'
 
-import { Input } from '@/components/ui/input'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { Title } from '@/app/loja/_components/title'
+import { GridProducts } from '@/features/foods/components/grid-products'
+
+import { Carousel } from '../_components/carousel'
+import { MainBanner } from '../_components/main-banner'
+import { CategoryMenu } from '../_components/category-menu'
 
 export default function StorePage() {
   const { store } = useOpenStore()
-  const categoriesQuery = useGetStoreCategories(store?.id)
-  const categories = categoriesQuery.data || []
-
-  if (!store) {
-    return null
-  }
-
-  if (categoriesQuery.isLoading) {
-    return <>Skeleton</>
-  }
+  const foodsQuery = useGetStoreFoods(store?.id)
+  const foods = foodsQuery.data || []
 
   return (
     <div className="min-h-screen">
-      <section className="relative w-full min-h-[80vh] flex flex-col justify-center">
+      <MainBanner />
+      <div className="container mx-auto px-4 py-8">
+        <div className="space-y-8">
+          <GridProducts title="Destaques" products={foods} />
+          <div className="space-y-4">
+            <Title title="Categorias" />
+            <Carousel />
+          </div>
+          <GridProducts title="Cardápio" products={foods}>
+            <CategoryMenu variant="dropdown" />
+          </GridProducts>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+{
+  /* <section className="relative w-full min-h-[80vh] flex flex-col justify-center">
         <div className="absolute inset-0 overflow-hidden">
           <Image
             src="/home-store-slug-desktop-bg.webp"
@@ -73,31 +83,14 @@ export default function StorePage() {
                   {category.name}
                 </Badge>
               ))}
-              {/* {[
-                'Lanches',
-                'Bebidas',
-                'Combos',
-                'Promocionais',
-                'Doces',
-                'Porções',
-                'Fritas',
-                'Peixes',
-                'Camarões',
-                'Sushi',
-                'Carnes',
-                'Cerveja',
-              ].map((category) => (
-                <Badge
-                  key={category}
-                  className="p-2 text-muted-foreground font-normal rounded-full bg-white border border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50 transition-colors cursor-pointer"
-                >
-                  {category}
-                </Badge>
-              ))} */}
             </nav>
           </div>
         </div>
-      </section>
-    </div>
-  )
+      </section> */
+}
+
+{
+  /* <div className="grid grid-cols-1 gap-6 md:grid-cols-[240px_1fr]">
+          <CategoryMenu className="hidden md:block" />
+        </div> */
 }

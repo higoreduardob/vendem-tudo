@@ -28,7 +28,7 @@ const app = new Hono()
     const ownerId = user.role === UserRole.OWNER ? user.id : user.ownerId!
 
     const store = await db.store.findUnique({
-      where: { id: auth.token.selectedStore, ownerId },
+      where: { id: auth.token.selectedStore.id, ownerId },
     })
 
     if (!store) {
@@ -67,7 +67,7 @@ const app = new Hono()
       const ownerId = user.role === UserRole.OWNER ? user.id : user.ownerId!
 
       const store = await db.store.findUnique({
-        where: { id: auth.token.selectedStore, ownerId },
+        where: { id: auth.token.selectedStore.id, ownerId },
       })
 
       if (!store) {
@@ -109,7 +109,7 @@ const app = new Hono()
       const ownerId = user.role === UserRole.OWNER ? user.id : user.ownerId!
 
       const store = await db.store.findUnique({
-        where: { id: auth.token.selectedStore, ownerId },
+        where: { id: auth.token.selectedStore.id, ownerId },
       })
 
       if (!store) {
@@ -145,7 +145,7 @@ const app = new Hono()
       const ownerId = user.role === UserRole.OWNER ? user.id : user.ownerId!
 
       const store = await db.store.findUnique({
-        where: { id: auth.token.selectedStore, ownerId },
+        where: { id: auth.token.selectedStore.id, ownerId },
       })
 
       if (!store) {
@@ -189,7 +189,7 @@ const app = new Hono()
       const ownerId = user.role === UserRole.OWNER ? user.id : user.ownerId!
 
       const store = await db.store.findUnique({
-        where: { id: auth.token.selectedStore, ownerId },
+        where: { id: auth.token.selectedStore.id, ownerId },
       })
 
       if (!store) {
@@ -238,7 +238,7 @@ const app = new Hono()
       const ownerId = user.role === UserRole.OWNER ? user.id : user.ownerId!
 
       const store = await db.store.findUnique({
-        where: { id: auth.token.selectedStore, ownerId },
+        where: { id: auth.token.selectedStore.id, ownerId },
       })
 
       if (!store) {
@@ -285,7 +285,7 @@ const app = new Hono()
       const ownerId = user.role === UserRole.OWNER ? user.id : user.ownerId!
 
       const store = await db.store.findUnique({
-        where: { id: auth.token.selectedStore, ownerId },
+        where: { id: auth.token.selectedStore.id, ownerId },
       })
 
       if (!store) {

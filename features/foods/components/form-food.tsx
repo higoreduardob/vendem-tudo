@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
-import { Eye, Sandwich } from 'lucide-react'
+import { Eye, Plus, Sandwich, X } from 'lucide-react'
 import { zodResolver } from '@hookform/resolvers/zod'
 
 import { cn } from '@/lib/utils'
@@ -25,6 +25,7 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { FormDialog } from '@/components/form-dialog'
 import { AmountInput } from '@/components/amount-input'
@@ -72,7 +73,8 @@ export const FormFood = ({
       value: category.id,
     })
   )
-  const onCreateCategory = (name: string) => categoryMutation.mutate({ name })
+  const onCreateCategory = (name: string) =>
+    categoryMutation.mutate({ name, image: '' })
   const isLoadingCreateCategory = categoryMutation.isPending
 
   const additionalsQuery = useGetFoodAdditionals()
@@ -222,9 +224,79 @@ export const FormFood = ({
           />
           <FormField
             control={form.control}
+            name="ingredients"
+            render={() => (
+              <FormItem className="w-full mt-12">
+                <FormLabel htmlFor="ingredient">Ingredientes</FormLabel>
+                <div className="flex gap-2">
+                  <Input
+                    id="ingredient"
+                    placeholder="Digite um ingrediente"
+                    disabled={isPending}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && e.currentTarget.value.trim()) {
+                        e.preventDefault()
+                        const currentIngredients =
+                          form.getValues('ingredients') || []
+                        form.setValue('ingredients', [
+                          ...currentIngredients,
+                          e.currentTarget.value.trim(),
+                        ])
+                        e.currentTarget.value = ''
+                      }
+                    }}
+                  />
+                  <Button
+                    type="button"
+                    onClick={() => {
+                      const input =
+                        document.querySelector<HTMLInputElement>('#ingredient')
+                      if (input?.value.trim()) {
+                        const currentIngredients =
+                          form.getValues('ingredients') || []
+                        form.setValue('ingredients', [
+                          ...currentIngredients,
+                          input.value.trim(),
+                        ])
+                        input.value = ''
+                      }
+                    }}
+                  >
+                    <Plus className="size-4" />
+                  </Button>
+                </div>
+                <FormMessage />
+                <div className="flex flex-wrap gap-2 mt-4">
+                  {form.watch('ingredients')?.map((ingredient, index) => (
+                    <Badge
+                      key={index}
+                      variant="secondary"
+                      className="flex items-center gap-1"
+                    >
+                      {ingredient}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const updatedIngredients = form
+                            .getValues('ingredients')
+                            .filter((_, i) => i !== index)
+                          form.setValue('ingredients', updatedIngredients)
+                        }}
+                        className="ml-1 text-red-500 hover:text-red-700"
+                      >
+                        <X className="size-4" />
+                      </button>
+                    </Badge>
+                  ))}
+                </div>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
             name="additionals"
             render={({ field }) => (
-              <FormItem className="w-full mt-12">
+              <FormItem className="w-full">
                 <div className="flex items-center justify-between">
                   <FormLabel htmlFor="additionals">Adicionais</FormLabel>
                   <Button

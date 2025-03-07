@@ -131,13 +131,27 @@ model TwoFactorConfirmation {
   @@unique([userId])
 }
 
+// enum FoodTagEnum {
+//   NEWEST
+//   PROMOTION
+//   MOST_SALE
+// }
+
 model Food {
-  id          String  @id @default(cuid())
+  id          String   @id @default(cuid())
   name        String
+  image       String
   description String
+  ingredients String[]
   price       Int
   promotion   Int?
-  status      Boolean @default(true)
+  status      Boolean  @default(true)
+
+  // reviews     Review[]
+  // reviewsAvg Int?
+  // reviewsAmount Int?
+
+  // tag    String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -153,6 +167,7 @@ model Food {
 model FoodCategory {
   id     String  @id @default(cuid())
   name   String  @unique
+  image  String
   status Boolean @default(true)
 
   createdAt DateTime @default(now())

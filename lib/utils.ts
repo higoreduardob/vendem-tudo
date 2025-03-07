@@ -54,3 +54,7 @@ export function convertAmountToMiliunits(
 
   return Math.round(currAmount * 1000)
 }
+
+export function calculatePercentage(min: number, max: number) {
+  return min !== 0 && max > 0 ? Math.ceil((1 - min / max) * 100) : 0
+}

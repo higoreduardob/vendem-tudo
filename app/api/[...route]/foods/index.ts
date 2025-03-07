@@ -29,7 +29,7 @@ const app = new Hono()
     const ownerId = user.role === UserRole.OWNER ? user.id : user.ownerId!
 
     const store = await db.store.findUnique({
-      where: { id: auth.token.selectedStore, ownerId },
+      where: { id: auth.token.selectedStore.id, ownerId },
     })
 
     if (!store) {
@@ -42,6 +42,37 @@ const app = new Hono()
 
     return c.json({ data }, 200)
   })
+  .get(
+    '/stores/:storeId',
+    zValidator('param', z.object({ storeId: z.string().optional() })),
+    async (c) => {
+      const { storeId } = c.req.valid('param')
+
+      if (!storeId) {
+        return c.json({ error: 'Identificador não encontrado' }, 400)
+      }
+
+      const store = await db.store.findUnique({ where: { id: storeId } })
+      if (!store) {
+        return c.json({ error: 'Loja não cadastrada' }, 404)
+      }
+
+      const data = await db.food.findMany({
+        where: { storeId: store.id },
+        include: {
+          additionals: {
+            select: {
+              foodAdditional: {
+                include: { options: { include: { foodOption: true } } },
+              },
+            },
+          },
+        },
+      })
+
+      return c.json({ data }, 200)
+    }
+  )
   .get(
     '/:id',
     verifyAuth(),
@@ -68,7 +99,7 @@ const app = new Hono()
       const ownerId = user.role === UserRole.OWNER ? user.id : user.ownerId!
 
       const store = await db.store.findUnique({
-        where: { id: auth.token.selectedStore, ownerId },
+        where: { id: auth.token.selectedStore.id, ownerId },
       })
 
       if (!store) {
@@ -108,7 +139,7 @@ const app = new Hono()
     const ownerId = user.role === UserRole.OWNER ? user.id : user.ownerId!
 
     const store = await db.store.findUnique({
-      where: { id: auth.token.selectedStore, ownerId },
+      where: { id: auth.token.selectedStore.id, ownerId },
     })
 
     if (!store) {
@@ -154,7 +185,7 @@ const app = new Hono()
       const ownerId = user.role === UserRole.OWNER ? user.id : user.ownerId!
 
       const store = await db.store.findUnique({
-        where: { id: auth.token.selectedStore, ownerId },
+        where: { id: auth.token.selectedStore.id, ownerId },
       })
 
       if (!store) {
@@ -198,7 +229,7 @@ const app = new Hono()
       const ownerId = user.role === UserRole.OWNER ? user.id : user.ownerId!
 
       const store = await db.store.findUnique({
-        where: { id: auth.token.selectedStore, ownerId },
+        where: { id: auth.token.selectedStore.id, ownerId },
       })
 
       if (!store) {
@@ -248,7 +279,7 @@ const app = new Hono()
       const ownerId = user.role === UserRole.OWNER ? user.id : user.ownerId!
 
       const store = await db.store.findUnique({
-        where: { id: auth.token.selectedStore, ownerId },
+        where: { id: auth.token.selectedStore.id, ownerId },
       })
 
       if (!store) {
@@ -317,7 +348,7 @@ const app = new Hono()
       const ownerId = user.role === UserRole.OWNER ? user.id : user.ownerId!
 
       const store = await db.store.findUnique({
-        where: { id: auth.token.selectedStore, ownerId },
+        where: { id: auth.token.selectedStore.id, ownerId },
       })
 
       if (!store) {
