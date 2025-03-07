@@ -112,10 +112,10 @@ export const FormFood = ({
       <Form {...form}>
         <form
           id="form-food"
-          className="flex flex-col gap-4"
+          className="flex flex-col gap-2"
           onSubmit={form.handleSubmit(handleSubmit)}
         >
-          <div className="flex flex-col gap-4 md:flex-row">
+          <div className="flex flex-col gap-2 md:flex-row">
             <FormField
               control={form.control}
               name="name"
@@ -156,7 +156,7 @@ export const FormFood = ({
               )}
             />
           </div>
-          <div className="flex flex-col gap-4 md:flex-row">
+          <div className="flex flex-col gap-2 md:flex-row">
             <FormField
               control={form.control}
               name="price"

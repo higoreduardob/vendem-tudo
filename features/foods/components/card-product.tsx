@@ -135,8 +135,8 @@ export const ProductDetails = ({
   ingredients: string[]
 }) => {
   return (
-    <ScrollArea className="max-h-[229px] pr-1">
-      <div className="flex flex-col gap-4">
+    <ScrollArea className="max-h-[221px] pr-1">
+      <div className="flex flex-col gap-2">
         <div>
           <h4 className="font-semibold">Descrição:</h4>
           <div
@@ -552,66 +552,65 @@ export function ProductAdditionals({ ...product }: ResponseType) {
   }
 
   return (
-    <ScrollArea className="max-h-[400px] pr-4">
-      <div className="space-y-6">
-        {additionals.map(({ foodAdditional }) => {
-          const { id, name, description, required, minRequired, limit, role } =
-            foodAdditional
+    <div className="space-y-6">
+      {additionals.map(({ foodAdditional }) => {
+        const { id, name, description, required, minRequired, limit, role } =
+          foodAdditional
 
-          const selectedOptions = getOptionsForAdditional(id)
-          const selectedCount = selectedOptions.reduce(
-            (acc, opt) => acc + opt.quantity,
-            0
-          )
+        const selectedOptions = getOptionsForAdditional(id)
+        const selectedCount = selectedOptions.reduce(
+          (acc, opt) => acc + opt.quantity,
+          0
+        )
 
-          const isValid =
-            !required || (required && selectedCount >= (minRequired || 1))
+        const isValid =
+          !required || (required && selectedCount >= (minRequired || 1))
 
-          return (
-            <Card key={id} className="border-gray-200">
-              <CardHeader className="pb-2">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-lg font-bold">
-                    {name}
-                    {required && <span className="text-red-500 ml-1">*</span>}
-                  </CardTitle>
-                  <div className="flex flex-col items-end gap-1">
-                    <div className="flex gap-2">
-                      {(role === 'MULTIPLE' || role === 'QUANTITY') &&
-                        limit && <Badge variant="outline">Máx: {limit}</Badge>}
-                      {((role === 'MULTIPLE' || role === 'QUANTITY') &&
-                        required &&
-                        minRequired) ||
-                      (role === 'UNIQUE' && required) ? (
-                        <Badge variant="outline">Mín: {minRequired || 1}</Badge>
-                      ) : null}
-                    </div>
+        return (
+          <Card key={id} className="border-gray-200">
+            <CardHeader className="pb-2">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-lg font-bold">
+                  {name}
+                  {required && <span className="text-red-500 ml-1">*</span>}
+                </CardTitle>
+                <div className="flex flex-col items-end gap-1">
+                  <div className="flex gap-2">
                     {(role === 'MULTIPLE' || role === 'QUANTITY') && limit && (
-                      <span className="text-xs text-muted-foreground">
-                        {selectedCount}/{limit}{' '}
-                        {role === 'MULTIPLE' ? 'opções' : 'itens'} selecionados
-                      </span>
+                      <Badge variant="outline">Máx: {limit}</Badge>
                     )}
+                    {((role === 'MULTIPLE' || role === 'QUANTITY') &&
+                      required &&
+                      minRequired) ||
+                    (role === 'UNIQUE' && required) ? (
+                      <Badge variant="outline">Mín: {minRequired || 1}</Badge>
+                    ) : null}
                   </div>
+                  {(role === 'MULTIPLE' || role === 'QUANTITY') && limit && (
+                    <span className="text-xs text-muted-foreground">
+                      {selectedCount}/{limit}{' '}
+                      {role === 'MULTIPLE' ? 'opções' : 'itens'} selecionados
+                    </span>
+                  )}
                 </div>
-                <p className="text-sm text-muted-foreground">{description}</p>
-              </CardHeader>
-              <CardContent>
-                {renderAdditionalOptions(foodAdditional)}
-                {required && !isValid && (
-                  <p className="text-sm text-red-500 mt-2">
-                    {role === 'UNIQUE'
-                      ? 'Selecione uma opção'
-                      : `Selecione pelo menos ${minRequired || 1} ${
-                          role === 'QUANTITY' ? 'item(ns)' : 'opção(ões)'
-                        }`}
-                  </p>
-                )}
-              </CardContent>
-            </Card>
-          )
-        })}
-      </div>
-    </ScrollArea>
+              </div>
+              <p className="text-sm text-muted-foreground">{description}</p>
+            </CardHeader>
+            <CardContent>
+              {renderAdditionalOptions(foodAdditional)}
+              {required && !isValid && (
+                <p className="text-sm text-red-500 mt-2">
+                  {role === 'UNIQUE'
+                    ? 'Selecione uma opção'
+                    : `Selecione pelo menos ${minRequired || 1} ${
+                        role === 'QUANTITY' ? 'item(ns)' : 'opção(ões)'
+                      }`}
+                </p>
+              )}
+            </CardContent>
+          </Card>
+        )
+      })}
+    </div>
   )
 }

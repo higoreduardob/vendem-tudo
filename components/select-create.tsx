@@ -56,7 +56,7 @@ export const SelectCreate = ({
       key={value}
       inputId={id}
       placeholder={placeholder}
-      className="text-sm h-10"
+      className="text-sm h-10 border-input"
       components={{ NoOptionsMessage }}
       styles={{
         control: (base) => ({
@@ -68,6 +68,8 @@ export const SelectCreate = ({
           ':hover': {
             borderColor,
           },
+          borderRadius: '6px',
+          height: '40px',
         }),
         option: (base, { isFocused, isSelected }) => ({
           ...base,

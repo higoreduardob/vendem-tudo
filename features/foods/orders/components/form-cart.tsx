@@ -147,7 +147,7 @@ export const FormCart = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[700px] p-4">
+      <DialogContent className="border-none w-full sm:max-w-[700px] max-h-[90%] overflow-y-auto p-4">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-black">
             {name}
@@ -158,12 +158,12 @@ export const FormCart = ({
         </DialogHeader>
         <Form {...form}>
           <form
-            className="flex flex-col gap-4"
+            className="flex flex-col gap-2"
             onSubmit={form.handleSubmit(handleSubmit)}
           >
-            <div className="grid gap-4 py-4 md:grid-cols-2">
+            <div className="grid gap-2 py-4 md:grid-cols-2">
               <ProductImage {...product} className="rounded-lg" />
-              <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-2">
                 <div className="flex flex-col gap-2 sticky">
                   <div className="flex items-center gap-2 justify-between">
                     <div>
