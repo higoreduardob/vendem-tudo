@@ -39,6 +39,7 @@ import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Separator } from '@/components/ui/separator'
 import { ButtonCart } from '@/components/button-custom'
+import { ScrollArea } from '@/components/ui/scroll-area'
 
 type Props = {
   isOpen: boolean
@@ -198,30 +199,32 @@ export const FormCart = ({
               </div>
             </div>
             <Separator />
-            <ProductAdditionals {...product} />
-            <FormField
-              control={form.control}
-              name="obs"
-              render={({ field }) => (
-                <FormItem className="w-full">
-                  <FormLabel>Observação</FormLabel>
-                  <span className="text-xs block">
-                    Importante! Para pedir adicionais, use as opções acima.
-                  </span>
-                  <FormControl>
-                    <Textarea
-                      {...field}
-                      value={field.value || ''}
-                      placeholder="Observações do pedido"
-                      className="resize-none h-[100px]"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <Separator />
-            <ProductReview />
+            <ScrollArea className="max-h-[400px] pr-3">
+              <ProductAdditionals {...product} />
+              <FormField
+                control={form.control}
+                name="obs"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormLabel>Observação</FormLabel>
+                    <span className="text-xs block">
+                      Importante! Para pedir adicionais, use as opções acima.
+                    </span>
+                    <FormControl>
+                      <Textarea
+                        {...field}
+                        value={field.value || ''}
+                        placeholder="Observações do pedido"
+                        className="resize-none h-[100px]"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <Separator />
+              <ProductReview />
+            </ScrollArea>
           </form>
         </Form>
       </DialogContent>
