@@ -135,7 +135,7 @@ export const ProductDetails = ({
   ingredients: string[]
 }) => {
   return (
-    <ScrollArea className="max-h-[221px] pr-1">
+    <ScrollArea className="max-h-[330px] pr-1">
       <div className="flex flex-col gap-2">
         <div>
           <h4 className="font-semibold">Descrição:</h4>

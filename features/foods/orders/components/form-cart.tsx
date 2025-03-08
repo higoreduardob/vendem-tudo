@@ -140,6 +140,12 @@ export const FormCart = ({
     return (basePrice + additionalsPrice) * form.watch('quantity')
   }
 
+  const onSubmit = () => {
+    document
+      .getElementById('form-cart')
+      ?.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }))
+  }
+
   useEffect(() => {
     form.reset()
   }, [isOpen])
@@ -149,57 +155,60 @@ export const FormCart = ({
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="border-none w-full sm:max-w-[700px] max-h-[90%] overflow-y-auto p-4">
-        <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-black">
-            {name}
-          </DialogTitle>
-          <DialogDescription className="text-sm text-gray-500">
-            Ainda não há avaliações para este produto
-          </DialogDescription>
-        </DialogHeader>
-        <Form {...form}>
-          <form
-            className="flex flex-col gap-2"
-            onSubmit={form.handleSubmit(handleSubmit)}
-          >
-            <div className="grid gap-2 py-4 md:grid-cols-2">
-              <ProductImage {...product} className="rounded-lg" />
-              <div className="flex flex-col gap-2">
-                <div className="flex flex-col gap-2 sticky">
-                  <div className="flex items-center gap-2 justify-between">
-                    <div>
-                      <ProductPrice {...product} />
-                      <div className="text-sm font-medium mt-1">
-                        Total: {formatCurrency(calculateTotal())}
-                      </div>
-                    </div>
-                    <ButtonCart
-                      value={form.watch('quantity')}
-                      disabled={false}
-                      handleDecrement={() => {
-                        const newValue = form.getValues('quantity') - 1
-                        if (newValue < 1) return
+        <DialogHeader className="flex flex-row gap-2 items-center justify-between">
+          <div>
+            <DialogTitle className="text-2xl font-bold text-black">
+              {name}
+            </DialogTitle>
+            <DialogDescription className="text-sm text-gray-500">
+              Ainda não há avaliações para este produto
+            </DialogDescription>
+          </div>
+          <div className="flex flex-col gap-2 sticky">
+            <div className="flex items-center gap-2 justify-between">
+              <ButtonCart
+                value={form.watch('quantity')}
+                disabled={false}
+                handleDecrement={() => {
+                  const newValue = form.getValues('quantity') - 1
+                  if (newValue < 1) return
 
-                        form.setValue('quantity', newValue)
-                      }}
-                      handleIncrement={() => {
-                        const newValue = form.getValues('quantity') + 1
-                        form.setValue('quantity', newValue)
-                      }}
-                    />
-                  </div>
-                  <Button variant="red" className="w-full">
-                    Adicionar ao Carrinho
-                  </Button>
+                  form.setValue('quantity', newValue)
+                }}
+                handleIncrement={() => {
+                  const newValue = form.getValues('quantity') + 1
+                  form.setValue('quantity', newValue)
+                }}
+              />
+              <div>
+                <ProductPrice {...product} />
+                <div className="text-sm font-medium mt-1">
+                  Total: {formatCurrency(calculateTotal())}
                 </div>
-                <ProductDetails
-                  description={description}
-                  ingredients={ingredients}
-                />
               </div>
             </div>
-            <Separator />
-            <ScrollArea className="max-h-[400px] pr-3">
+            <Button variant="red" className="w-full" onClick={onSubmit}>
+              Adicionar ao Carrinho
+            </Button>
+          </div>
+        </DialogHeader>
+        <ScrollArea className="max-h-[800px] pr-3">
+          <Form {...form}>
+            <form
+              id="form-cart"
+              className="flex flex-col gap-2"
+              onSubmit={form.handleSubmit(handleSubmit)}
+            >
+              <div className="grid gap-2 py-4 md:grid-cols-2">
+                <ProductImage {...product} className="rounded-lg" />
+                <div className="flex flex-col gap-2">
+                  <ProductDetails
+                    description={description}
+                    ingredients={ingredients}
+                  />
+                </div>
+              </div>
+              <Separator />
               <ProductAdditionals {...product} />
               <FormField
                 control={form.control}
@@ -224,9 +233,9 @@ export const FormCart = ({
               />
               <Separator />
               <ProductReview />
-            </ScrollArea>
-          </form>
-        </Form>
+            </form>
+          </Form>
+        </ScrollArea>
       </DialogContent>
     </Dialog>
   )
