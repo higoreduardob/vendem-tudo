@@ -57,6 +57,12 @@ const app = new Hono()
         ...values
       } = validatedFields
 
+      if (!hasAcceptedTerms)
+        return c.json({ error: 'Termos são obrigatórios' }, 400)
+
+      if (password !== repeatPassword)
+        return c.json({ error: 'Senhas devem ser iguais' }, 400)
+
       switch (role) {
         case 'OWNER': {
           const existingUser = await db.user.findUnique({
@@ -87,11 +93,16 @@ const app = new Hono()
         }
       }
 
-      if (!hasAcceptedTerms)
-        return c.json({ error: 'Termos são obrigatórios' }, 400)
+      const store =
+        role !== 'OWNER'
+          ? storeId
+            ? await db.store.findUnique({ where: { id: storeId } })
+            : null
+          : null
 
-      if (password !== repeatPassword)
-        return c.json({ error: 'Senhas devem ser iguais' }, 400)
+      if (role !== 'OWNER' && !store) {
+        return c.json({ error: 'Loja não cadastrada' }, 404)
+      }
 
       const hashedPassword = await bcrypt.hash(password, 10)
       await db.user.create({
@@ -102,6 +113,7 @@ const app = new Hono()
           hasAcceptedTerms,
           role,
           storeId: role !== 'OWNER' ? storeId : null,
+          ownerId: role !== 'OWNER' ? store?.ownerId : null,
           address: { create: { ...address } },
         },
       })

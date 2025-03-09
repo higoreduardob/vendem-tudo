@@ -4,28 +4,28 @@ import { handle } from 'hono/vercel'
 
 import authConfig from '@/auth.config'
 
+import users from './users'
 import foods from './foods'
 import stores from './stores'
+import customers from './customers'
 import foodOptions from './foods/options'
 import authenticate from './authenticate'
 import foodCategories from './foods/categories'
 import foodAdditionals from './foods/additionals'
-
-// import users from './users'
 
 const app = new Hono().basePath('/api')
 
 app.use('*', initAuthConfig(getAuthConfig))
 
 const routes = app
+  .route('/users', users)
   .route('/foods', foods)
   .route('/stores', stores)
+  .route('/customers', customers)
   .route('/food-options', foodOptions)
   .route('/authenticate', authenticate)
   .route('/food-categories', foodCategories)
   .route('/food-additionals', foodAdditionals)
-
-// .route('/users', users)
 
 // @ts-ignor
 function getAuthConfig(c: Context): AuthConfig {

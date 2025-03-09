@@ -18,7 +18,7 @@ function AuthLayoutComponent({ children }: { children: React.ReactNode }) {
     if (status === 'authenticated' && user) {
       router.push(`/loja/${store?.slug}/conta`)
     }
-  }, [user, status, router])
+  }, [user, status, router, store])
 
   if (status === 'loading') {
     return (

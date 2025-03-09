@@ -93,3 +93,8 @@ export function mapSessionToUpdateData(sessionUser: ExtendedUser) {
 
   return updateData as UpdateFormValues
 }
+
+export function statusFilter(status: string | undefined) {
+  const regex = /^\s*(true|1|on)\s*$/i
+  return status !== 'none' ? regex.test(status!) : undefined
+}

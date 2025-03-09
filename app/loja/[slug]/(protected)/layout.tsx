@@ -18,7 +18,7 @@ function ProtectedLayoutComponent({ children }: { children: React.ReactNode }) {
     if (!user) {
       router.push(`/loja/${store?.slug}/entrar`)
     }
-  }, [user, status, router])
+  }, [user, status, router, store])
 
   if (status === 'loading') {
     return (
