@@ -6,6 +6,8 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { zodResolver } from '@hookform/resolvers/zod'
 
+import { UserRole } from '@prisma/client'
+
 import {
   signInDefaultValues,
   SignInFormValues,
@@ -27,16 +29,26 @@ import { InputPassword } from '@/components/input-custom'
 import { ButtonLoading } from '@/components/button-custom'
 import { Wrapper } from '@/features/auth/components/wrapper'
 
-export const FormSignIn = () => {
+export const FormSignIn = ({
+  role,
+  storeId,
+  slug,
+  isCustomer = false,
+}: {
+  role: UserRole
+  storeId?: string
+  slug?: string
+  isCustomer?: boolean
+}) => {
   const router = useRouter()
   const [twoFactor, setTwoFactor] = useState(false)
   const [redirect, setRedirect] = useState('')
 
   const { update } = useCurrentUser()
-  const mutation = useSignIn()
+  const mutation = useSignIn(role, storeId)
   const form = useForm<SignInFormValues>({
     resolver: zodResolver(signInSchema),
-    defaultValues: signInDefaultValues,
+    defaultValues: { ...signInDefaultValues, role },
     shouldFocusError: true,
     reValidateMode: 'onChange',
     mode: 'all',
@@ -88,12 +100,12 @@ export const FormSignIn = () => {
       } abaixo para acessar em sua conta`}
       footerTitle="Cadastrar"
       footerDescription="Não possui uma conta?"
-      footerLink="/cadastrar"
+      footerLink={!isCustomer ? '/cadastrar' : `/loja/${slug}/cadastrar`}
     >
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="flex flex-col gap-4"
+          className="flex flex-col gap-2"
         >
           {twoFactor ? (
             <FormField
@@ -149,7 +161,11 @@ export const FormSignIn = () => {
                 )}
               />
               <Link
-                href="/recuperar-senha"
+                href={
+                  !isCustomer
+                    ? '/recuperar-senha'
+                    : `/loja/${slug}/recuperar-senha`
+                }
                 className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
               >
                 Esqueceu a senha?

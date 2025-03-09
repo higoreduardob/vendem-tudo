@@ -5,6 +5,8 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter, useSearchParams } from 'next/navigation'
 
+import { UserRole } from '@prisma/client'
+
 import {
   resetPasswordDefaultValues,
   ResetPasswordFormValues,
@@ -25,19 +27,29 @@ import { ButtonLoading } from '@/components/button-custom'
 import { Wrapper } from '@/features/auth/components/wrapper'
 import { ProgressPassword } from '@/components/progress-custom'
 
-export const FormResetPassword = () => {
+export const FormResetPassword = ({
+  role,
+  slug,
+  isCustomer,
+}: {
+  role: UserRole
+  slug?: string
+  isCustomer?: boolean
+}) => {
   const router = useRouter()
   const searchParams = useSearchParams()
 
   const token = searchParams.get('token')
+  const storeId = searchParams.get('storeId') ?? undefined
 
   if (!token) {
+    const url = !isCustomer ? '/entrar' : `/loja/${slug}/entrar`
     toast.error('Token inválido')
-    router.push('/entrar')
+    router.push(url)
     return null
   }
 
-  const mutation = useResetPassword(token)
+  const mutation = useResetPassword(token, role as UserRole, storeId)
   const form = useForm<ResetPasswordFormValues>({
     resolver: zodResolver(resetPasswordSchema),
     defaultValues: resetPasswordDefaultValues,
@@ -51,7 +63,8 @@ export const FormResetPassword = () => {
   const onSubmit = (values: ResetPasswordFormValues) => {
     mutation.mutate(values, {
       onSuccess: () => {
-        router.push('/entrar')
+        const url = !isCustomer ? '/entrar' : `/loja/${slug}/entrar`
+        router.push(url)
       },
     })
   }
@@ -62,14 +75,14 @@ export const FormResetPassword = () => {
       description="Informe o email da sua conta"
       footerTitle="Entrar"
       footerDescription="Lembrou sua senha?"
-      footerLink="/entrar"
+      footerLink={!isCustomer ? '/entrar' : `/loja/${slug}/entrar`}
     >
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="flex flex-col gap-4"
+          className="flex flex-col gap-2"
         >
-          <div className="flex flex-col gap-4 md:flex-row">
+          <div className="flex flex-col gap-2 md:flex-row">
             <div className="flex flex-col gap-1 w-full">
               <FormField
                 control={form.control}
@@ -88,7 +101,7 @@ export const FormResetPassword = () => {
                 )}
               />
               {form.getValues('password') && (
-                <ProgressPassword password={form.getValues('password')} />
+                <ProgressPassword password={form.watch('password')} />
               )}
             </div>
             <FormField

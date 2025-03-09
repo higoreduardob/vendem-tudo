@@ -6,7 +6,6 @@ export type ExtendedUser = DefaultSession['user'] & {
   role: UserRole
   isTwoFactorEnabled?: boolean
   cpfCnpj: string | null
-  rgIe: string | null
   whatsApp: string | null
   address: any
   selectedStore: { id: string; name: string; slug: string } | null
@@ -25,7 +24,6 @@ declare module '@auth/core/jwt' {
     role?: UserRole
     isTwoFactorEnabled?: boolean
     cpfCnpj: string | null
-    rgIe: string | null
     whatsApp: string | null
     address: any
     selectedStore: { id: string; name: string; slug: string } | null

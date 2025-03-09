@@ -11,7 +11,7 @@ type RequestType = InferRequestType<
   (typeof client.api.authenticate)['sign-up']['$post']
 >['json']
 
-export const useSignUp = () => {
+export const useSignUp = (storeId?: string) => {
   const mutation = useMutation<
     ResponseType,
     { message: string; status: number },
@@ -19,6 +19,7 @@ export const useSignUp = () => {
   >({
     mutationFn: async (json) => {
       const response = await client.api.authenticate['sign-up']['$post']({
+        query: { storeId },
         json,
       })
 

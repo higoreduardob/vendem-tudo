@@ -11,8 +11,10 @@ import { UserRole } from '@prisma/client'
 
 import {
   sendPasswordResetEmail,
+  sendPasswordResetEmailWithSlug,
   sendTwoFactorTokenEmail,
   sendVerificationToken,
+  sendVerificationTokenWithSlug,
 } from '@/lib/mail'
 import {
   generateTwoFactorToken,
@@ -28,55 +30,123 @@ import {
   forgotPasswordSchema,
   resetPasswordSchema,
   signInSchema,
-  signUpInformationSchema,
   signUpSchema,
 } from '@/features/auth/schema'
 import { insertStoreSchema } from '@/features/stores/schema'
 
 const app = new Hono()
-  .post('/sign-up', zValidator('json', signUpSchema), async (c) => {
-    const validatedFields = c.req.valid('json')
+  .post(
+    '/sign-up',
+    zValidator('query', z.object({ storeId: z.string().optional() })),
+    zValidator('json', signUpSchema),
+    async (c) => {
+      const { storeId } = c.req.valid('query')
+      const validatedFields = c.req.valid('json')
 
-    if (!validatedFields) return c.json({ error: 'Campos inválidos' }, 400)
+      if (!validatedFields) return c.json({ error: 'Campos inválidos' }, 400)
 
-    const { email, password, repeatPassword, hasAcceptedTerms, ...values } =
-      validatedFields
-    const existingUser = await db.user.findUnique({ where: { email } })
-    if (existingUser) return c.json({ error: 'Email já cadastrado' }, 400)
-
-    if (!hasAcceptedTerms)
-      return c.json({ error: 'Termos são obrigatórios' }, 400)
-
-    if (password !== repeatPassword)
-      return c.json({ error: 'Senhas devem ser iguais' }, 400)
-
-    const hashedPassword = await bcrypt.hash(password, 10)
-    await db.user.create({
-      data: {
-        ...values,
+      const {
         email,
-        password: hashedPassword,
+        password,
+        repeatPassword,
         hasAcceptedTerms,
-        role: UserRole.OWNER,
-      },
-    })
+        role,
+        address,
+        ...values
+      } = validatedFields
 
-    // TODO: Add paywall
-    const verificationToken = await generateVerificationToken(email)
-    await sendVerificationToken(
-      verificationToken.email,
-      verificationToken.token
-    )
+      switch (role) {
+        case 'OWNER': {
+          const existingUser = await db.user.findUnique({
+            where: { unique_email_per_role: { email, role } },
+          })
+          if (existingUser) return c.json({ error: 'Email já cadastrado' }, 400)
 
-    return c.json({ success: 'Acesse seu email e confirme seu cadastro!' }, 201)
-  })
+          // TODO: Add paywall
+          break
+        }
+
+        default: {
+          if (!storeId) {
+            return c.json({ error: 'Identificador não encontrado' }, 400)
+          }
+
+          const store = await db.store.findUnique({ where: { id: storeId } })
+          if (!store) {
+            return c.json({ error: 'Loja não cadastrada' }, 404)
+          }
+
+          const existingUser = await db.user.findUnique({
+            where: { unique_email_per_store: { email, storeId } },
+          })
+          if (existingUser) return c.json({ error: 'Email já cadastrado' }, 400)
+
+          break
+        }
+      }
+
+      if (!hasAcceptedTerms)
+        return c.json({ error: 'Termos são obrigatórios' }, 400)
+
+      if (password !== repeatPassword)
+        return c.json({ error: 'Senhas devem ser iguais' }, 400)
+
+      const hashedPassword = await bcrypt.hash(password, 10)
+      await db.user.create({
+        data: {
+          ...values,
+          email,
+          password: hashedPassword,
+          hasAcceptedTerms,
+          role,
+          storeId: role !== 'OWNER' ? storeId : null,
+          address: { create: { ...address } },
+        },
+      })
+
+      const verificationToken = await generateVerificationToken(email)
+
+      if (role === 'OWNER') {
+        await sendVerificationToken(
+          verificationToken.email,
+          verificationToken.token,
+          role
+        )
+      } else {
+        const store = await db.store.findUnique({ where: { id: storeId } })
+        if (!store) {
+          return c.json({ error: 'Loja não cadastrada' }, 404)
+        }
+
+        await sendVerificationTokenWithSlug(
+          verificationToken.email,
+          verificationToken.token,
+          role,
+          store.slug,
+          store.id
+        )
+      }
+
+      return c.json(
+        { success: 'Acesse seu email e confirme seu cadastro!' },
+        201
+      )
+    }
+  )
   .post(
     '/sign-up-verified',
-    zValidator('query', z.object({ token: z.string().optional() })),
+    zValidator(
+      'query',
+      z.object({
+        token: z.string().optional(),
+        role: z.nativeEnum(UserRole).optional(),
+        storeId: z.string().optional(),
+      })
+    ),
     async (c) => {
-      const { token } = c.req.valid('query')
+      const { token, role, storeId } = c.req.valid('query')
 
-      if (!token) return c.json({ error: 'Usuário inválido' }, 400)
+      if (!token || !role) return c.json({ error: 'Usuário inválido' }, 400)
 
       const existingUserToken = await db.verificationToken.findUnique({
         where: { token },
@@ -89,86 +159,79 @@ const app = new Hono()
         return c.json({ error: 'Token expirado, faça novamente o login' }, 400)
       }
 
-      const existingUser = await db.user.findUnique({
-        where: { email: existingUserToken.email },
-      })
-      if (!existingUser) {
-        return c.json({ error: 'Usuário não cadastrado' }, 404)
+      switch (role) {
+        case 'OWNER': {
+          const existingUser = await db.user.findUnique({
+            where: {
+              unique_email_per_role: { email: existingUserToken.email, role },
+            },
+          })
+          if (!existingUser) {
+            return c.json({ error: 'Usuário não cadastrado' }, 404)
+          }
+
+          await db.user.update({
+            where: { email: existingUser.email, id: existingUser.id },
+            data: {
+              emailVerified: new Date(),
+              completedAccount: new Date(),
+            },
+          })
+
+          await db.verificationToken.delete({
+            where: { id: existingUserToken.id, token: existingUserToken.token },
+          })
+
+          const verificationToken = await generateVerificationToken(
+            existingUserToken.email
+          )
+
+          return c.json(
+            {
+              success: 'Conta verificada, registre sua loja',
+              token: verificationToken.token,
+            },
+            200
+          )
+        }
+
+        default: {
+          if (!storeId) {
+            return c.json({ error: 'Identificador não encontrado' }, 400)
+          }
+
+          const store = await db.store.findUnique({ where: { id: storeId } })
+          if (!store) {
+            return c.json({ error: 'Loja não cadastrada' }, 404)
+          }
+
+          const existingUser = await db.user.findUnique({
+            where: {
+              unique_email_per_store: {
+                email: existingUserToken.email,
+                storeId,
+              },
+            },
+          })
+          if (!existingUser) {
+            return c.json({ error: 'Usuário não cadastrado' }, 404)
+          }
+
+          await db.user.update({
+            where: { email: existingUser.email, id: existingUser.id },
+            data: {
+              emailVerified: new Date(),
+              completedAccount: new Date(),
+            },
+          })
+
+          await db.verificationToken.delete({
+            where: { id: existingUserToken.id, token: existingUserToken.token },
+          })
+
+          return c.json({ success: 'Conta verificada' }, 200)
+        }
       }
-
-      await db.user.update({
-        where: { email: existingUser.email, id: existingUser.id },
-        data: {
-          emailVerified: new Date(),
-        },
-      })
-
-      await db.verificationToken.delete({
-        where: { id: existingUserToken.id, token: existingUserToken.token },
-      })
-
-      return c.json({ success: 'Conta verificada' }, 200)
-    }
-  )
-  .post(
-    '/sign-up-information',
-    zValidator('json', signUpInformationSchema),
-    zValidator('query', z.object({ token: z.string().optional() })),
-    async (c) => {
-      const { token } = c.req.valid('query')
-      const validatedFields = c.req.valid('json')
-
-      if (!token) return c.json({ error: 'Usuário inválido' }, 400)
-
-      if (!validatedFields) return c.json({ error: 'Campos inválidos' }, 400)
-      const { address, ...values } = validatedFields
-
-      const existingUserToken = await db.verificationToken.findUnique({
-        where: { token },
-      })
-      if (!existingUserToken)
-        return c.json({ error: 'Usuário não cadastrado' }, 404)
-
-      const hasExpired = new Date(existingUserToken.expires) < new Date()
-      if (hasExpired) {
-        return c.json({ error: 'Token expirado' }, 400)
-      }
-
-      const existingUser = await db.user.findUnique({
-        where: { email: existingUserToken.email },
-      })
-      if (!existingUser) {
-        return c.json({ error: 'Usuário não cadastrado' }, 404)
-      }
-
-      await db.user.update({
-        where: { email: existingUser.email, id: existingUser.id },
-        data: {
-          ...values,
-          completedAccount: new Date(),
-          address: { create: { ...address } },
-        },
-      })
-
-      await db.verificationToken.delete({
-        where: { id: existingUserToken.id, token: existingUserToken.token },
-      })
-
-      if (existingUser.role === UserRole.OWNER) {
-        const verificationToken = await generateVerificationToken(
-          existingUser.email
-        )
-
-        return c.json(
-          {
-            success: 'Cadastro completado, registre sua loja',
-            token: verificationToken.token,
-          },
-          200
-        )
-      }
-
-      return c.json({ success: 'Cadastro completado' }, 200)
     }
   )
   .post(
@@ -196,7 +259,12 @@ const app = new Hono()
       }
 
       const existingUser = await db.user.findUnique({
-        where: { email: existingUserToken.email },
+        where: {
+          unique_email_per_role: {
+            email: existingUserToken.email,
+            role: 'OWNER',
+          },
+        },
       })
       if (!existingUser) {
         return c.json({ error: 'Usuário não cadastrado' }, 404)
@@ -241,174 +309,265 @@ const app = new Hono()
       return c.json({ error: 'Usuário não autorizado' }, 401)
     }
 
-    const user = await db.user.findUnique({ where: { id: auth.token.sub } })
+    const user = await db.user.findUnique({
+      where: { id: auth.token.sub },
+    })
     if (!user) return c.json({ error: 'Usuário não autorizado' }, 401)
 
     return c.json({ success: !!user })
   })
-  .post('/sign-in', zValidator('json', signInSchema), async (c) => {
-    const validatedFields = c.req.valid('json')
+  .post(
+    '/sign-in',
+    zValidator(
+      'query',
+      z.object({
+        role: z.nativeEnum(UserRole).optional(),
+        storeId: z.string().optional(),
+      })
+    ),
+    zValidator('json', signInSchema),
+    async (c) => {
+      const { role, storeId } = c.req.valid('query')
+      const validatedFields = c.req.valid('json')
 
-    if (!validatedFields) return c.json({ error: 'Campos inválidos' }, 400)
-    const { email, password, code } = validatedFields
+      if (!role) return c.json({ error: 'Usuário inválido' }, 400)
 
-    const existingUser = await db.user.findUnique({ where: { email } })
-    if (!existingUser || !existingUser.email || !existingUser.password) {
-      return c.json({ error: 'Email não cadastrado' }, 400)
-    }
-
-    if (
-      ![UserRole.OWNER as string, UserRole.EMPLOYEE as string].includes(
-        existingUser.role
-      )
-    ) {
-      return c.json({ error: 'Usuário sem autorização' }, 400)
-    }
-
-    if (!code) {
-      const passwordsMatch = await bcrypt.compare(
-        password,
-        existingUser.password
-      )
-      if (!passwordsMatch) {
-        return c.json({ error: 'Email e/ou senha inválidos' }, 400)
+      if (role !== 'OWNER' && !storeId) {
+        return c.json({ error: 'Identificador não encontrado' }, 400)
       }
-    }
 
-    if (!existingUser.emailVerified) {
-      const verificationToken = await generateVerificationToken(
-        existingUser.email
-      )
-      await sendVerificationToken(
-        verificationToken.email,
-        verificationToken.token
-      )
+      if (!validatedFields) return c.json({ error: 'Campos inválidos' }, 400)
+      const { email, password, code } = validatedFields
 
-      return c.json(
-        { success: 'Acesse seu email e confirme seu cadastro' },
-        200
-      )
-    }
+      const store =
+        role !== 'OWNER'
+          ? await db.store.findUnique({ where: { id: storeId } })
+          : null
+      if (role !== 'OWNER' && !store) {
+        return c.json({ error: 'Loja não cadastrada' }, 404)
+      }
 
-    if (!existingUser.completedAccount) {
-      const verificationToken = await generateVerificationToken(
-        existingUser.email
-      )
+      const existingUser =
+        role === 'OWNER'
+          ? await db.user.findUnique({
+              where: {
+                unique_email_per_role: { email, role },
+              },
+            })
+          : storeId
+          ? await db.user.findUnique({
+              where: {
+                unique_email_per_store: {
+                  email,
+                  storeId,
+                },
+              },
+            })
+          : null
+      if (!existingUser || !existingUser.email || !existingUser.password) {
+        return c.json({ error: 'Email não cadastrado' }, 400)
+      }
 
-      return c.json(
-        {
-          success: 'Complete seus dados cadastrais',
-          redirect: `/cadastrar/completar-cadastro?token=${verificationToken.token}`,
-        },
-        200
-      )
-    }
+      if (!code) {
+        const passwordsMatch = await bcrypt.compare(
+          password,
+          existingUser.password
+        )
+        if (!passwordsMatch) {
+          return c.json({ error: 'Email e/ou senha inválidos' }, 400)
+        }
+      }
 
-    if (existingUser.role === UserRole.OWNER && !existingUser.completedStore) {
-      const verificationToken = await generateVerificationToken(
-        existingUser.email
-      )
-
-      return c.json(
-        {
-          success: 'Cadastre sua loja',
-          redirect: `/cadastrar/loja?token=${verificationToken.token}`,
-        },
-        200
-      )
-    }
-
-    if (existingUser.isTwoFactorEnabled && existingUser.email) {
-      if (code) {
-        const twoFactorToken = await getTwoFactorTokenByEmail(
+      if (!existingUser.emailVerified) {
+        const verificationToken = await generateVerificationToken(
           existingUser.email
         )
-        if (!twoFactorToken) {
-          return c.json({ error: 'Código inválido' }, 400)
+
+        if (role !== 'CUSTOMER') {
+          await sendVerificationToken(
+            verificationToken.email,
+            verificationToken.token,
+            role
+          )
+        } else if (!store) {
+          return c.json({ error: 'Loja não cadastrada' }, 404)
+        } else {
+          await sendVerificationTokenWithSlug(
+            verificationToken.email,
+            verificationToken.token,
+            role,
+            store.slug,
+            store.id
+          )
         }
-
-        if (twoFactorToken.token !== code) {
-          return c.json({ error: 'Código inválido' }, 400)
-        }
-
-        const hasExpired = new Date(twoFactorToken.expires) < new Date()
-        if (hasExpired) {
-          return c.json({ error: 'Código expirado' }, 400)
-        }
-
-        await db.twoFactorToken.delete({
-          where: { id: twoFactorToken.id },
-        })
-
-        const existingConfirmation = await getTwoFactorConfirmationByUserId(
-          existingUser.id
-        )
-        if (existingConfirmation) {
-          await db.twoFactorConfirmation.delete({
-            where: { id: existingConfirmation.id },
-          })
-        }
-
-        await db.twoFactorConfirmation.create({
-          data: { userId: existingUser.id },
-        })
-      } else {
-        const twoFactorToken = await generateTwoFactorToken(existingUser.email)
-        await sendTwoFactorTokenEmail(
-          twoFactorToken.email,
-          twoFactorToken.token
-        )
 
         return c.json(
-          { success: 'Informe o código enviado ao seu email', twoFactor: true },
+          { success: 'Acesse seu email e confirme seu cadastro' },
           200
         )
       }
-    }
 
-    try {
-      await signIn('credentials', {
-        email,
-        password,
-        redirect: false,
-      })
+      if (!existingUser.completedAccount) {
+        const verificationToken = await generateVerificationToken(
+          existingUser.email
+        )
 
-      return c.json(
-        {
-          success: 'Login realizado com sucesso',
-          redirect: DEFAULT_LOGIN_REDIRECT,
-          update: true,
-        },
-        200
-      )
-    } catch (error) {
-      if (error instanceof AuthError) {
-        switch (error.type) {
-          case 'CredentialsSignin':
-            return c.json({ error: 'Email e/ou senha inválidos' }, 400)
-          default:
-            return c.json(
-              { error: 'Erro inesperado, contate o administrador' },
-              500
-            )
+        return c.json(
+          {
+            success: 'Complete seus dados cadastrais',
+            redirect: `/cadastrar/completar-cadastro?token=${verificationToken.token}`,
+          },
+          200
+        )
+      }
+
+      if (
+        existingUser.role === UserRole.OWNER &&
+        !existingUser.completedStore
+      ) {
+        const verificationToken = await generateVerificationToken(
+          existingUser.email
+        )
+
+        return c.json(
+          {
+            success: 'Cadastre sua loja',
+            redirect: `/cadastrar/loja?token=${verificationToken.token}`,
+          },
+          200
+        )
+      }
+
+      if (existingUser.isTwoFactorEnabled && existingUser.email) {
+        if (code) {
+          const twoFactorToken = await getTwoFactorTokenByEmail(
+            existingUser.email
+          )
+          if (!twoFactorToken) {
+            return c.json({ error: 'Código inválido' }, 400)
+          }
+
+          if (twoFactorToken.token !== code) {
+            return c.json({ error: 'Código inválido' }, 400)
+          }
+
+          const hasExpired = new Date(twoFactorToken.expires) < new Date()
+          if (hasExpired) {
+            return c.json({ error: 'Código expirado' }, 400)
+          }
+
+          await db.twoFactorToken.delete({
+            where: { id: twoFactorToken.id },
+          })
+
+          const existingConfirmation = await getTwoFactorConfirmationByUserId(
+            existingUser.id
+          )
+          if (existingConfirmation) {
+            await db.twoFactorConfirmation.delete({
+              where: { id: existingConfirmation.id },
+            })
+          }
+
+          await db.twoFactorConfirmation.create({
+            data: { userId: existingUser.id },
+          })
+        } else {
+          const twoFactorToken = await generateTwoFactorToken(
+            existingUser.email
+          )
+          await sendTwoFactorTokenEmail(
+            twoFactorToken.email,
+            twoFactorToken.token
+          )
+
+          return c.json(
+            {
+              success: 'Informe o código enviado ao seu email',
+              twoFactor: true,
+            },
+            200
+          )
         }
       }
 
-      throw error
+      try {
+        await signIn('credentials', {
+          email,
+          password,
+          role,
+          storeId,
+          redirect: false,
+        })
+
+        return c.json(
+          {
+            success: 'Login realizado com sucesso',
+            redirect:
+              role === 'CUSTOMER' && store
+                ? `/loja/${store.slug}/conta`
+                : DEFAULT_LOGIN_REDIRECT,
+            update: true,
+          },
+          200
+        )
+      } catch (error) {
+        if (error instanceof AuthError) {
+          switch (error.type) {
+            case 'CredentialsSignin':
+              return c.json({ error: 'Email e/ou senha inválidos' }, 400)
+            default:
+              return c.json(
+                { error: 'Erro inesperado, contate o administrador' },
+                500
+              )
+          }
+        }
+
+        throw error
+      }
     }
-  })
+  )
   .post(
     '/forgot-password',
+    zValidator(
+      'query',
+      z.object({
+        role: z.nativeEnum(UserRole).optional(),
+        storeId: z.string().optional(),
+      })
+    ),
     zValidator('json', forgotPasswordSchema),
     async (c) => {
+      const { role, storeId } = c.req.valid('query')
       const validatedFields = c.req.valid('json')
+
+      if (!role) return c.json({ error: 'Usuário inválido' }, 400)
+
+      if (role !== 'OWNER' && !storeId) {
+        return c.json({ error: 'Identificador não encontrado' }, 400)
+      }
 
       if (!validatedFields) return c.json({ error: 'Campos inválidos' }, 400)
       const { email } = validatedFields
 
-      const existingUser = await db.user.findUnique({
-        where: { email },
-      })
+      const existingUser =
+        role === 'OWNER'
+          ? await db.user.findUnique({
+              where: {
+                unique_email_per_role: { email, role },
+              },
+            })
+          : storeId
+          ? await db.user.findUnique({
+              where: {
+                unique_email_per_store: {
+                  email,
+                  storeId,
+                },
+              },
+            })
+          : null
       if (!existingUser) return c.json({ error: 'Usuário não cadastrado' }, 404)
 
       const token = uuidv4()
@@ -430,10 +589,29 @@ const app = new Hono()
           expires,
         },
       })
-      await sendPasswordResetEmail(
-        passwordResetToken.email,
-        passwordResetToken.token
-      )
+
+      if (role !== 'CUSTOMER') {
+        await sendPasswordResetEmail(
+          passwordResetToken.email,
+          passwordResetToken.token
+        )
+      } else {
+        if (!storeId) {
+          return c.json({ error: 'Identificador não encontrado' }, 400)
+        }
+
+        const store = await db.store.findUnique({ where: { id: storeId } })
+        if (!store) {
+          return c.json({ error: 'Loja não cadastrada' }, 404)
+        }
+
+        await sendPasswordResetEmailWithSlug(
+          passwordResetToken.email,
+          passwordResetToken.token,
+          store.slug,
+          store.id
+        )
+      }
 
       return c.json(
         { success: 'Acesse seu email para redefinir sua senha' },
@@ -444,12 +622,25 @@ const app = new Hono()
   .post(
     '/reset-password',
     zValidator('json', resetPasswordSchema),
-    zValidator('query', z.object({ token: z.string().optional() })),
+    zValidator(
+      'query',
+      z.object({
+        token: z.string().optional(),
+        role: z.nativeEnum(UserRole).optional(),
+        storeId: z.string().optional(),
+      })
+    ),
     async (c) => {
       const validatedFields = c.req.valid('json')
-      const { token } = c.req.valid('query')
+      const { token, role, storeId } = c.req.valid('query')
 
       if (!token) return c.json({ error: 'Token inválido' }, 400)
+
+      if (!role) return c.json({ error: 'Usuário inválido' }, 400)
+
+      if (role !== 'OWNER' && !storeId) {
+        return c.json({ error: 'Identificador não encontrado' }, 400)
+      }
 
       if (!validatedFields) return c.json({ error: 'Campos inválidos' }, 400)
       const { password, repeatPassword } = validatedFields
@@ -469,9 +660,23 @@ const app = new Hono()
         return c.json({ error: 'Token expirado' }, 400)
       }
 
-      const existingUser = await db.user.findUnique({
-        where: { email: existingToken.email },
-      })
+      const existingUser =
+        role === 'OWNER'
+          ? await db.user.findUnique({
+              where: {
+                unique_email_per_role: { email: existingToken.email, role },
+              },
+            })
+          : storeId
+          ? await db.user.findUnique({
+              where: {
+                unique_email_per_store: {
+                  email: existingToken.email,
+                  storeId,
+                },
+              },
+            })
+          : null
       if (!existingUser) {
         return c.json({ error: 'Usuário não cadastrado' }, 404)
       }
@@ -550,6 +755,74 @@ const app = new Hono()
       }
     }
   )
-  // TODO: Implement Recaptcha
+// TODO: Implement Recaptcha
 
 export default app
+
+// .post(
+//   '/sign-up-information',
+//   zValidator('json', signUpInformationSchema),
+//   zValidator(
+//     'query',
+//     z.object({
+//       token: z.string().optional(),
+//       role: z.nativeEnum(UserRole).optional(),
+//     })
+//   ),
+//   async (c) => {
+//     const { token, role } = c.req.valid('query')
+//     const validatedFields = c.req.valid('json')
+
+//     if (!token || !role) return c.json({ error: 'Usuário inválido' }, 400)
+
+//     if (!validatedFields) return c.json({ error: 'Campos inválidos' }, 400)
+//     const { address, ...values } = validatedFields
+
+//     const existingUserToken = await db.verificationToken.findUnique({
+//       where: { token },
+//     })
+//     if (!existingUserToken)
+//       return c.json({ error: 'Usuário não cadastrado' }, 404)
+
+//     const hasExpired = new Date(existingUserToken.expires) < new Date()
+//     if (hasExpired) {
+//       return c.json({ error: 'Token expirado' }, 400)
+//     }
+
+//     const existingUser = await db.user.findUnique({
+//       where: { email: existingUserToken.email },
+//     })
+//     if (!existingUser) {
+//       return c.json({ error: 'Usuário não cadastrado' }, 404)
+//     }
+
+//     await db.user.update({
+//       where: { email: existingUser.email, id: existingUser.id },
+//       data: {
+//         ...values,
+//         completedAccount: new Date(),
+//         address: { create: { ...address } },
+//       },
+//     })
+
+//     await db.verificationToken.delete({
+//       where: { id: existingUserToken.id, token: existingUserToken.token },
+//     })
+
+//     if (existingUser.role === UserRole.OWNER) {
+//       const verificationToken = await generateVerificationToken(
+//         existingUser.email
+//       )
+
+//       return c.json(
+//         {
+//           success: 'Cadastro completado, registre sua loja',
+//           token: verificationToken.token,
+//         },
+//         200
+//       )
+//     }
+
+//     return c.json({ success: 'Cadastro completado' }, 200)
+//   }
+// )

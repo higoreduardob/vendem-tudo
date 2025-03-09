@@ -2,6 +2,8 @@ import { toast } from 'sonner'
 import { useMutation } from '@tanstack/react-query'
 import { InferRequestType, InferResponseType } from 'hono'
 
+import { UserRole } from '@prisma/client'
+
 import { client } from '@/lib/hono'
 
 type ResponseType = InferResponseType<
@@ -11,7 +13,7 @@ type RequestType = InferRequestType<
   (typeof client.api.authenticate)['forgot-password']['$post']
 >['json']
 
-export const useForgotPassword = () => {
+export const useForgotPassword = (role?: UserRole, storeId?: string) => {
   const mutation = useMutation<
     ResponseType,
     { message: string; status: number },
@@ -21,6 +23,7 @@ export const useForgotPassword = () => {
       const response = await client.api.authenticate['forgot-password'][
         '$post'
       ]({
+        query: { role, storeId },
         json,
       })
 

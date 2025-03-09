@@ -12,41 +12,46 @@ enum UserRole {
   OWNER
   MANAGER
   EMPLOYEE
+  CUSTOMER
 }
 
 model User {
-  id       String  @id @default(cuid())
-  name     String
-  email    String  @unique
-  password String
-  whatsApp String
-  cpfCnpj  String  @unique
-  rgIe     String?
-
-  role UserRole @default(EMPLOYEE)
-
-  status             Boolean @default(true)
-  hasAcceptedTerms   Boolean @default(true)
-  isTwoFactorEnabled Boolean @default(false)
-
+  id               String    @id @default(cuid())
+  name             String
+  email            String
+  password         String
+  whatsApp         String
+  cpfCnpj          String
   emailVerified    DateTime?
-  completedAccount DateTime?
-  completedStore   DateTime?
+  role             UserRole
+  status           Boolean   @default(true)
+  hasAcceptedTerms Boolean   @default(true)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  address               Address?
+  address Address?
+
+  completedAccount      DateTime?
+  isTwoFactorEnabled    Boolean                @default(false)
   twoFactorConfirmation TwoFactorConfirmation?
+
+  completedStore DateTime?
 
   ownerId String?
   owner   User?   @relation("users", fields: [ownerId], references: [id])
   users   User[]  @relation("users")
 
+  storeId    String?
+  storeOwner Store?  @relation("owner", fields: [storeId], references: [id])
+
   selectedStore String?
   store         Store?  @relation("selectedStore", fields: [selectedStore], references: [id])
 
   stores Store[]
+
+  @@unique([email, role], name: "unique_email_per_role")
+  @@unique([email, storeId], name: "unique_email_per_store")
 }
 
 enum StoreRole {
@@ -71,6 +76,7 @@ model Store {
   ownerId String
   owner   User   @relation(fields: [ownerId], references: [id])
 
+  belongs         User[]           @relation("owner")
   users           User[]           @relation("selectedStore")
   foods           Food[]
   foodCategories  FoodCategory[]

@@ -6,6 +6,8 @@ import { BadgeCheck, TriangleAlert } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 
+import { UserRole } from '@prisma/client'
+
 import { useSignUpVerified } from '@/features/auth/api/use-sign-up-verified'
 
 import { Wrapper } from '@/features/auth/components/wrapper'
@@ -34,20 +36,29 @@ const FormMessage = ({ isError, message }: ResponseTypeProps) => {
   )
 }
 
-export const FormSignUpVerified = () => {
+export const FormSignUpVerified = ({
+  slug,
+  isCustomer = false,
+}: {
+  slug?: string
+  isCustomer?: boolean
+}) => {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [response, setResponse] = useState<ResponseTypeProps | null>(null)
 
   const token = searchParams.get('token')
+  const role = searchParams.get('role')
+  const storeId = searchParams.get('storeId') ?? undefined
 
-  if (!token) {
+  if (!token || !role) {
+    const url = !isCustomer ? '/entrar' : `/loja/${slug}/entrar`
     toast.error('Token inválido')
-    router.push('/entrar')
+    router.push(url)
     return null
   }
 
-  const mutation = useSignUpVerified(token)
+  const mutation = useSignUpVerified(token, role as UserRole, storeId)
   const isPending = mutation.isPending
 
   const onSubmit = useCallback(() => {
@@ -91,7 +102,7 @@ export const FormSignUpVerified = () => {
           ? 'Acesse sua conta'
           : 'Tente fazer novamente a socilitação'
       }
-      footerLink="/entrar"
+      footerLink={!isCustomer ? '/entrar' : `/loja/${slug}/entrar`}
     >
       <div className="flex items-center w-full justify-center">
         {!response && <BeatLoader />}

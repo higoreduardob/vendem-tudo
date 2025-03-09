@@ -3,6 +3,8 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 
+import { UserRole } from '@prisma/client'
+
 import {
   forgotPasswordDefaultValues,
   ForgotPasswordFormValues,
@@ -22,8 +24,18 @@ import { Input } from '@/components/ui/input'
 import { ButtonLoading } from '@/components/button-custom'
 import { Wrapper } from '@/features/auth/components/wrapper'
 
-export const FormForgotPassword = () => {
-  const mutation = useForgotPassword()
+export const FormForgotPassword = ({
+  role,
+  slug,
+  storeId,
+  isCustomer = false,
+}: {
+  role: UserRole
+  slug?: string
+  storeId?: string
+  isCustomer?: boolean
+}) => {
+  const mutation = useForgotPassword(role, storeId)
   const form = useForm<ForgotPasswordFormValues>({
     resolver: zodResolver(forgotPasswordSchema),
     defaultValues: forgotPasswordDefaultValues,
@@ -41,18 +53,19 @@ export const FormForgotPassword = () => {
       },
     })
   }
+
   return (
     <Wrapper
       title="Recuperar senha"
       description="Informe o email da sua conta"
       footerTitle="Entrar"
       footerDescription="Lembrou sua senha?"
-      footerLink="/entrar"
+      footerLink={!isCustomer ? '/entrar' : `/loja/${slug}/entrar`}
     >
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="flex flex-col gap-4"
+          className="flex flex-col gap-2"
         >
           <FormField
             control={form.control}

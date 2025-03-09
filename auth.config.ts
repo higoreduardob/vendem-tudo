@@ -13,13 +13,30 @@ export default {
         const validatedFields = signInSchema.safeParse(credentials)
 
         if (!validatedFields.success) return null
+        const { email, password, role, storeId } = validatedFields.data
 
-        const { email, password } = validatedFields.data
-        const user = await db.user.findUnique({ where: { email } })
-        if (!user || !user.password) return null
+        const existingUser =
+          role === 'OWNER'
+            ? await db.user.findUnique({
+                where: {
+                  unique_email_per_role: { email, role },
+                },
+              })
+            : storeId
+            ? await db.user.findUnique({
+                where: {
+                  unique_email_per_store: { email, storeId },
+                },
+              })
+            : null
 
-        const passwordsMatch = await bcrypt.compare(password, user.password)
-        if (passwordsMatch) return user
+        if (!existingUser || !existingUser.password) return null
+
+        const passwordsMatch = await bcrypt.compare(
+          password,
+          existingUser.password
+        )
+        if (passwordsMatch) return existingUser
 
         return null
       },
