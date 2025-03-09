@@ -4,17 +4,19 @@ import dynamic from 'next/dynamic'
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 
+import { useOpenStore } from '@/hooks/use-store'
 import { useCurrentUser } from '@/features/auth/hooks/use-current-user'
 
 import { Skeleton } from '@/components/ui/skeleton'
 
 function ProtectedLayoutComponent({ children }: { children: React.ReactNode }) {
   const router = useRouter()
+  const { store } = useOpenStore()
   const { user, status } = useCurrentUser()
 
   useEffect(() => {
     if (!user) {
-      router.push('/entrar')
+      router.push(`/loja/${store?.slug}/entrar`)
     }
   }, [user, status, router])
 

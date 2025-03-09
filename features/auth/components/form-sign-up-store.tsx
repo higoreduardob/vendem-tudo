@@ -53,7 +53,7 @@ export const FormSignUpStore = () => {
         defaultValues={insertStoreDefaultValues}
         onSubmit={onSubmit}
       />
-      <div className="flex flex-col gap-4 mt-4">
+      <div className="flex flex-col gap-2 mt-4">
         <ButtonLoading
           type="submit"
           onClick={handleSubmit}

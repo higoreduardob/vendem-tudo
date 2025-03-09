@@ -130,3 +130,45 @@ export const resetPasswordDefaultValues: ResetPasswordFormValues = {
   password: '',
   repeatPassword: '',
 }
+
+export const updateSchema = z.object({
+  name: z
+    .string({ message: 'Nome é obrigatório' })
+    .min(1, { message: 'Nome é obrigatório' }),
+  whatsApp: whatsAppSchema,
+  cpfCnpj: cpfCnpjSchema,
+  address: addressSchema,
+})
+
+export type UpdateFormValues = z.infer<typeof updateSchema>
+
+export const updatePasswordSchema = z
+  .object({
+    password: z
+      .string({ message: 'Senha é obrigatório' })
+      .min(1, { message: 'Senha é obrigatório' }),
+    newPassword: z
+      .string({ message: 'Nova senha é obrigatório' })
+      .min(6, { message: 'Nova senha deve ter no mínimo 6 caracteres' }),
+    repeatPassword: z
+      .string({ message: 'Repetir senha é obrigatório' })
+      .min(1, { message: 'Repetir senha é obrigatório' }),
+  })
+  .refine(
+    (data) => {
+      if (data.newPassword !== data.repeatPassword) return false
+      return true
+    },
+    {
+      message: 'Repetir deve ser igual a nova senha',
+      path: ['repeatPassword'],
+    }
+  )
+
+export type UpdatePasswordFormValues = z.infer<typeof updatePasswordSchema>
+
+export const updatePasswordDefaultValues: UpdatePasswordFormValues = {
+  newPassword: '',
+  password: '',
+  repeatPassword: '',
+}

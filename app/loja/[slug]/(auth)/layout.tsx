@@ -4,19 +4,21 @@ import { useEffect } from 'react'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
 
-// import { useCurrentUser } from '@/features/auth/hooks/use-current-user'
+import { useOpenStore } from '@/hooks/use-store'
+import { useCurrentUser } from '@/features/auth/hooks/use-current-user'
 
 import { Skeleton } from '@/components/ui/skeleton'
 
 function AuthLayoutComponent({ children }: { children: React.ReactNode }) {
   const router = useRouter()
-  // const { user, status } = useCurrentUser()
+  const { store } = useOpenStore()
+  const { user, status } = useCurrentUser()
 
-  // useEffect(() => {
-  //   if (status === 'authenticated' && user) {
-  //     router.push('/plataforma')
-  //   }
-  // }, [user, status, router])
+  useEffect(() => {
+    if (status === 'authenticated' && user) {
+      router.push(`/loja/${store?.slug}/conta`)
+    }
+  }, [user, status, router])
 
   if (status === 'loading') {
     return (
@@ -39,9 +41,9 @@ function AuthLayoutComponent({ children }: { children: React.ReactNode }) {
     )
   }
 
-  // if (status === 'authenticated' && user) {
-  //   return null
-  // }
+  if (status === 'authenticated' && user) {
+    return null
+  }
 
   return (
     <section className="flex min-h-[calc(100vh-56px)] justify-center items-center max-w-6xl mx-auto">
