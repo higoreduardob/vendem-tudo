@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/navigation-menu'
 import { Button } from '@/components/ui/button'
 import { ShoppingCart } from './shopping-cart'
+import { FormOrder } from '@/features/foods/orders/components/form-order'
 
 export const Header = () => {
   const [isCartOpen, setIsCartOpen] = useState(false)
@@ -111,7 +112,8 @@ export const Header = () => {
           </Link>
         </div>
       </div>
-      <ShoppingCart isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
+      {/* <ShoppingCart isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} /> */}
+      <FormOrder isOpen={isCartOpen} handleClose={() => setIsCartOpen(false)} />
     </header>
   )
 }

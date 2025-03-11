@@ -259,7 +259,7 @@ const app = new Hono()
       if (!token) return c.json({ error: 'Usuário inválido' }, 400)
 
       if (!validatedFields) return c.json({ error: 'Campos inválidos' }, 400)
-      const { slug, address, ...values } = validatedFields
+      const { slug, address, schedules, shippings, ...values } = validatedFields
 
       const existingUserToken = await db.verificationToken.findUnique({
         where: { token },
@@ -297,6 +297,8 @@ const app = new Hono()
             slug,
             ...values,
             address: { create: { ...address } },
+            schedules: { createMany: { data: schedules } },
+            shippings: { createMany: { data: shippings } },
           },
         })
 

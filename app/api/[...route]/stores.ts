@@ -16,7 +16,7 @@ const app = new Hono()
     const validatedFields = c.req.valid('json')
 
     if (!validatedFields) return c.json({ error: 'Campos inválidos' }, 400)
-    const { slug, address, ...values } = validatedFields
+    const { slug, address, schedules, shippings, ...values } = validatedFields
 
     if (!auth.token?.sub) {
       return c.json({ error: 'Usuário não autorizado' }, 401)
@@ -43,6 +43,8 @@ const app = new Hono()
           ownerId,
           ...values,
           address: { create: { ...address } },
+          schedules: { createMany: { data: schedules } },
+          shippings: { createMany: { data: shippings } },
         },
       })
 
@@ -134,6 +136,24 @@ const app = new Hono()
               number: true,
             },
           },
+          schedules: {
+            select: {
+              enabled: true,
+              day: true,
+              open: true,
+              close: true,
+            },
+          },
+          shippings: {
+            select: {
+              neighborhood: true,
+              city: true,
+              state: true,
+              fee: true,
+              deadlineAt: true,
+              minimumAmount: true,
+            },
+          },
         },
       })
 
@@ -195,7 +215,7 @@ const app = new Hono()
       const validatedFields = c.req.valid('json')
 
       if (!validatedFields) return c.json({ error: 'Campos inválidos' }, 400)
-      const { slug, address, ...values } = validatedFields
+      const { slug, address, schedules, shippings, ...values } = validatedFields
 
       if (!id) {
         return c.json({ error: 'Identificador não encontrado' }, 400)
@@ -229,6 +249,40 @@ const app = new Hono()
               create: { ...address },
               update: { ...address },
             },
+          },
+          schedules: {
+            deleteMany: {},
+            createMany: {
+              data: schedules.map((schedule) => ({
+                day: schedule.day,
+                open: schedule.open,
+                close: schedule.close,
+                enabled: schedule.enabled,
+              })),
+            },
+          },
+          shippings: {
+            deleteMany: {
+              storeId: id,
+              neighborhood: { notIn: shippings.map((s) => s.neighborhood) },
+            },
+            upsert: shippings.map((shipping) => ({
+              where: {
+                storeId_neighborhood: {
+                  storeId: id,
+                  neighborhood: shipping.neighborhood,
+                },
+              },
+              update: {
+                neighborhood: shipping.neighborhood,
+                city: shipping.city,
+                state: shipping.state,
+                fee: shipping.fee,
+                deadlineAt: shipping.deadlineAt,
+                minimumAmount: shipping.minimumAmount,
+              },
+              create: { ...shipping },
+            })),
           },
         },
       })

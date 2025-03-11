@@ -70,6 +70,7 @@ export const FormCart = ({
       name,
       image,
       amount: promotion || price,
+      subAmount: promotion || price,
       quantity: 1,
       obs: '',
       additionals: [],
@@ -119,6 +120,10 @@ export const FormCart = ({
       return
     }
 
+    const { amount, subAmount } = calculateTotal()
+    values.amount = amount
+    values.subAmount = subAmount
+
     addProduct(values)
     toast.success('Produto adicionado ao carrinho!')
     handleClose()
@@ -137,7 +142,10 @@ export const FormCart = ({
         )
       }, 0)
 
-    return (basePrice + additionalsPrice) * form.watch('quantity')
+    const amount = basePrice + additionalsPrice
+    const subAmount = amount * form.watch('quantity')
+
+    return { amount, subAmount }
   }
 
   const onSubmit = () => {
@@ -183,7 +191,7 @@ export const FormCart = ({
               <div>
                 <ProductPrice {...product} />
                 <div className="text-sm font-medium mt-1">
-                  Total: {formatCurrency(calculateTotal())}
+                  Total: {formatCurrency(calculateTotal().subAmount)}
                 </div>
               </div>
             </div>

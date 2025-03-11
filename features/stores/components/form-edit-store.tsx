@@ -28,6 +28,10 @@ export const FormEditStore = () => {
     whatsApp: data.whatsApp || '',
     role: data.role,
     address: data.address,
+    payment: data.payment,
+    schedules: data.schedules,
+    shippingRole: data.shippingRole,
+    shippings: data.shippings,
   }
 
   const onSubmit = (values: InsertStoreFormValues) => {

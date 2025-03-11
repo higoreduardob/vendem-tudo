@@ -39,6 +39,11 @@ export const useGetStore = (id?: string) => {
         whatsApp: phoneMask(data.whatsApp),
         cpfCnpj: cpfCnpjMask(data.cpfCnpj),
         address: formattedAddress,
+        schedules: data.schedules.map((schedule) => ({
+          ...schedule,
+          open: new Date(schedule.open),
+          close: new Date(schedule.close),
+        })),
       }
     },
   })

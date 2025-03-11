@@ -34,7 +34,7 @@ export default function StoreLayout({
 
   return (
     <section>
-      {/* <Header /> */}
+      <Header />
       {children}
       {/* <Footer /> */}
     </section>

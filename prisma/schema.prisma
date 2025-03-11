@@ -50,6 +50,9 @@ model User {
 
   stores Store[]
 
+  foodOrders  FoodOrder[]
+  foodReviews FoodReview[]
+
   @@unique([email, role], name: "unique_email_per_role")
   @@unique([email, storeId], name: "unique_email_per_store")
 }
@@ -58,15 +61,44 @@ enum StoreRole {
   FOOD
 }
 
+enum StorePayment {
+  PIX
+  CASH
+  VISA_DEBIT_CARD
+  MASTER_DEBIT_CARD
+  VISA_CREDIT_CARD
+  MASTER_CREDIT_CARD
+  MEAL_VOUCHER
+}
+
+enum ShippingRole {
+  PICK_UP_ON_STORE
+  DELIVERY
+}
+
+model Schedule {
+  day     Int
+  open    DateTime
+  close   DateTime
+  enabled Boolean
+
+  storeId String
+  store   Store  @relation(fields: [storeId], references: [id])
+
+  @@unique([day, storeId])
+}
+
 model Store {
-  id       String      @id @default(cuid())
-  name     String
-  slug     String      @unique
-  email    String?
-  cpfCnpj  String?
-  whatsApp String?
-  role     StoreRole[]
-  status   Boolean     @default(true)
+  id           String         @id @default(cuid())
+  name         String
+  slug         String         @unique
+  email        String?
+  cpfCnpj      String?
+  whatsApp     String?
+  role         StoreRole[]
+  payment      StorePayment[]
+  shippingRole ShippingRole[]
+  status       Boolean        @default(true)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -76,12 +108,17 @@ model Store {
   ownerId String
   owner   User   @relation(fields: [ownerId], references: [id])
 
-  belongs         User[]           @relation("owner")
-  users           User[]           @relation("selectedStore")
+  belongs User[] @relation("owner")
+  users   User[] @relation("selectedStore")
+
+  schedules Schedule[]
+  shippings Shipping[]
+
   foods           Food[]
   foodCategories  FoodCategory[]
   foodAdditionals FoodAdditional[]
   foodOptions     FoodOption[]
+  foodOrders      FoodOrder[]
 }
 
 model Address {
@@ -94,11 +131,33 @@ model Address {
   number       String?
   complement   String?
 
-  userId String? @unique
-  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      String?    @unique
+  user        User?      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  storeId     String?    @unique
+  store       Store?     @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  foodOrderId String?    @unique
+  foodOrder   FoodOrder? @relation(fields: [foodOrderId], references: [id], onDelete: Cascade)
+}
 
-  storeId String? @unique
-  store   Store?  @relation(fields: [storeId], references: [id], onDelete: Cascade)
+model Shipping {
+  id            String       @id @default(cuid())
+  neighborhood  String
+  city          String
+  state         String
+  fee           Int?
+  deadlineAt    Int?
+  minimumAmount Int?
+  role          ShippingRole @default(DELIVERY)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  storeId String
+  store   Store  @relation(fields: [storeId], references: [id])
+
+  foodOrders FoodOrder[]
+
+  @@unique([storeId, neighborhood], name: "storeId_neighborhood")
 }
 
 model VerificationToken {
@@ -137,12 +196,6 @@ model TwoFactorConfirmation {
   @@unique([userId])
 }
 
-// enum FoodTagEnum {
-//   NEWEST
-//   PROMOTION
-//   MOST_SALE
-// }
-
 model Food {
   id          String   @id @default(cuid())
   name        String
@@ -153,12 +206,6 @@ model Food {
   promotion   Int?
   status      Boolean  @default(true)
 
-  // reviews     Review[]
-  // reviewsAvg Int?
-  // reviewsAmount Int?
-
-  // tag    String?
-
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -168,6 +215,12 @@ model Food {
   category   FoodCategory @relation(fields: [categoryId], references: [id])
 
   additionals FoodAndAdditional[]
+  items       FoodItem[]
+  sales       Int?
+
+  reviews       FoodReview[]
+  reviewsAvg    Int?
+  reviewsAmount Int?
 }
 
 model FoodCategory {
@@ -210,6 +263,7 @@ model FoodAdditional {
 
   foods   FoodAndAdditional[]
   options FoodAdditionalAndOption[]
+  items   FoodItemAdditional[]
 }
 
 model FoodAndAdditional {
@@ -236,6 +290,7 @@ model FoodOption {
   store   Store  @relation(fields: [storeId], references: [id])
 
   additionals FoodAdditionalAndOption[]
+  items       FoodItemOption[]
 }
 
 model FoodAdditionalAndOption {
@@ -246,4 +301,105 @@ model FoodAdditionalAndOption {
   foodAdditional FoodAdditional @relation(fields: [foodAdditionalId], references: [id], onDelete: Cascade)
 
   @@id([foodOptionId, foodAdditionalId])
+}
+
+enum OrderHistoryProgress {
+  PENDING
+  ACCEPT
+  DELIVERY
+  DELIVERED
+  CANCELLED
+}
+
+model OrderHistory {
+  id       String               @id @default(cuid())
+  progress OrderHistoryProgress @default(PENDING)
+
+  createdAt DateTime @default(now())
+
+  foodOrderHistories OrderHistoryFoodOrder[]
+}
+
+model FoodOrder {
+  id           String       @id @default(cuid())
+  code         String
+  amount       Int
+  moneyChange  Int?
+  payment      StorePayment
+  shippingRole ShippingRole
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  storeId    String
+  store      Store  @relation(fields: [storeId], references: [id])
+  customerId String
+  customer   User   @relation(fields: [customerId], references: [id])
+
+  address Address?
+
+  shippingId String?
+  shipping   Shipping? @relation(fields: [shippingId], references: [id])
+
+  items     FoodItem[]
+  histories OrderHistoryFoodOrder[]
+}
+
+model OrderHistoryFoodOrder {
+  orderHistoryId String
+  orderHistory   OrderHistory @relation(fields: [orderHistoryId], references: [id])
+  foodOrderId    String
+  foodOrder      FoodOrder    @relation(fields: [foodOrderId], references: [id])
+
+  @@unique([orderHistoryId, foodOrderId])
+}
+
+model FoodItem {
+  id       String  @id @default(cuid())
+  reviewed Boolean @default(false)
+  quantity Int     @default(1)
+  amount   Int
+  obs      String?
+
+  orderId String
+  order   FoodOrder @relation(fields: [orderId], references: [id])
+  foodId  String
+  food    Food      @relation(fields: [foodId], references: [id])
+
+  additionals FoodItemAdditional[]
+  options     FoodItemOption[]
+}
+
+model FoodItemAdditional {
+  foodItemId   String
+  foodItem     FoodItem       @relation(fields: [foodItemId], references: [id])
+  additionalId String
+  additional   FoodAdditional @relation(fields: [additionalId], references: [id])
+
+  @@unique([foodItemId, additionalId])
+}
+
+model FoodItemOption {
+  foodItemId String
+  foodItem   FoodItem   @relation(fields: [foodItemId], references: [id])
+  optionId   String
+  option     FoodOption @relation(fields: [optionId], references: [id])
+
+  quantity Int @default(1)
+  amount   Int
+
+  @@unique([foodItemId, optionId])
+}
+
+model FoodReview {
+  id          String  @id @default(cuid())
+  stars       Int?    @default(0) @db.SmallInt
+  description String?
+
+  createdAt DateTime @default(now())
+
+  foodId     String
+  food       Food   @relation(fields: [foodId], references: [id])
+  customerId String
+  customer   User   @relation(fields: [customerId], references: [id])
 }

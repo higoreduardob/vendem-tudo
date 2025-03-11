@@ -1,4 +1,9 @@
-import { FoodAdditionalRole, StoreRole } from '@prisma/client'
+import {
+  FoodAdditionalRole,
+  ShippingRole,
+  StorePayment,
+  StoreRole,
+} from '@prisma/client'
 
 export function translatePasswordOptionsProps(option: PasswordOptionsProps) {
   switch (option) {
@@ -26,5 +31,33 @@ export function translateFoodAdditionalRole(role: FoodAdditionalRole) {
       return 'Única escolha'
     default:
       return 'Quantidade númerica'
+  }
+}
+
+export function translateStorePayment(payment: StorePayment) {
+  switch (payment) {
+    case 'PIX':
+      return 'Pix'
+    case 'MASTER_CREDIT_CARD':
+      return 'Crédito - MASTER'
+    case 'MASTER_DEBIT_CARD':
+      return 'Débito - MASTER'
+    case 'VISA_CREDIT_CARD':
+      'Crédito - VISA'
+    case 'VISA_DEBIT_CARD':
+      return 'Débito - VISA'
+    case 'MEAL_VOUCHER':
+      return 'Vale alimentação'
+    default:
+      return 'Dinheiro'
+  }
+}
+
+export function translateShippingRole(role: ShippingRole) {
+  switch (role) {
+    case 'PICK_UP_ON_STORE':
+      return 'Retirar na loja'
+    default:
+      return 'Delivery'
   }
 }
