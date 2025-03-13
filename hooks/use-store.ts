@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useQuery } from '@tanstack/react-query'
 
 import { client } from '@/lib/hono'
+import { phoneMask } from '@/lib/format'
 
 type ResponseType = InferResponseType<
   (typeof client.api.stores)['slug']['$get'],
@@ -46,7 +47,7 @@ export const useStore = (slug?: string) => {
       }
 
       const { data } = await response.json()
-      return data
+      return { ...data, whatsApp: phoneMask(data.whatsApp) }
     },
   })
 

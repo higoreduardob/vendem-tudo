@@ -78,7 +78,9 @@ export const addressSchema = z.object({
   complement: z.string().nullish(),
 })
 
-export const addressDefaultValues: z.infer<typeof addressSchema> = {
+export type AddressFormValues = z.infer<typeof addressSchema>
+
+export const addressDefaultValues: AddressFormValues = {
   city: '',
   neighborhood: '',
   state: '',

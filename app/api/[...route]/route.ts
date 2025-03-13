@@ -8,6 +8,7 @@ import users from './users'
 import foods from './foods'
 import stores from './stores'
 import customers from './customers'
+import foodOrders from './foods/orders'
 import foodOptions from './foods/options'
 import authenticate from './authenticate'
 import foodCategories from './foods/categories'
@@ -22,6 +23,7 @@ const routes = app
   .route('/foods', foods)
   .route('/stores', stores)
   .route('/customers', customers)
+  .route('/food-orders', foodOrders)
   .route('/food-options', foodOptions)
   .route('/authenticate', authenticate)
   .route('/food-categories', foodCategories)

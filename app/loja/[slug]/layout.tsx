@@ -19,7 +19,7 @@ export default function StoreLayout({
 
   // const router = useRouter()
   const { store } = useOpenStore()
-
+console.log(store)
   // useEffect(() => {
   //   if (!store) {
   //     router.push('/')
@@ -34,7 +34,7 @@ export default function StoreLayout({
 
   return (
     <section>
-      <Header />
+      {/* <Header /> */}
       {children}
       {/* <Footer /> */}
     </section>

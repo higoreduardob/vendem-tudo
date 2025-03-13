@@ -57,7 +57,17 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       const existingUser = await db.user.findUnique({
         where: { id: token.sub },
         include: {
-          address: true,
+          address: {
+            select: {
+              zipCode: true,
+              street: true,
+              neighborhood: true,
+              city: true,
+              state: true,
+              number: true,
+              complement: true,
+            },
+          },
           store: {
             select: {
               id: true,
@@ -73,7 +83,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       token.name = existingUser.name
       token.whatsApp = existingUser.whatsApp
       token.cpfCnpj = existingUser.cpfCnpj
-      token.address = existingUser.address
+      token.address = existingUser.address!
       token.isTwoFactorEnabled = existingUser.isTwoFactorEnabled
       token.selectedStore = existingUser.store
 

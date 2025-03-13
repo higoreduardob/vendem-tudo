@@ -24,7 +24,7 @@ export const Header = () => {
   const { cart } = useCartStore()
   const categoriesQuery = useGetStoreCategories(store?.id)
   const categories = categoriesQuery.data || []
-
+console.log(cart)
   const HEADER_NAV_MAIN = [
     { title: 'Início' },
     {

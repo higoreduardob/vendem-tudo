@@ -2,18 +2,36 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { HelpCircle } from 'lucide-react'
+import { useForm } from 'react-hook-form'
+import { useEffect, useMemo } from 'react'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { CreditCard, HelpCircle, MapPin, Timer } from 'lucide-react'
 
-import { formatCurrency } from '@/lib/utils'
+import { ShippingRole } from '@prisma/client'
+
+import { zipCodeMask } from '@/lib/format'
+import { cn, formatCurrency } from '@/lib/utils'
 import { translateStoreRole } from '@/lib/i18n'
 
 import { useOpenStore } from '@/hooks/use-store'
+import { useCurrentUser } from '@/features/auth/hooks/use-current-user'
 
 import {
-  InsertProductInCartFormValues,
+  type InsertOrderFormValues,
+  insertOrderSchema,
+  type InsertProductInCartFormValues,
   useCartStore,
+  useCheckoutStore,
 } from '@/features/foods/orders/schema'
+import type { AddressFormValues } from '@/features/common/schema'
 
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+  Form,
+} from '@/components/ui/form'
 import {
   Sheet,
   SheetContent,
@@ -30,22 +48,19 @@ import {
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { FormCheckout } from './form-checkout'
 
-type Props = {
-  isOpen: boolean
-  handleClose: () => void
-}
-
-type OrderItemProps = {
-  add: () => void
-  remove: () => void
-}
-
-const OrderItem = ({
+export const OrderItem = ({
   add,
   remove,
+  isNonAddedProduct = false,
   ...product
-}: InsertProductInCartFormValues & OrderItemProps) => {
+}: InsertProductInCartFormValues & {
+  add?: () => void
+  remove?: () => void
+  isNonAddedProduct?: boolean
+}) => {
   const { name, image, quantity, amount, subAmount, additionals, obs } = product
 
   return (
@@ -99,24 +114,26 @@ const OrderItem = ({
                   </TooltipProvider>
                 </div>
               )}
-              <div className="flex gap-4 mt-2">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-red-500 hover:bg-red-600 hover:text-red-50"
-                  onClick={add}
-                >
-                  Adicionar +1
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-muted-foreground hover:bg-black hover:text-white"
-                  onClick={remove}
-                >
-                  Remover -1
-                </Button>
-              </div>
+              {!isNonAddedProduct && (
+                <div className="flex gap-2 mt-2">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-red-500 hover:bg-red-600 hover:text-red-50"
+                    onClick={add}
+                  >
+                    Adicionar +1
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-muted-foreground hover:bg-black hover:text-white"
+                    onClick={remove}
+                  >
+                    Remover -1
+                  </Button>
+                </div>
+              )}
             </div>
             <div className="flex flex-col items-end">
               <p className="text-sm text-muted-foreground">
@@ -141,123 +158,325 @@ const OrderItem = ({
   )
 }
 
-export const FormOrder = ({ isOpen, handleClose }: Props) => {
+export const OrderShipping = ({
+  address,
+  role,
+  fee,
+  deadlineAt,
+  isNonAddressChange = false,
+  isColumnDirection = false,
+}: {
+  address: AddressFormValues
+  role: ShippingRole
+  fee?: number
+  deadlineAt?: number
+  isNonAddressChange?: boolean
+  isColumnDirection?: boolean
+}) => {
+  return (
+    <div
+      className={cn('space-y-2', isColumnDirection && 'grid grid-cols-2 gap-2')}
+    >
+      <div className="flex items-center gap-2 bg-gray-50 p-2 rounded-sm">
+        <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
+          <MapPin className="text-red-500 w-5 h-5" />
+        </div>
+
+        <div className="flex-1">
+          <p className="text-[#3A3A3A] font-medium">
+            {address.street} - {address?.number || 'S/N'}
+          </p>
+          <p className="text-gray-500 text-sm">
+            {address.neighborhood}, {zipCodeMask(address.zipCode)} -{' '}
+            {address.city}/{address.state}
+          </p>
+        </div>
+        {role === 'DELIVERY' && !isNonAddressChange && (
+          <button type="button" className="text-red-500 text-sm font-medium">
+            Trocar
+          </button>
+        )}
+      </div>
+
+      <div className="border border-gray-200 rounded-sm p-2">
+        <div className="flex justify-between items-center">
+          <div>
+            <p className="text-red-500 text-sm mb-1">
+              {role === 'DELIVERY' ? 'Entrega' : 'Retirada'}
+            </p>
+            <p className="text-gray-500 text-sm">
+              {deadlineAt ? `Hoje, ${deadlineAt} min` : 'Hoje'}
+            </p>
+          </div>
+          {deadlineAt && (
+            <div className="text-gray-400">
+              <Timer />
+            </div>
+          )}
+        </div>
+        {fee ? (
+          <p className="text-[#3A3A3A] font-medium mt-2">
+            {formatCurrency(fee)}
+          </p>
+        ) : (
+          <p className="text-green-500 font-medium mt-2">Grátis</p>
+        )}
+      </div>
+    </div>
+  )
+}
+
+export const FormOrder = ({
+  isOpen,
+  handleClose,
+}: {
+  isOpen: boolean
+  handleClose: () => void
+}) => {
+  const { onOpen } = useCheckoutStore()
   const { store } = useOpenStore()
+  const { user } = useCurrentUser()
   const { cart, addCart, removeCart } = useCartStore()
 
-  if (!store) return null
+  if (!store || !user) return null
+
+  const { shippings, address: storeAddress } = store
+  const { address: userAddress } = user
+
+  if (!storeAddress) {
+    return null
+  }
+
+  const shippingAddress = shippings.find(
+    (shipping) =>
+      shipping.neighborhood === userAddress.neighborhood &&
+      shipping.city === userAddress.city &&
+      shipping.state === userAddress.state
+  )
+  const minAmount = shippingAddress?.minimumAmount
+  const fee = shippingAddress?.fee
 
   const roleOptions = store.role.map((role) => translateStoreRole(role))
 
-  const calculateTotal = () => {
-    const subAmount = cart.reduce((total, item) => total + item.subAmount, 0)
-    const amount = subAmount + 10
+  const calculateSubAmount = () =>
+    cart.reduce((total, item) => total + item.subAmount, 0)
 
-    return { subAmount, amount }
+  // TODO: Fix error useMemo
+  const defaultValues: InsertOrderFormValues = useMemo(
+    () => ({
+      storeId: store.id,
+      customerId: 'user.id',
+      shippingId: shippingAddress?.id,
+      deadlineAt: shippingAddress?.deadlineAt,
+      subAmount: calculateSubAmount(),
+      amount: calculateSubAmount() + (fee || 0),
+      fee: fee || 0,
+      shippingRole: ShippingRole.DELIVERY,
+      items: cart,
+    }),
+    [store.id, user.id, shippingAddress?.id, fee, cart]
+  )
+
+  const form = useForm<InsertOrderFormValues>({
+    resolver: zodResolver(insertOrderSchema),
+    defaultValues: defaultValues,
+    shouldFocusError: true,
+    reValidateMode: 'onChange',
+    mode: 'all',
+  })
+
+  if (!form) return null
+
+  const watchShippingRole = form.watch('shippingRole')
+
+  useEffect(() => {
+    if (watchShippingRole === ShippingRole.DELIVERY) {
+      form.setValue('fee', fee || 0)
+      form.setValue('shippingId', shippingAddress?.id)
+    } else {
+      form.setValue('fee', 0)
+      form.setValue('shippingId', null)
+    }
+  }, [watchShippingRole, fee, shippingAddress?.id, form])
+
+  useEffect(() => {
+    form.setValue('items', cart)
+    const newSubAmount = calculateSubAmount()
+    form.setValue('subAmount', newSubAmount)
+    form.setValue(
+      'amount',
+      newSubAmount +
+        (watchShippingRole === ShippingRole.DELIVERY ? fee || 0 : 0)
+    )
+  }, [cart, form, fee, watchShippingRole])
+
+  const handleSubmit = (values: InsertOrderFormValues) => {
+    onOpen(values)
   }
 
   return (
-    <Sheet open={isOpen} onOpenChange={handleClose}>
-      <SheetContent className="w-full sm:max-w-lg flex flex-col">
-        <SheetHeader>
-          <SheetTitle>
-            <div className="flex-1">
-              <p className="text-sm">
-                <span className="text-amber-600">
-                  O pedido mínimo para essa loja é de{' '}
-                </span>
-                <span className="text-amber-600 font-medium">R$ 25,00</span>
-                <span className="text-amber-600">
-                  , não inclusa a taxa de entrega.
-                </span>
-              </p>
+    <>
+      <FormCheckout />
+      <Sheet open={isOpen} onOpenChange={handleClose}>
+        <SheetContent className="w-full sm:max-w-lg flex flex-col">
+          <SheetHeader>
+            <SheetTitle>
+              <div className="flex-1">
+                <p className="text-sm">
+                  {minAmount ? (
+                    <>
+                      <span className="text-amber-600">
+                        O pedido mínimo para entregar nesta loja é de{' '}
+                      </span>
+                      <span className="text-amber-600 font-medium">
+                        {formatCurrency(minAmount)}
+                      </span>
+                      <span className="text-amber-600">
+                        , não inclusa a taxa de entrega.
+                      </span>
+                    </>
+                  ) : (
+                    <span className="text-amber-600">
+                      Loja sem pedido mínimo de entrega
+                    </span>
+                  )}
+                </p>
+              </div>
+            </SheetTitle>
+          </SheetHeader>
+
+          <div className="space-y-2">
+            <div className="flex justify-between items-center">
+              <h2 className="font-medium text-lg">{store.name}</h2>
+              <Link href="#" className="text-sm text-red-500 font-medium">
+                Ver Cardápio
+              </Link>
             </div>
-          </SheetTitle>
-        </SheetHeader>
 
-        <div className="space-y-2">
-          <div className="flex justify-between items-center">
-            <h2 className="font-medium text-lg">{store.name}</h2>
-            <Link href="#" className="text-sm text-red-500 font-medium">
-              Ver Cardápio
-            </Link>
-          </div>
-
-          <p className="text-muted-foreground text-sm">
-            {roleOptions.map((role, index) => (
-              <span key={index}>{role}</span>
-            ))}
-          </p>
-        </div>
-
-        <Separator />
-
-        <ScrollArea className="h-full space-y-4 pr-2">
-          {cart.map((item, index) => (
-            <OrderItem
-              key={index}
-              add={() => addCart(index)}
-              remove={() => removeCart(index)}
-              {...item}
-            />
-          ))}
-        </ScrollArea>
-
-        <Separator className="mt-auto" />
-
-        {/* <div className="flex justify-between items-center py-2">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-6 bg-gray-100 flex items-center justify-center rotate-12">
-              <div className="w-6 h-4 border border-dashed border-gray-400"></div>
-            </div>
-            <div>
-              <p className="font-medium">Cupom</p>
-              <p className="text-sm text-muted-foreground">
-                1 cupom disponível
-              </p>
-            </div>
-          </div>
-          <ChevronRight className="h-5 w-5 text-muted-foreground" />
-        </div>
-
-        <Separator /> */}
-
-        <div className="space-y-2 py-2">
-          <div className="flex justify-between">
-            <p className="text-muted-foreground">Subtotal</p>
-            <p className="font-medium">
-              {formatCurrency(calculateTotal().subAmount)}
+            <p className="text-muted-foreground text-sm">
+              {roleOptions.map((role, index) => (
+                <span key={index}>{role}</span>
+              ))}
             </p>
           </div>
-          {/* <div className="flex justify-between items-center">
-            <div className="flex items-center gap-1">
-              <p className="text-muted-foreground">Taxa de Serviço</p>
-              <HelpCircle className="h-4 w-4 text-muted-foreground" />
-            </div>
-            <p className="font-medium">R$ 0,99</p>
-          </div> */}
-          <div className="flex justify-between">
-            <p className="text-muted-foreground">Taxa de entrega</p>
-            <p className="text-green-500 font-medium">Grátis</p>
-          </div>
-        </div>
 
-        <Separator />
+          <Separator />
 
-        <SheetFooter>
-          <div className="flex flex-col gap-2 w-full">
-            <div className="flex justify-between w-full mb-4">
-              <p className="font-medium text-lg">Total</p>
-              <p className="font-medium text-lg">
-                {formatCurrency(calculateTotal().amount)}
-              </p>
-            </div>
-            <Button className="w-full bg-pink-300 hover:bg-pink-400 text-white">
-              Escolher forma de pagamento
-            </Button>
-          </div>
-        </SheetFooter>
-      </SheetContent>
-    </Sheet>
+          <ScrollArea className="h-full space-y-4 pr-2 pb-4">
+            {cart.map((item, index) => (
+              <OrderItem
+                key={index}
+                add={() => addCart(index)}
+                remove={() => removeCart(index)}
+                {...item}
+              />
+            ))}
+          </ScrollArea>
+
+          <Separator className="mt-auto" />
+
+          <Form {...form}>
+            <form
+              className="flex flex-col gap-2"
+              onSubmit={form.handleSubmit(handleSubmit)}
+            >
+              <div className="space-y-2">
+                <FormField
+                  control={form.control}
+                  name="shippingRole"
+                  render={({ field }) => (
+                    <FormItem className="w-full">
+                      <FormControl>
+                        <Tabs
+                          value={field.value}
+                          onValueChange={(value) =>
+                            field.onChange(value as ShippingRole)
+                          }
+                        >
+                          <TabsList className="w-full grid grid-cols-2 h-10 p-0 bg-transparent">
+                            <TabsTrigger
+                              value={ShippingRole.DELIVERY}
+                              className="data-[state=active]:border-b-2 data-[state=active]:border-red-500 data-[state=active]:text-red-500 rounded-none h-10 font-medium shadow-none drop-shadow-none data-[state=active]:shadow-none text-gray-400"
+                            >
+                              Entrega
+                            </TabsTrigger>
+                            <TabsTrigger
+                              value={ShippingRole.PICK_UP_ON_STORE}
+                              className="data-[state=active]:border-b-2 data-[state=active]:border-red-500 data-[state=active]:text-red-500 rounded-none h-10 font-medium shadow-none drop-shadow-none data-[state=active]:shadow-none text-gray-400"
+                            >
+                              Retirada
+                            </TabsTrigger>
+                          </TabsList>
+                          <TabsContent
+                            value={ShippingRole.DELIVERY}
+                            className="mt-4 space-y-2"
+                          >
+                            <OrderShipping
+                              address={userAddress}
+                              role={ShippingRole.DELIVERY}
+                              fee={form.getValues('fee') || undefined}
+                              deadlineAt={
+                                form.getValues('deadlineAt') || undefined
+                              }
+                            />
+                          </TabsContent>
+                          <TabsContent
+                            value={ShippingRole.PICK_UP_ON_STORE}
+                            className="mt-4 space-y-2"
+                          >
+                            <OrderShipping
+                              address={storeAddress}
+                              role={ShippingRole.PICK_UP_ON_STORE}
+                            />
+                          </TabsContent>
+                        </Tabs>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <Separator />
+
+              <div className="space-y-2 py-2">
+                <div className="flex justify-between">
+                  <p className="text-muted-foreground">Subtotal</p>
+                  <p className="font-medium">
+                    {formatCurrency(form.watch('subAmount'))}
+                  </p>
+                </div>
+                <div className="flex justify-between">
+                  <p className="text-muted-foreground">Taxa de entrega</p>
+                  {form.getValues('fee') ? (
+                    <p className="text-[#3A3A3A] font-medium">
+                      {formatCurrency(form.watch('fee') || 0)}
+                    </p>
+                  ) : (
+                    <p className="text-green-500 font-medium">Grátis</p>
+                  )}
+                </div>
+              </div>
+
+              <Separator />
+
+              <SheetFooter>
+                <div className="flex flex-col gap-2 w-full">
+                  <div className="flex justify-between w-full mb-4">
+                    <p className="font-medium text-lg">Total</p>
+                    <p className="font-medium text-lg">
+                      {formatCurrency(form.watch('amount'))}
+                    </p>
+                  </div>
+                  <Button variant="red">
+                    <CreditCard /> Escolher forma de pagamento
+                  </Button>
+                </div>
+              </SheetFooter>
+            </form>
+          </Form>
+        </SheetContent>
+      </Sheet>
+    </>
   )
 }

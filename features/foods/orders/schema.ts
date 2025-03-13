@@ -2,7 +2,11 @@ import { z } from 'zod'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
-import { ShippingRole, StorePayment } from '@prisma/client'
+import {
+  OrderHistoryProgress,
+  ShippingRole,
+  StorePayment,
+} from '@prisma/client'
 
 export const insertProductInCartSchema = z.object({
   productId: z
@@ -126,11 +130,10 @@ export const insertOrderSchema = z.object({
     .string({ message: 'Cliente é obrigatório' })
     .min(1, { message: 'Cliente é obrigatório' }),
   shippingId: z.string().nullish(),
-  amount: z.number().positive({ message: 'Preço é obrigatório' }),
-  moneyChange: z.number().nullish(),
-  payment: z.nativeEnum(StorePayment, {
-    message: 'Forma de pagamento é obrigatório',
-  }),
+  subAmount: z.number().positive({ message: 'Subtotal é obrigatório' }),
+  amount: z.number().positive({ message: 'Total é obrigatório' }),
+  fee: z.number().nullish(),
+  deadlineAt: z.number().nullish(),
   shippingRole: z.nativeEnum(ShippingRole, {
     message: 'Método de entrega é obrigatório',
   }),
@@ -140,3 +143,51 @@ export const insertOrderSchema = z.object({
 })
 
 export type InsertOrderFormValues = z.infer<typeof insertOrderSchema>
+
+export const insertCheckoutSchema = z
+  .object({
+    payment: z.nativeEnum(StorePayment, {
+      message: 'Forma de pagamento é obrigatório',
+    }),
+    moneyChange: z.number().nullish(),
+  })
+  .merge(insertOrderSchema)
+  .refine(
+    (data) => {
+      if (data.payment === StorePayment.CASH) {
+        return (
+          data.moneyChange &&
+          data.moneyChange > 0 &&
+          data.moneyChange >= data.amount
+        )
+      }
+      return true
+    },
+    {
+      message:
+        'Troco é obrigatório e maior ou igual ao valor total, para pagamento em dinheiro',
+      path: ['moneyChange'],
+    }
+  )
+
+export type InsertCheckoutFormValues = z.infer<typeof insertCheckoutSchema>
+
+type CheckoutState = {
+  isOpen: boolean
+  order: InsertOrderFormValues | null
+  onOpen: (order: InsertOrderFormValues) => void
+  onClose: () => void
+}
+
+export const useCheckoutStore = create<CheckoutState>((set) => ({
+  isOpen: false,
+  order: null,
+  onOpen: (order: InsertOrderFormValues) => set({ order, isOpen: true }),
+  onClose: () => set({ order: null, isOpen: false }),
+}))
+
+export const updateHistorySchema = z.object({
+  progress: z.nativeEnum(OrderHistoryProgress, {
+    message: 'Situação é obrigatório',
+  }),
+})

@@ -2,12 +2,14 @@ import { type DefaultSession, User } from 'next-auth'
 
 import { UserRole } from '@prisma/client'
 
+import { AddressFormValues } from '@/features/common/schema'
+
 export type ExtendedUser = DefaultSession['user'] & {
   role: UserRole
   isTwoFactorEnabled?: boolean
   cpfCnpj: string | null
   whatsApp: string | null
-  address: any
+  address: AddressFormValues
   selectedStore: { id: string; name: string; slug: string } | null
 }
 
@@ -25,7 +27,7 @@ declare module '@auth/core/jwt' {
     isTwoFactorEnabled?: boolean
     cpfCnpj: string | null
     whatsApp: string | null
-    address: any
+    address: AddressFormValues
     selectedStore: { id: string; name: string; slug: string } | null
   }
 }

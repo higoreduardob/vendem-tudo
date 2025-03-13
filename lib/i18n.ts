@@ -1,5 +1,6 @@
 import {
   FoodAdditionalRole,
+  OrderHistoryProgress,
   ShippingRole,
   StorePayment,
   StoreRole,
@@ -43,7 +44,7 @@ export function translateStorePayment(payment: StorePayment) {
     case 'MASTER_DEBIT_CARD':
       return 'Débito - MASTER'
     case 'VISA_CREDIT_CARD':
-      'Crédito - VISA'
+      return 'Crédito - VISA'
     case 'VISA_DEBIT_CARD':
       return 'Débito - VISA'
     case 'MEAL_VOUCHER':
@@ -59,5 +60,20 @@ export function translateShippingRole(role: ShippingRole) {
       return 'Retirar na loja'
     default:
       return 'Delivery'
+  }
+}
+
+export function translateOrderHistoryProgress(progress: OrderHistoryProgress) {
+  switch (progress) {
+    case 'ACCEPT':
+      return 'Aceito'
+    case 'CANCELLED':
+      return 'Cancelado'
+    case 'PENDING':
+      return 'Pendente'
+    case 'DELIVERED':
+      return 'Entregue'
+    default:
+      return 'Em trânsito'
   }
 }

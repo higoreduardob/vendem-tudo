@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { signOut } from 'next-auth/react'
 import { usePathname } from 'next/navigation'
-import { Package, ShieldCheck, User, LogOut, Heart } from 'lucide-react'
+import { Package, ShieldCheck, User, LogOut } from 'lucide-react'
 
 import { useOpenStore } from '@/hooks/use-store'
 
@@ -35,11 +35,11 @@ export function AppSidebar() {
       href: `/loja/${store.slug}/conta/pedidos`,
       icon: Package,
     },
-    {
-      title: 'Favoritos',
-      href: `/loja/${store.slug}/conta/favoritos`,
-      icon: Heart,
-    },
+    // {
+    //   title: 'Favoritos',
+    //   href: `/loja/${store.slug}/conta/favoritos`,
+    //   icon: Heart,
+    // },
     {
       title: 'Segurança',
       href: `/loja/${store.slug}/conta/seguranca`,

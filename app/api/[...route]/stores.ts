@@ -92,6 +92,38 @@ const app = new Hono()
 
       const data = await db.store.findUnique({
         where: { slug },
+        include: {
+          address: {
+            select: {
+              city: true,
+              neighborhood: true,
+              state: true,
+              street: true,
+              zipCode: true,
+              complement: true,
+              number: true,
+            },
+          },
+          schedules: {
+            select: {
+              enabled: true,
+              day: true,
+              open: true,
+              close: true,
+            },
+          },
+          shippings: {
+            select: {
+              id: true,
+              neighborhood: true,
+              city: true,
+              state: true,
+              fee: true,
+              deadlineAt: true,
+              minimumAmount: true,
+            },
+          },
+        },
       })
 
       if (!data) {
