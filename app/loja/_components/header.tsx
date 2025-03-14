@@ -1,8 +1,8 @@
 import Link from 'next/link'
-import { useState } from 'react'
-import { Heart, ShoppingBag, User } from 'lucide-react'
+import { ShoppingBag, User } from 'lucide-react'
 
 import { useOpenStore } from '@/hooks/use-store'
+import { useOpenAbout } from '@/app/loja/_components/about-store'
 import { useGetStoreCategories } from '@/features/foods/categories/api/use-get-categories'
 
 import { useCartStore } from '@/features/foods/orders/schema'
@@ -15,27 +15,27 @@ import {
   NavigationMenuTrigger,
 } from '@/components/ui/navigation-menu'
 import { Button } from '@/components/ui/button'
-import { ShoppingCart } from './shopping-cart'
-import { FormOrder } from '@/features/foods/orders/components/form-order'
+import { useOpenOrder } from '@/features/foods/orders/components/form-order'
 
 export const Header = () => {
-  const [isCartOpen, setIsCartOpen] = useState(false)
-  const { store } = useOpenStore()
   const { cart } = useCartStore()
+  const { store } = useOpenStore()
+  const { onOpen: onOpenAbout } = useOpenAbout()
+  const { onOpen: onOpenOrder } = useOpenOrder()
+
   const categoriesQuery = useGetStoreCategories(store?.id)
   const categories = categoriesQuery.data || []
-console.log(cart)
+
   const HEADER_NAV_MAIN = [
-    { title: 'Início' },
     {
       title: 'Categorias',
+      onClick: () => {},
       items: categories.map((category) => ({
         title: category.name,
         count: category._count.foods,
       })),
     },
-    { title: 'Sobre' },
-    { title: 'Contato' },
+    { title: 'Sobre', onClick: () => onOpenAbout() },
   ]
 
   if (categoriesQuery.isLoading) {
@@ -62,6 +62,7 @@ console.log(cart)
                               key={key}
                               variant="ghost"
                               className="w-full flex items-center justify-between"
+                              onClick={item.onClick}
                             >
                               {value.title}
                               <span className="text-sm opacity-50">
@@ -73,7 +74,7 @@ console.log(cart)
                       </NavigationMenuContent>
                     </>
                   ) : (
-                    <Button variant="ghost">
+                    <Button variant="ghost" onClick={item.onClick}>
                       <span>{item.title}</span>
                     </Button>
                   )}
@@ -86,7 +87,7 @@ console.log(cart)
           <Button
             variant="ghost"
             className="relative flex items-center justify-center w-10 h-10 rounded-full cursor-pointer hover:bg-black/[0.05]"
-            onClick={() => setIsCartOpen(true)}
+            onClick={onOpenOrder}
           >
             <ShoppingBag className="h-[1.2rem] w-[1.2rem]" />
             <span className="absolute top-0 left-6 flex items-center justify-center h-[16px] min-w-[16px] text-[12px] text-white bg-red-600 rounded-full">
@@ -94,7 +95,7 @@ console.log(cart)
             </span>
           </Button>
 
-          <Button
+          {/* <Button
             variant="ghost"
             className="relative flex items-center justify-center w-10 h-10 rounded-full cursor-pointer hover:bg-black/[0.05]"
           >
@@ -102,7 +103,7 @@ console.log(cart)
             <span className="absolute top-0 left-6 flex items-center justify-center h-[16px] min-w-[16px] text-[12px] text-white bg-red-600 rounded-full">
               5
             </span>
-          </Button>
+          </Button> */}
 
           <Link
             href={`/loja/${store!.slug}/entrar`}
@@ -112,8 +113,6 @@ console.log(cart)
           </Link>
         </div>
       </div>
-      {/* <ShoppingCart isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} /> */}
-      <FormOrder isOpen={isCartOpen} handleClose={() => setIsCartOpen(false)} />
     </header>
   )
 }

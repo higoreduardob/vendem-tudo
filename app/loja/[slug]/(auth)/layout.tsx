@@ -14,6 +14,8 @@ function AuthLayoutComponent({ children }: { children: React.ReactNode }) {
   const { store } = useOpenStore()
   const { user, status } = useCurrentUser()
 
+  if (!store) return null
+
   useEffect(() => {
     if (status === 'authenticated' && user) {
       router.push(`/loja/${store?.slug}/conta`)

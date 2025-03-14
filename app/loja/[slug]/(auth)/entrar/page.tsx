@@ -7,6 +7,8 @@ import { FormSignIn } from '@/features/auth/components/form-sign-in'
 export default function SignInPage() {
   const { store } = useOpenStore()
 
+  if (!store) return null
+
   return (
     <FormSignIn
       role="CUSTOMER"

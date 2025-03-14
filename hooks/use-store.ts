@@ -6,8 +6,9 @@ import { useQuery } from '@tanstack/react-query'
 
 import { client } from '@/lib/hono'
 import { phoneMask } from '@/lib/format'
+import { mapAddress } from '@/lib/utils'
 
-type ResponseType = InferResponseType<
+export type ResponseType = InferResponseType<
   (typeof client.api.stores)['slug']['$get'],
   200
 >['data']
@@ -47,7 +48,11 @@ export const useStore = (slug?: string) => {
       }
 
       const { data } = await response.json()
-      return { ...data, whatsApp: phoneMask(data.whatsApp) }
+      return {
+        ...data,
+        whatsApp: phoneMask(data.whatsApp),
+        address: mapAddress(data.address!),
+      }
     },
   })
 

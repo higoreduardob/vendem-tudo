@@ -13,8 +13,6 @@ export default function OrdersPage() {
   const ordersQuery = useGetOrders()
   const orders = ordersQuery.data || []
 
-  console.log(orders)
-
   return (
     <div className="w-full flex flex-col gap-2">
       <div className="flex items-center justify-between">

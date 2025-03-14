@@ -14,7 +14,7 @@ export default function StorePage() {
   const { store } = useOpenStore()
   const foodsQuery = useGetStoreFoods(store?.id)
   const foods = foodsQuery.data || []
-console.log(foods)
+
   return (
     <div className="min-h-screen">
       <MainBanner />

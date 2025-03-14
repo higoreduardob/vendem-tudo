@@ -29,6 +29,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Checkbox } from '@/components/ui/checkbox'
 import { MultiSelector } from '@/components/multi-selector'
+import { Textarea } from '@/components/ui/textarea'
 
 export const FormDetail = ({ isPending }: { isPending?: boolean }) => {
   const form = useFormContext<InsertStoreFormValues>()
@@ -212,6 +213,24 @@ export const FormDetail = ({ isPending }: { isPending?: boolean }) => {
           label="Métodos de entrega"
           options={shippingRoleOptions}
           disabled={isPending}
+        />
+        <FormField
+          control={form.control}
+          name="about"
+          render={({ field }) => (
+            <FormItem className="w-full">
+              <FormLabel>Sobre a loja</FormLabel>
+              <FormControl>
+                <Textarea
+                  {...field}
+                  value={field.value || ''}
+                  placeholder="Bem-vindo à [Nome da Loja]! Aqui, preparamos cada pedido com carinho e qualidade para que sua experiência seja sempre incrível. Explore nosso cardápio e aproveite o melhor do delivery, com rapidez e sabor garantidos!"
+                  className="resize-none h-[100px]"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
       </CardContent>
     </Card>

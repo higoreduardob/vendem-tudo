@@ -172,20 +172,6 @@ export const insertCheckoutSchema = z
 
 export type InsertCheckoutFormValues = z.infer<typeof insertCheckoutSchema>
 
-type CheckoutState = {
-  isOpen: boolean
-  order: InsertOrderFormValues | null
-  onOpen: (order: InsertOrderFormValues) => void
-  onClose: () => void
-}
-
-export const useCheckoutStore = create<CheckoutState>((set) => ({
-  isOpen: false,
-  order: null,
-  onOpen: (order: InsertOrderFormValues) => set({ order, isOpen: true }),
-  onClose: () => set({ order: null, isOpen: false }),
-}))
-
 export const updateHistorySchema = z.object({
   progress: z.nativeEnum(OrderHistoryProgress, {
     message: 'Situação é obrigatório',

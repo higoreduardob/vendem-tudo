@@ -1,27 +1,28 @@
-'use client'
-
 import Link from 'next/link'
 import Image from 'next/image'
+import { create } from 'zustand'
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
-import { useEffect, useMemo } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CreditCard, HelpCircle, MapPin, Timer } from 'lucide-react'
 
 import { ShippingRole } from '@prisma/client'
 
-import { zipCodeMask } from '@/lib/format'
-import { cn, formatCurrency } from '@/lib/utils'
-import { translateStoreRole } from '@/lib/i18n'
+import { ExtendedUser } from '@/types/next-auth'
 
-import { useOpenStore } from '@/hooks/use-store'
+import { zipCodeMask } from '@/lib/format'
+import { translateStoreRole } from '@/lib/i18n'
+import { cn, formatCurrency } from '@/lib/utils'
+
+import { ResponseType, useOpenStore } from '@/hooks/use-store'
 import { useCurrentUser } from '@/features/auth/hooks/use-current-user'
+import { useOpenCheckout } from '@/features/foods/orders/components/form-checkout'
 
 import {
   type InsertOrderFormValues,
   insertOrderSchema,
   type InsertProductInCartFormValues,
   useCartStore,
-  useCheckoutStore,
 } from '@/features/foods/orders/schema'
 import type { AddressFormValues } from '@/features/common/schema'
 
@@ -49,18 +50,51 @@ import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { FormCheckout } from './form-checkout'
+
+type OrderItemProps = InsertProductInCartFormValues & {
+  add?: () => void
+  remove?: () => void
+  isNonAddedProduct?: boolean
+}
+
+type OrderShippingProps = {
+  address: AddressFormValues
+  role: ShippingRole
+  fee?: number
+  deadlineAt?: number
+  isNonAddressChange?: boolean
+  isColumnDirection?: boolean
+}
+
+type FormOrderComponentProps = {
+  isOpen: boolean
+  handleClose: () => void
+  store: ResponseType
+  user: ExtendedUser
+  cart: InsertProductInCartFormValues[]
+  addCart: (index: number) => void
+  removeCart: (index: number) => void
+  onOpenCheckout: (order: InsertOrderFormValues) => void
+}
+
+type OpenOrderState = {
+  isOpen: boolean
+  onOpen: () => void
+  onClose: () => void
+}
+
+export const useOpenOrder = create<OpenOrderState>((set) => ({
+  isOpen: false,
+  onOpen: () => set({ isOpen: true }),
+  onClose: () => set({ isOpen: false }),
+}))
 
 export const OrderItem = ({
   add,
   remove,
   isNonAddedProduct = false,
   ...product
-}: InsertProductInCartFormValues & {
-  add?: () => void
-  remove?: () => void
-  isNonAddedProduct?: boolean
-}) => {
+}: OrderItemProps) => {
   const { name, image, quantity, amount, subAmount, additionals, obs } = product
 
   return (
@@ -165,14 +199,7 @@ export const OrderShipping = ({
   deadlineAt,
   isNonAddressChange = false,
   isColumnDirection = false,
-}: {
-  address: AddressFormValues
-  role: ShippingRole
-  fee?: number
-  deadlineAt?: number
-  isNonAddressChange?: boolean
-  isColumnDirection?: boolean
-}) => {
+}: OrderShippingProps) => {
   return (
     <div
       className={cn('space-y-2', isColumnDirection && 'grid grid-cols-2 gap-2')}
@@ -226,26 +253,41 @@ export const OrderShipping = ({
   )
 }
 
-export const FormOrder = ({
-  isOpen,
-  handleClose,
-}: {
-  isOpen: boolean
-  handleClose: () => void
-}) => {
-  const { onOpen } = useCheckoutStore()
+export const FormOrder = () => {
   const { store } = useOpenStore()
   const { user } = useCurrentUser()
+  const { isOpen, onClose } = useOpenOrder()
   const { cart, addCart, removeCart } = useCartStore()
+  const { onOpen: onOpenCheckout } = useOpenCheckout()
 
   if (!store || !user) return null
 
+  return (
+    <FormOrderComponent
+      isOpen={isOpen}
+      handleClose={onClose}
+      store={store}
+      user={user}
+      cart={cart}
+      addCart={addCart}
+      removeCart={removeCart}
+      onOpenCheckout={onOpenCheckout}
+    />
+  )
+}
+
+const FormOrderComponent = ({
+  isOpen,
+  handleClose,
+  store,
+  user,
+  cart,
+  addCart,
+  removeCart,
+  onOpenCheckout,
+}: FormOrderComponentProps) => {
   const { shippings, address: storeAddress } = store
   const { address: userAddress } = user
-
-  if (!storeAddress) {
-    return null
-  }
 
   const shippingAddress = shippings.find(
     (shipping) =>
@@ -261,31 +303,25 @@ export const FormOrder = ({
   const calculateSubAmount = () =>
     cart.reduce((total, item) => total + item.subAmount, 0)
 
-  // TODO: Fix error useMemo
-  const defaultValues: InsertOrderFormValues = useMemo(
-    () => ({
-      storeId: store.id,
-      customerId: 'user.id',
-      shippingId: shippingAddress?.id,
-      deadlineAt: shippingAddress?.deadlineAt,
-      subAmount: calculateSubAmount(),
-      amount: calculateSubAmount() + (fee || 0),
-      fee: fee || 0,
-      shippingRole: ShippingRole.DELIVERY,
-      items: cart,
-    }),
-    [store.id, user.id, shippingAddress?.id, fee, cart]
-  )
+  const defaultValues: InsertOrderFormValues = {
+    storeId: store.id,
+    customerId: 'user.id',
+    shippingId: shippingAddress?.id,
+    deadlineAt: shippingAddress?.deadlineAt,
+    subAmount: calculateSubAmount(),
+    amount: calculateSubAmount() + (fee || 0),
+    fee: fee || 0,
+    shippingRole: ShippingRole.DELIVERY,
+    items: cart,
+  }
 
   const form = useForm<InsertOrderFormValues>({
     resolver: zodResolver(insertOrderSchema),
-    defaultValues: defaultValues,
+    defaultValues,
     shouldFocusError: true,
     reValidateMode: 'onChange',
     mode: 'all',
   })
-
-  if (!form) return null
 
   const watchShippingRole = form.watch('shippingRole')
 
@@ -311,172 +347,170 @@ export const FormOrder = ({
   }, [cart, form, fee, watchShippingRole])
 
   const handleSubmit = (values: InsertOrderFormValues) => {
-    onOpen(values)
+    // console.log(values)
+    onOpenCheckout(values)
   }
 
   return (
-    <>
-      <FormCheckout />
-      <Sheet open={isOpen} onOpenChange={handleClose}>
-        <SheetContent className="w-full sm:max-w-lg flex flex-col">
-          <SheetHeader>
-            <SheetTitle>
-              <div className="flex-1">
-                <p className="text-sm">
-                  {minAmount ? (
-                    <>
-                      <span className="text-amber-600">
-                        O pedido mínimo para entregar nesta loja é de{' '}
-                      </span>
-                      <span className="text-amber-600 font-medium">
-                        {formatCurrency(minAmount)}
-                      </span>
-                      <span className="text-amber-600">
-                        , não inclusa a taxa de entrega.
-                      </span>
-                    </>
-                  ) : (
+    <Sheet open={isOpen} onOpenChange={handleClose}>
+      <SheetContent className="w-full sm:max-w-lg flex flex-col">
+        <SheetHeader>
+          <SheetTitle>
+            <div className="flex-1">
+              <p className="text-sm">
+                {minAmount ? (
+                  <>
                     <span className="text-amber-600">
-                      Loja sem pedido mínimo de entrega
+                      O pedido mínimo para entregar nesta loja é de{' '}
                     </span>
-                  )}
-                </p>
-              </div>
-            </SheetTitle>
-          </SheetHeader>
-
-          <div className="space-y-2">
-            <div className="flex justify-between items-center">
-              <h2 className="font-medium text-lg">{store.name}</h2>
-              <Link href="#" className="text-sm text-red-500 font-medium">
-                Ver Cardápio
-              </Link>
+                    <span className="text-amber-600 font-medium">
+                      {formatCurrency(minAmount)}
+                    </span>
+                    <span className="text-amber-600">
+                      , não inclusa a taxa de entrega.
+                    </span>
+                  </>
+                ) : (
+                  <span className="text-amber-600">
+                    Loja sem pedido mínimo de entrega
+                  </span>
+                )}
+              </p>
             </div>
+          </SheetTitle>
+        </SheetHeader>
 
-            <p className="text-muted-foreground text-sm">
-              {roleOptions.map((role, index) => (
-                <span key={index}>{role}</span>
-              ))}
-            </p>
+        <div className="space-y-2">
+          <div className="flex justify-between items-center">
+            <h2 className="font-medium text-lg">{store.name}</h2>
+            <Link href="#" className="text-sm text-red-500 font-medium">
+              Ver Cardápio
+            </Link>
           </div>
 
-          <Separator />
-
-          <ScrollArea className="h-full space-y-4 pr-2 pb-4">
-            {cart.map((item, index) => (
-              <OrderItem
-                key={index}
-                add={() => addCart(index)}
-                remove={() => removeCart(index)}
-                {...item}
-              />
+          <p className="text-muted-foreground text-sm">
+            {roleOptions.map((role, index) => (
+              <span key={index}>{role}</span>
             ))}
-          </ScrollArea>
+          </p>
+        </div>
 
-          <Separator className="mt-auto" />
+        <Separator />
 
-          <Form {...form}>
-            <form
-              className="flex flex-col gap-2"
-              onSubmit={form.handleSubmit(handleSubmit)}
-            >
-              <div className="space-y-2">
-                <FormField
-                  control={form.control}
-                  name="shippingRole"
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FormControl>
-                        <Tabs
-                          value={field.value}
-                          onValueChange={(value) =>
-                            field.onChange(value as ShippingRole)
-                          }
-                        >
-                          <TabsList className="w-full grid grid-cols-2 h-10 p-0 bg-transparent">
-                            <TabsTrigger
-                              value={ShippingRole.DELIVERY}
-                              className="data-[state=active]:border-b-2 data-[state=active]:border-red-500 data-[state=active]:text-red-500 rounded-none h-10 font-medium shadow-none drop-shadow-none data-[state=active]:shadow-none text-gray-400"
-                            >
-                              Entrega
-                            </TabsTrigger>
-                            <TabsTrigger
-                              value={ShippingRole.PICK_UP_ON_STORE}
-                              className="data-[state=active]:border-b-2 data-[state=active]:border-red-500 data-[state=active]:text-red-500 rounded-none h-10 font-medium shadow-none drop-shadow-none data-[state=active]:shadow-none text-gray-400"
-                            >
-                              Retirada
-                            </TabsTrigger>
-                          </TabsList>
-                          <TabsContent
+        <ScrollArea className="h-full space-y-4 pr-2 pb-4">
+          {cart.map((item, index) => (
+            <OrderItem
+              key={index}
+              add={() => addCart(index)}
+              remove={() => removeCart(index)}
+              {...item}
+            />
+          ))}
+        </ScrollArea>
+
+        <Separator className="mt-auto" />
+
+        <Form {...form}>
+          <form
+            className="flex flex-col gap-2"
+            onSubmit={form.handleSubmit(handleSubmit)}
+          >
+            <div className="space-y-2">
+              <FormField
+                control={form.control}
+                name="shippingRole"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormControl>
+                      <Tabs
+                        value={field.value}
+                        onValueChange={(value) =>
+                          field.onChange(value as ShippingRole)
+                        }
+                      >
+                        <TabsList className="w-full grid grid-cols-2 h-10 p-0 bg-transparent">
+                          <TabsTrigger
                             value={ShippingRole.DELIVERY}
-                            className="mt-4 space-y-2"
+                            className="data-[state=active]:border-b-2 data-[state=active]:border-red-500 data-[state=active]:text-red-500 rounded-none h-10 font-medium shadow-none drop-shadow-none data-[state=active]:shadow-none text-gray-400"
                           >
-                            <OrderShipping
-                              address={userAddress}
-                              role={ShippingRole.DELIVERY}
-                              fee={form.getValues('fee') || undefined}
-                              deadlineAt={
-                                form.getValues('deadlineAt') || undefined
-                              }
-                            />
-                          </TabsContent>
-                          <TabsContent
+                            Entrega
+                          </TabsTrigger>
+                          <TabsTrigger
                             value={ShippingRole.PICK_UP_ON_STORE}
-                            className="mt-4 space-y-2"
+                            className="data-[state=active]:border-b-2 data-[state=active]:border-red-500 data-[state=active]:text-red-500 rounded-none h-10 font-medium shadow-none drop-shadow-none data-[state=active]:shadow-none text-gray-400"
                           >
-                            <OrderShipping
-                              address={storeAddress}
-                              role={ShippingRole.PICK_UP_ON_STORE}
-                            />
-                          </TabsContent>
-                        </Tabs>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                            Retirada
+                          </TabsTrigger>
+                        </TabsList>
+                        <TabsContent
+                          value={ShippingRole.DELIVERY}
+                          className="mt-4 space-y-2"
+                        >
+                          <OrderShipping
+                            address={userAddress}
+                            role={ShippingRole.DELIVERY}
+                            fee={form.getValues('fee') || undefined}
+                            deadlineAt={
+                              form.getValues('deadlineAt') || undefined
+                            }
+                          />
+                        </TabsContent>
+                        <TabsContent
+                          value={ShippingRole.PICK_UP_ON_STORE}
+                          className="mt-4 space-y-2"
+                        >
+                          <OrderShipping
+                            address={storeAddress!}
+                            role={ShippingRole.PICK_UP_ON_STORE}
+                          />
+                        </TabsContent>
+                      </Tabs>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <Separator />
+
+            <div className="space-y-2 py-2">
+              <div className="flex justify-between">
+                <p className="text-muted-foreground">Subtotal</p>
+                <p className="font-medium">
+                  {formatCurrency(form.watch('subAmount'))}
+                </p>
               </div>
+              <div className="flex justify-between">
+                <p className="text-muted-foreground">Taxa de entrega</p>
+                {form.getValues('fee') ? (
+                  <p className="text-[#3A3A3A] font-medium">
+                    {formatCurrency(form.watch('fee') || 0)}
+                  </p>
+                ) : (
+                  <p className="text-green-500 font-medium">Grátis</p>
+                )}
+              </div>
+            </div>
 
-              <Separator />
+            <Separator />
 
-              <div className="space-y-2 py-2">
-                <div className="flex justify-between">
-                  <p className="text-muted-foreground">Subtotal</p>
-                  <p className="font-medium">
-                    {formatCurrency(form.watch('subAmount'))}
+            <SheetFooter>
+              <div className="flex flex-col gap-2 w-full">
+                <div className="flex justify-between w-full mb-4">
+                  <p className="font-medium text-lg">Total</p>
+                  <p className="font-medium text-lg">
+                    {formatCurrency(form.watch('amount'))}
                   </p>
                 </div>
-                <div className="flex justify-between">
-                  <p className="text-muted-foreground">Taxa de entrega</p>
-                  {form.getValues('fee') ? (
-                    <p className="text-[#3A3A3A] font-medium">
-                      {formatCurrency(form.watch('fee') || 0)}
-                    </p>
-                  ) : (
-                    <p className="text-green-500 font-medium">Grátis</p>
-                  )}
-                </div>
+                <Button variant="red">
+                  <CreditCard /> Escolher forma de pagamento
+                </Button>
               </div>
-
-              <Separator />
-
-              <SheetFooter>
-                <div className="flex flex-col gap-2 w-full">
-                  <div className="flex justify-between w-full mb-4">
-                    <p className="font-medium text-lg">Total</p>
-                    <p className="font-medium text-lg">
-                      {formatCurrency(form.watch('amount'))}
-                    </p>
-                  </div>
-                  <Button variant="red">
-                    <CreditCard /> Escolher forma de pagamento
-                  </Button>
-                </div>
-              </SheetFooter>
-            </form>
-          </Form>
-        </SheetContent>
-      </Sheet>
-    </>
+            </SheetFooter>
+          </form>
+        </Form>
+      </SheetContent>
+    </Sheet>
   )
 }

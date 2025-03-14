@@ -1,12 +1,14 @@
 'use client'
 
 import { useEffect } from 'react'
-import { useParams, useRouter } from 'next/navigation'
+import { useParams, useRouter, usePathname } from 'next/navigation'
 
 import { useStore } from '@/hooks/use-store'
 import { useOpenStore } from '@/hooks/use-store'
 
 import { Header } from '@/app/loja/_components/header'
+import { DialogProvider } from '../_providers/dialog-provider'
+import { SheetProvider } from '../_providers/sheet-provider'
 // import { Footer } from '../_components/footer'
 
 export default function StoreLayout({
@@ -14,12 +16,13 @@ export default function StoreLayout({
 }: {
   children: React.ReactNode
 }) {
+  const pathname = usePathname()
   const params = useParams() as { slug?: string }
   useStore(params.slug)
 
   // const router = useRouter()
   const { store } = useOpenStore()
-console.log(store)
+
   // useEffect(() => {
   //   if (!store) {
   //     router.push('/')
@@ -32,11 +35,17 @@ console.log(store)
     return null
   }
 
+  const isAccountPage = pathname.includes('/conta')
+
   return (
-    <section>
-      {/* <Header /> */}
-      {children}
-      {/* <Footer /> */}
-    </section>
+    <>
+      <DialogProvider />
+      <SheetProvider />
+      <section>
+        {!isAccountPage && <Header />}
+        {children}
+        {/* {!isAccountPage && <Footer />} */}
+      </section>
+    </>
   )
 }

@@ -1,5 +1,4 @@
-'use client'
-
+import { create } from 'zustand'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -7,7 +6,9 @@ import { Banknote, CreditCard, DollarSign } from 'lucide-react'
 
 import { StorePayment } from '@prisma/client'
 
-import { useOpenStore } from '@/hooks/use-store'
+import { ExtendedUser } from '@/types/next-auth'
+
+import { ResponseType, useOpenStore } from '@/hooks/use-store'
 import { useCurrentUser } from '@/features/auth/hooks/use-current-user'
 import { useCreateOrder } from '@/features/foods/orders/api/use-create-order'
 
@@ -17,8 +18,8 @@ import { translateStorePayment } from '@/lib/i18n'
 import {
   type InsertCheckoutFormValues,
   insertCheckoutSchema,
+  InsertOrderFormValues,
   useCartStore,
-  useCheckoutStore,
 } from '@/features/foods/orders/schema'
 
 import {
@@ -43,15 +44,36 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 
-const PaymentOption = ({
-  currValue,
-  value,
-  onClick,
-}: {
+type PaymentOptionType = {
   currValue: StorePayment
   value: StorePayment
   onClick: () => void
-}) => {
+}
+
+type FormCheckoutComponentProps = {
+  isOpen: boolean
+  handleClose: () => void
+  store: ResponseType
+  user: ExtendedUser
+  order: InsertOrderFormValues
+  onSubmit: (values: InsertCheckoutFormValues) => void
+}
+
+type OpenCheckoutState = {
+  isOpen: boolean
+  order: InsertOrderFormValues | null
+  onOpen: (order: InsertOrderFormValues) => void
+  onClose: () => void
+}
+
+export const useOpenCheckout = create<OpenCheckoutState>((set) => ({
+  isOpen: false,
+  order: null,
+  onOpen: (order: InsertOrderFormValues) => set({ order, isOpen: true }),
+  onClose: () => set({ order: null, isOpen: false }),
+}))
+
+const PaymentOption = ({ currValue, value, onClick }: PaymentOptionType) => {
   const payment = () => {
     switch (value) {
       case 'PIX':
@@ -126,11 +148,42 @@ export const FormCheckout = () => {
   const { store } = useOpenStore()
   const { user } = useCurrentUser()
   const { clearCart } = useCartStore()
-  const { order, isOpen, onClose } = useCheckoutStore()
+  const { isOpen, order, onClose } = useOpenCheckout()
 
   const mutation = useCreateOrder()
   const isPending = mutation.isPending
 
+  if (!store || !user || !order) return null
+
+  const onSubmit = (values: InsertCheckoutFormValues) => {
+    mutation.mutate(values, {
+      onSuccess: () => {
+        onClose()
+        clearCart()
+      },
+    })
+  }
+
+  return (
+    <FormCheckoutComponent
+      isOpen={isOpen}
+      handleClose={onClose}
+      store={store}
+      user={user}
+      order={order}
+      onSubmit={onSubmit}
+    />
+  )
+}
+
+const FormCheckoutComponent = ({
+  isOpen,
+  handleClose,
+  store,
+  user,
+  order,
+  onSubmit,
+}: FormCheckoutComponentProps) => {
   const form = useForm<InsertCheckoutFormValues>({
     resolver: zodResolver(insertCheckoutSchema),
     defaultValues: { ...order },
@@ -145,8 +198,6 @@ export const FormCheckout = () => {
     }
   }, [order, form])
 
-  if (!store || !user || !order) return null
-
   const { payment, address: storeAddress } = store
   const { address: userAddress } = user
   const { shippingRole, fee, deadlineAt } = order
@@ -155,19 +206,13 @@ export const FormCheckout = () => {
   const selectedPayment = form.watch('payment')
 
   const handleSubmit = (values: InsertCheckoutFormValues) => {
-    console.log(values)
-    mutation.mutate(values, {
-      onSuccess: () => {
-        onClose()
-        clearCart()
-      },
-    })
+    onSubmit(values)
   }
 
-  console.log(form.formState.errors)
+  // console.log(form.formState.errors)
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="border-none w-full sm:max-w-[700px] max-h-[90%] overflow-y-auto p-4">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-black">

@@ -6,6 +6,7 @@ import { ExtendedUser } from '@/types/next-auth'
 import { cpfCnpjMask, phoneMask, zipCodeMask } from '@/lib/format'
 
 import { UpdateFormValues } from '@/features/auth/schema'
+import { AddressFormValues } from '@/features/common/schema'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -97,4 +98,24 @@ export function mapSessionToUpdateData(sessionUser: ExtendedUser) {
 export function statusFilter(status: string | undefined) {
   const regex = /^\s*(true|1|on)\s*$/i
   return status !== 'none' ? regex.test(status!) : undefined
+}
+
+export function formatAddress(address: AddressFormValues) {
+  const { street, number, neighborhood, city, state, zipCode } = address
+
+  return `${street}, ${
+    number || 'S/N'
+  } - ${neighborhood}, ${city} - ${state}, ${zipCode}`
+}
+
+export function mapAddress(address: AddressFormValues) {
+  return {
+    street: address.street || '',
+    neighborhood: address.neighborhood || '',
+    city: address.city || '',
+    state: address.state || '',
+    number: address.number || '',
+    zipCode: address.zipCode ? zipCodeMask(address.zipCode) : '',
+    complement: address.complement || '',
+  }
 }

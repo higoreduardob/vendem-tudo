@@ -26,6 +26,7 @@ export const FormEditStore = () => {
     email: data.email,
     cpfCnpj: data.cpfCnpj || '',
     whatsApp: data.whatsApp || '',
+    about: data.about,
     role: data.role,
     address: data.address,
     payment: data.payment,

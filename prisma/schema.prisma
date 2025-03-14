@@ -94,7 +94,8 @@ model Store {
   slug         String         @unique
   email        String?
   cpfCnpj      String?
-  whatsApp     String?
+  whatsApp     String
+  about        String
   role         StoreRole[]
   payment      StorePayment[]
   shippingRole ShippingRole[]

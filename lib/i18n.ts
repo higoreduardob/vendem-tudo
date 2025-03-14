@@ -48,7 +48,7 @@ export function translateStorePayment(payment: StorePayment) {
     case 'VISA_DEBIT_CARD':
       return 'Débito - VISA'
     case 'MEAL_VOUCHER':
-      return 'Vale alimentação'
+      return 'Vale-Refeição'
     default:
       return 'Dinheiro'
   }

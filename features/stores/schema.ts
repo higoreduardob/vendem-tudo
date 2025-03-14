@@ -38,6 +38,7 @@ export const insertStoreSchema = z.object({
     .nullish(),
   cpfCnpj: cpfCnpjSchema,
   whatsApp: whatsAppSchema,
+  about: z.string({ message: 'Sobre é obrigatório' }),
   role: z
     .array(z.nativeEnum(StoreRole), {
       message: 'Tipo de produto é obrigatório',
@@ -74,6 +75,7 @@ export const insertStoreDefaultValues: InsertStoreFormValues = {
   email: '',
   cpfCnpj: '',
   whatsApp: '',
+  about: '',
   role: [],
   payment: [],
   shippingRole: [],
