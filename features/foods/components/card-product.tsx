@@ -1,5 +1,4 @@
 import Image from 'next/image'
-import { useState } from 'react'
 import { InferResponseType } from 'hono'
 import { ShoppingCart, X } from 'lucide-react'
 import { useFormContext, useWatch } from 'react-hook-form'
@@ -10,6 +9,8 @@ import { client } from '@/lib/hono'
 import { calculatePercentage, cn, formatCurrency } from '@/lib/utils'
 
 import type { InsertProductInCartFormValues } from '@/features/foods/orders/schema'
+
+import { useOpenCart } from '@/features/foods/orders/components/form-cart'
 
 import {
   Card,
@@ -23,7 +24,6 @@ import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { ButtonCart } from '@/components/button-custom'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { FormCart } from '../orders/components/form-cart'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 
 export type ResponseType = InferResponseType<
@@ -32,7 +32,7 @@ export type ResponseType = InferResponseType<
 >['data'][0]
 
 export const CardProduct = ({ ...product }: ResponseType) => {
-  const [isDetailsOpen, setIsDetailsOpen] = useState(false)
+  const { onOpen } = useOpenCart()
   const { name } = product
 
   // TODO: Add variant badge
@@ -52,37 +52,30 @@ export const CardProduct = ({ ...product }: ResponseType) => {
   // }
 
   return (
-    <>
-      <Card className="overflow-hidden p-0">
-        <ProductImage {...product} />
-        <CardHeader className="px-2 pt-2">
-          <h3 className="font-semibold">{name}</h3>
-        </CardHeader>
-        <CardContent className="px-2">
-          <ProductPrice {...product} />
-          <div className="flex items-center gap-1">
-            <p className="text-sm text-gray-500">
-              Ainda não há avaliações para este produto
-            </p>
-          </div>
-        </CardContent>
-        <CardFooter className="p-2">
-          <Button
-            className="w-full gap-2"
-            variant="red"
-            onClick={() => setIsDetailsOpen(true)}
-          >
-            <ShoppingCart className="h-4 w-4" />
-            Adicionar
-          </Button>
-        </CardFooter>
-      </Card>
-      <FormCart
-        isOpen={isDetailsOpen}
-        handleClose={() => setIsDetailsOpen(false)}
-        {...product}
-      />
-    </>
+    <Card className="overflow-hidden p-0">
+      <ProductImage {...product} />
+      <CardHeader className="px-2 pt-2">
+        <h3 className="font-semibold">{name}</h3>
+      </CardHeader>
+      <CardContent className="px-2">
+        <ProductPrice {...product} />
+        <div className="flex items-center gap-1">
+          <p className="text-sm text-gray-500">
+            Ainda não há avaliações para este produto
+          </p>
+        </div>
+      </CardContent>
+      <CardFooter className="p-2">
+        <Button
+          className="w-full gap-2"
+          variant="red"
+          onClick={() => onOpen(product)}
+        >
+          <ShoppingCart className="h-4 w-4" />
+          Adicionar
+        </Button>
+      </CardFooter>
+    </Card>
   )
 }
 

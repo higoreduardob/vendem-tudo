@@ -25,6 +25,8 @@ export const insertShippingSchema = z.object({
   minimumAmount: z.number().int().nullish(),
 })
 
+export type InsertShippingFormValues = z.infer<typeof insertShippingSchema>
+
 export const insertStoreSchema = z.object({
   name: z
     .string({ message: 'Nome é obrigatório' })

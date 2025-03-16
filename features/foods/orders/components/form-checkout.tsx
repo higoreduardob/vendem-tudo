@@ -43,6 +43,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import { useOpenCheckoutDialog } from './checkout-dialog'
 
 type PaymentOptionType = {
   currValue: StorePayment
@@ -149,6 +150,7 @@ export const FormCheckout = () => {
   const { user } = useCurrentUser()
   const { clearCart } = useCartStore()
   const { isOpen, order, onClose } = useOpenCheckout()
+  const { onOpen } = useOpenCheckoutDialog()
 
   const mutation = useCreateOrder()
   const isPending = mutation.isPending
@@ -156,9 +158,14 @@ export const FormCheckout = () => {
   if (!store || !user || !order) return null
 
   const onSubmit = (values: InsertCheckoutFormValues) => {
+    const { deadlineAt: shippingDeadlineAt, shippingRole } = values
+    const deadlineAt =
+      shippingRole === 'DELIVERY' ? shippingDeadlineAt || undefined : undefined
+
     mutation.mutate(values, {
       onSuccess: () => {
         onClose()
+        onOpen(deadlineAt)
         clearCart()
       },
     })

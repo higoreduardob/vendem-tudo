@@ -15,9 +15,7 @@
 
         <Separator /> */}
 
-    1 . Consertar o bug do form-checkout de submit
-    2 . Product-card: Ao adicionar o produto no carrinho, fazer já a abertura do sheet do cart
-    3 . Cart: 1. Só mostrar para usuário logado | 2. Colocar mensagem de carrinho vazio | 3. Para endereço do cliente q a loja não faz deixa somente a opção de retirar | 4. Botão de trocar endereço abrir modal de endereço para atualizar a informação do cliente | 5. Após finalizar a seleção do checkout colocar um informativo do pedido com gif de delivery
+    3 . Cart: 4. Botão de trocar consertar o refetch state
     4 . Checkout: 1. Consertar layout do enderço de entrega para w-full | 2. Consertar layout do card product para w-full
     5 . Dark mode: Melhor a loja para dark mode
     6 . Notificações: 1. Fazer push notifications, e pesquisar como fazer no next para os registros de pedidos
@@ -26,6 +24,7 @@
     9 . Colocar um disabled em bairro, city, state, street quando digitar o CEP e deixei um loading de ui
     10 . check rules in authenticated: Store and Customer
     11 . check stages in order food
+    12 . Rever o error list do card product para o toaster
 
 Features:
   Institucional:

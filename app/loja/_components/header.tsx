@@ -1,8 +1,10 @@
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { ShoppingBag, User } from 'lucide-react'
 
 import { useOpenStore } from '@/hooks/use-store'
 import { useOpenAbout } from '@/app/loja/_components/about-store'
+import { useCurrentUser } from '@/features/auth/hooks/use-current-user'
 import { useGetStoreCategories } from '@/features/foods/categories/api/use-get-categories'
 
 import { useCartStore } from '@/features/foods/orders/schema'
@@ -18,15 +20,25 @@ import { Button } from '@/components/ui/button'
 import { useOpenOrder } from '@/features/foods/orders/components/form-order'
 
 export const Header = () => {
+  const router = useRouter()
   const { cart } = useCartStore()
   const { store } = useOpenStore()
+  const { user, status } = useCurrentUser()
   const { onOpen: onOpenAbout } = useOpenAbout()
   const { onOpen: onOpenOrder } = useOpenOrder()
+
+  if (!store) {
+    return null
+  }
 
   const categoriesQuery = useGetStoreCategories(store?.id)
   const categories = categoriesQuery.data || []
 
   const HEADER_NAV_MAIN = [
+    {
+      title: 'Ínicio',
+      onClick: () => router.push(`/loja/${store.slug}`),
+    },
     {
       title: 'Categorias',
       onClick: () => {},
@@ -40,6 +52,14 @@ export const Header = () => {
 
   if (categoriesQuery.isLoading) {
     return <>Skeleton</>
+  }
+
+  const handleOrder = () => {
+    if (status === 'authenticated' && user) {
+      onOpenOrder()
+    } else {
+      router.push(`/loja/${store.slug}/entrar`)
+    }
   }
 
   return (
@@ -87,7 +107,7 @@ export const Header = () => {
           <Button
             variant="ghost"
             className="relative flex items-center justify-center w-10 h-10 rounded-full cursor-pointer hover:bg-black/[0.05]"
-            onClick={onOpenOrder}
+            onClick={handleOrder}
           >
             <ShoppingBag className="h-[1.2rem] w-[1.2rem]" />
             <span className="absolute top-0 left-6 flex items-center justify-center h-[16px] min-w-[16px] text-[12px] text-white bg-red-600 rounded-full">

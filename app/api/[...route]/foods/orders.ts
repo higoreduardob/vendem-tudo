@@ -265,7 +265,7 @@ const app = new Hono()
 
       const shipping = store.shippings.find((item) => item.id === shippingId)
 
-      if (!shipping) {
+      if (shippingId && !shipping) {
         return c.json({ error: 'Método de entrega inválida' }, 400)
       }
 
@@ -340,7 +340,7 @@ const app = new Hono()
         (acc, item) => acc + item.amount * item.quantity,
         0
       )
-      const amount = (shipping.fee || 0) + subAmount
+      const amount = (shipping?.fee || 0) + subAmount
 
       await db.foodOrder.create({
         data: {
@@ -351,7 +351,7 @@ const app = new Hono()
           shippingRole: store.shippingRole.find((s) => s === shippingRole)!,
           storeId: store.id,
           customerId: user.id,
-          shippingId: shipping.id,
+          shippingId: shipping?.id,
 
           items: {
             create: foodItems.map((item) => ({

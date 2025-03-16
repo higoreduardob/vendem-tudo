@@ -1,36 +1,23 @@
-'use client'
-
-import { mapSessionToUpdateData } from '@/lib/utils'
-
 import { UpdateFormValues } from '@/features/auth/schema'
-
-import { useUpdate } from '@/features/auth/api/use-update'
-import { useUpdate2fa } from '@/features/auth/api/use-update-2fa'
-import { useCurrentUser } from '@/features/auth/hooks/use-current-user'
 
 import { Switch } from '@/components/ui/switch'
 import { MockForm } from '@/components/mock-form'
+import { FormDialog } from '@/components/form-dialog'
 import { ButtonLoading } from '@/components/button-custom'
 import { FormUser } from '@/features/users/components/form-user'
 import { FormControl, FormItem, FormLabel } from '@/components/ui/form'
 
-export const FormUpdate = () => {
-  const { user, update } = useCurrentUser()
+type FormUpdateProps = {
+  isPending?: boolean
+  defaultValues: UpdateFormValues
+  onSubmit: (values: UpdateFormValues) => void
+}
 
-  if (!user) return null
-
-  const mutation = useUpdate(user.id)
-
-  const isPending = mutation.isPending
-
-  const onSubmit = (values: UpdateFormValues) => {
-    mutation.mutate(values, {
-      onSuccess: async () => {
-        await update()
-      },
-    })
-  }
-
+export const FormUpdate = ({
+  isPending,
+  defaultValues,
+  onSubmit,
+}: FormUpdateProps) => {
   const handleSubmit = () => {
     document
       .getElementById('form-user')
@@ -41,7 +28,7 @@ export const FormUpdate = () => {
     <>
       <FormUser
         formId="form-user"
-        defaultValues={mapSessionToUpdateData(user)}
+        defaultValues={defaultValues}
         isPending={isPending}
         onSubmit={onSubmit}
       />
@@ -58,15 +45,17 @@ export const FormUpdate = () => {
   )
 }
 
-export const Form2FA = () => {
-  const { user, update } = useCurrentUser()
+type Form2FAProps = {
+  isTwoFactorEnabled?: boolean
+  isPending?: boolean
+  onSubmit: () => void
+}
 
-  if (!user) return null
-
-  const { id, isTwoFactorEnabled } = user
-
-  const mutation = useUpdate2fa(user.id)
-
+export const Form2FA = ({
+  isTwoFactorEnabled,
+  isPending,
+  onSubmit,
+}: Form2FAProps) => {
   return (
     <MockForm>
       <FormItem className="flex items-center gap-3">
@@ -77,23 +66,46 @@ export const Form2FA = () => {
           <Switch
             id="2FA"
             checked={isTwoFactorEnabled}
-            disabled={mutation.isPending}
-            onCheckedChange={() =>
-              mutation.mutate(
-                { param: { id } },
-                {
-                  onSuccess: async () => {
-                    update()
-                    // signIn(isOauth ? 'google' : 'credentials', {
-                    //   redirect: false,
-                    // })
-                  },
-                }
-              )
-            }
+            disabled={isPending}
+            onCheckedChange={onSubmit}
           />
         </FormControl>
       </FormItem>
     </MockForm>
+  )
+}
+
+type FormDialogUpdateProps = {
+  isOpen: boolean
+  defaultValues: UpdateFormValues
+  isPending?: boolean
+  handleClose: () => void
+  onSubmit: (values: UpdateFormValues) => void
+}
+
+export const FormDialogUpdate = ({
+  isOpen,
+  defaultValues,
+  isPending,
+  handleClose,
+  onSubmit,
+}: FormDialogUpdateProps) => {
+  return (
+    <FormDialog
+      formId="form-user"
+      title="Atualizar informações da conta"
+      description="Preencha os campos abaixo, e ao finalizar clique em “Salvar”."
+      isOpen={isOpen}
+      isPending={isPending}
+      handleClose={handleClose}
+      className="max-w-3xl"
+    >
+      <FormUser
+        formId="form-user"
+        defaultValues={defaultValues}
+        isPending={isPending}
+        onSubmit={onSubmit}
+      />
+    </FormDialog>
   )
 }

@@ -1,10 +1,9 @@
-import Link from 'next/link'
 import Image from 'next/image'
 import { create } from 'zustand'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { CreditCard, HelpCircle, MapPin, Timer } from 'lucide-react'
+import { CreditCard, HelpCircle, MapPin, Timer, Utensils } from 'lucide-react'
 
 import { ShippingRole } from '@prisma/client'
 
@@ -16,6 +15,7 @@ import { cn, formatCurrency } from '@/lib/utils'
 
 import { ResponseType, useOpenStore } from '@/hooks/use-store'
 import { useCurrentUser } from '@/features/auth/hooks/use-current-user'
+import { useOpenUpdate } from '@/features/auth/hooks/use-open-update'
 import { useOpenCheckout } from '@/features/foods/orders/components/form-checkout'
 
 import {
@@ -25,6 +25,7 @@ import {
   useCartStore,
 } from '@/features/foods/orders/schema'
 import type { AddressFormValues } from '@/features/common/schema'
+import { InsertShippingFormValues } from '@/features/stores/schema'
 
 import {
   FormControl,
@@ -74,7 +75,8 @@ type FormOrderComponentProps = {
   cart: InsertProductInCartFormValues[]
   addCart: (index: number) => void
   removeCart: (index: number) => void
-  onOpenCheckout: (order: InsertOrderFormValues) => void
+  onSubmit: (order: InsertOrderFormValues) => void
+  defaultValues: InsertOrderFormValues
 }
 
 type OpenOrderState = {
@@ -200,6 +202,8 @@ export const OrderShipping = ({
   isNonAddressChange = false,
   isColumnDirection = false,
 }: OrderShippingProps) => {
+  const { onOpen } = useOpenUpdate()
+
   return (
     <div
       className={cn('space-y-2', isColumnDirection && 'grid grid-cols-2 gap-2')}
@@ -219,7 +223,11 @@ export const OrderShipping = ({
           </p>
         </div>
         {role === 'DELIVERY' && !isNonAddressChange && (
-          <button type="button" className="text-red-500 text-sm font-medium">
+          <button
+            type="button"
+            className="text-red-500 text-sm font-medium"
+            onClick={onOpen}
+          >
             Trocar
           </button>
         )}
@@ -253,6 +261,22 @@ export const OrderShipping = ({
   )
 }
 
+type ShippingsResponseType = InsertShippingFormValues & { id: string }
+
+const findShippingAddress = (
+  shippings: ShippingsResponseType[],
+  userAddress: AddressFormValues
+) =>
+  shippings.find(
+    (shipping) =>
+      shipping.neighborhood === userAddress.neighborhood &&
+      shipping.city === userAddress.city &&
+      shipping.state === userAddress.state
+  )
+
+const calculateSubAmount = (cart: InsertProductInCartFormValues[]) =>
+  cart.reduce((total, item) => total + item.subAmount, 0)
+
 export const FormOrder = () => {
   const { store } = useOpenStore()
   const { user } = useCurrentUser()
@@ -261,6 +285,33 @@ export const FormOrder = () => {
   const { onOpen: onOpenCheckout } = useOpenCheckout()
 
   if (!store || !user) return null
+
+  const { shippings } = store
+  const { address: userAddress } = user
+  const isDeliveredEnabled = store.shippingRole.includes('DELIVERY')
+  const shippingAddress = isDeliveredEnabled
+    ? findShippingAddress(shippings, userAddress)
+    : undefined
+  const fee = shippingAddress?.fee || 0
+  const subAmount = calculateSubAmount(cart)
+
+  const defaultValues: InsertOrderFormValues = {
+    storeId: store.id,
+    customerId: 'user.id',
+    shippingId: shippingAddress?.id,
+    deadlineAt: shippingAddress?.deadlineAt,
+    subAmount: subAmount,
+    amount: subAmount + fee,
+    fee: fee,
+    shippingRole:
+      isDeliveredEnabled && shippingAddress ? 'DELIVERY' : 'PICK_UP_ON_STORE',
+    items: cart,
+  }
+
+  const onSubmit = (order: InsertOrderFormValues) => {
+    onOpenCheckout(order)
+    onClose()
+  }
 
   return (
     <FormOrderComponent
@@ -271,7 +322,8 @@ export const FormOrder = () => {
       cart={cart}
       addCart={addCart}
       removeCart={removeCart}
-      onOpenCheckout={onOpenCheckout}
+      onSubmit={onSubmit}
+      defaultValues={defaultValues}
     />
   )
 }
@@ -284,37 +336,11 @@ const FormOrderComponent = ({
   cart,
   addCart,
   removeCart,
-  onOpenCheckout,
+  onSubmit,
+  defaultValues,
 }: FormOrderComponentProps) => {
   const { shippings, address: storeAddress } = store
   const { address: userAddress } = user
-
-  const shippingAddress = shippings.find(
-    (shipping) =>
-      shipping.neighborhood === userAddress.neighborhood &&
-      shipping.city === userAddress.city &&
-      shipping.state === userAddress.state
-  )
-  const minAmount = shippingAddress?.minimumAmount
-  const fee = shippingAddress?.fee
-
-  const roleOptions = store.role.map((role) => translateStoreRole(role))
-
-  const calculateSubAmount = () =>
-    cart.reduce((total, item) => total + item.subAmount, 0)
-
-  const defaultValues: InsertOrderFormValues = {
-    storeId: store.id,
-    customerId: 'user.id',
-    shippingId: shippingAddress?.id,
-    deadlineAt: shippingAddress?.deadlineAt,
-    subAmount: calculateSubAmount(),
-    amount: calculateSubAmount() + (fee || 0),
-    fee: fee || 0,
-    shippingRole: ShippingRole.DELIVERY,
-    items: cart,
-  }
-
   const form = useForm<InsertOrderFormValues>({
     resolver: zodResolver(insertOrderSchema),
     defaultValues,
@@ -323,32 +349,38 @@ const FormOrderComponent = ({
     mode: 'all',
   })
 
+  const roleOptions = store.role.map((role) => translateStoreRole(role))
+  const isEmptyCart = !cart.length
+
+  const isDeliveredEnabled = store.shippingRole.includes('DELIVERY')
+  const shippingAddress = isDeliveredEnabled
+    ? findShippingAddress(shippings, userAddress)
+    : undefined
+  const minAmount = shippingAddress?.minimumAmount
+  const shippingFee = shippingAddress?.fee || 0
+
   const watchShippingRole = form.watch('shippingRole')
 
   useEffect(() => {
-    if (watchShippingRole === ShippingRole.DELIVERY) {
-      form.setValue('fee', fee || 0)
+    const subAmount = calculateSubAmount(cart)
+
+    if (watchShippingRole === 'DELIVERY') {
+      form.setValue('fee', shippingFee)
       form.setValue('shippingId', shippingAddress?.id)
+      form.setValue('shippingRole', 'DELIVERY')
     } else {
       form.setValue('fee', 0)
       form.setValue('shippingId', null)
+      form.setValue('shippingRole', 'PICK_UP_ON_STORE')
     }
-  }, [watchShippingRole, fee, shippingAddress?.id, form])
 
-  useEffect(() => {
     form.setValue('items', cart)
-    const newSubAmount = calculateSubAmount()
-    form.setValue('subAmount', newSubAmount)
-    form.setValue(
-      'amount',
-      newSubAmount +
-        (watchShippingRole === ShippingRole.DELIVERY ? fee || 0 : 0)
-    )
-  }, [cart, form, fee, watchShippingRole])
+    form.setValue('subAmount', subAmount)
+    form.setValue('amount', subAmount + (form.watch('fee') || 0))
+  }, [watchShippingRole, shippingFee, shippingAddress, cart, form])
 
   const handleSubmit = (values: InsertOrderFormValues) => {
-    // console.log(values)
-    onOpenCheckout(values)
+    onSubmit(values)
   }
 
   return (
@@ -383,9 +415,13 @@ const FormOrderComponent = ({
         <div className="space-y-2">
           <div className="flex justify-between items-center">
             <h2 className="font-medium text-lg">{store.name}</h2>
-            <Link href="#" className="text-sm text-red-500 font-medium">
+            <Button
+              variant="ghost"
+              className="text-sm text-red-500 font-medium"
+              onClick={handleClose}
+            >
               Ver Cardápio
-            </Link>
+            </Button>
           </div>
 
           <p className="text-muted-foreground text-sm">
@@ -398,118 +434,140 @@ const FormOrderComponent = ({
         <Separator />
 
         <ScrollArea className="h-full space-y-4 pr-2 pb-4">
-          {cart.map((item, index) => (
-            <OrderItem
-              key={index}
-              add={() => addCart(index)}
-              remove={() => removeCart(index)}
-              {...item}
-            />
-          ))}
+          {!isEmptyCart ? (
+            cart.map((item, index) => (
+              <OrderItem
+                key={index}
+                add={() => addCart(index)}
+                remove={() => removeCart(index)}
+                {...item}
+              />
+            ))
+          ) : (
+            <div className="flex flex-col gap-2 items-center justify-center">
+              <p className="text-base leading-tight dark:text-white">
+                <span className="font-semibold">
+                  Não tem produtos no seu carrinho
+                </span>
+              </p>
+              <Button variant="red" onClick={handleClose}>
+                <Utensils /> Ver cardápio
+              </Button>
+            </div>
+          )}
         </ScrollArea>
 
-        <Separator className="mt-auto" />
+        {!isEmptyCart && (
+          <>
+            <Separator className="mt-auto" />
 
-        <Form {...form}>
-          <form
-            className="flex flex-col gap-2"
-            onSubmit={form.handleSubmit(handleSubmit)}
-          >
-            <div className="space-y-2">
-              <FormField
-                control={form.control}
-                name="shippingRole"
-                render={({ field }) => (
-                  <FormItem className="w-full">
-                    <FormControl>
-                      <Tabs
-                        value={field.value}
-                        onValueChange={(value) =>
-                          field.onChange(value as ShippingRole)
-                        }
-                      >
-                        <TabsList className="w-full grid grid-cols-2 h-10 p-0 bg-transparent">
-                          <TabsTrigger
-                            value={ShippingRole.DELIVERY}
-                            className="data-[state=active]:border-b-2 data-[state=active]:border-red-500 data-[state=active]:text-red-500 rounded-none h-10 font-medium shadow-none drop-shadow-none data-[state=active]:shadow-none text-gray-400"
-                          >
-                            Entrega
-                          </TabsTrigger>
-                          <TabsTrigger
-                            value={ShippingRole.PICK_UP_ON_STORE}
-                            className="data-[state=active]:border-b-2 data-[state=active]:border-red-500 data-[state=active]:text-red-500 rounded-none h-10 font-medium shadow-none drop-shadow-none data-[state=active]:shadow-none text-gray-400"
-                          >
-                            Retirada
-                          </TabsTrigger>
-                        </TabsList>
-                        <TabsContent
-                          value={ShippingRole.DELIVERY}
-                          className="mt-4 space-y-2"
-                        >
-                          <OrderShipping
-                            address={userAddress}
-                            role={ShippingRole.DELIVERY}
-                            fee={form.getValues('fee') || undefined}
-                            deadlineAt={
-                              form.getValues('deadlineAt') || undefined
+            <Form {...form}>
+              <form
+                className="flex flex-col gap-2"
+                onSubmit={form.handleSubmit(handleSubmit)}
+              >
+                <div className="space-y-2">
+                  <FormField
+                    control={form.control}
+                    name="shippingRole"
+                    render={({ field }) => (
+                      <FormItem className="w-full">
+                        <FormControl>
+                          <Tabs
+                            value={field.value}
+                            onValueChange={(value) =>
+                              field.onChange(value as ShippingRole)
                             }
-                          />
-                        </TabsContent>
-                        <TabsContent
-                          value={ShippingRole.PICK_UP_ON_STORE}
-                          className="mt-4 space-y-2"
-                        >
-                          <OrderShipping
-                            address={storeAddress!}
-                            role={ShippingRole.PICK_UP_ON_STORE}
-                          />
-                        </TabsContent>
-                      </Tabs>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <Separator />
-
-            <div className="space-y-2 py-2">
-              <div className="flex justify-between">
-                <p className="text-muted-foreground">Subtotal</p>
-                <p className="font-medium">
-                  {formatCurrency(form.watch('subAmount'))}
-                </p>
-              </div>
-              <div className="flex justify-between">
-                <p className="text-muted-foreground">Taxa de entrega</p>
-                {form.getValues('fee') ? (
-                  <p className="text-[#3A3A3A] font-medium">
-                    {formatCurrency(form.watch('fee') || 0)}
-                  </p>
-                ) : (
-                  <p className="text-green-500 font-medium">Grátis</p>
-                )}
-              </div>
-            </div>
-
-            <Separator />
-
-            <SheetFooter>
-              <div className="flex flex-col gap-2 w-full">
-                <div className="flex justify-between w-full mb-4">
-                  <p className="font-medium text-lg">Total</p>
-                  <p className="font-medium text-lg">
-                    {formatCurrency(form.watch('amount'))}
-                  </p>
+                          >
+                            <TabsList className="w-full grid grid-cols-2 h-10 p-0 bg-transparent">
+                              {shippingAddress && (
+                                <TabsTrigger
+                                  value={ShippingRole.DELIVERY}
+                                  className="data-[state=active]:border-b-2 data-[state=active]:border-red-500 data-[state=active]:text-red-500 rounded-none h-10 font-medium shadow-none drop-shadow-none data-[state=active]:shadow-none text-gray-400"
+                                >
+                                  Entrega
+                                </TabsTrigger>
+                              )}
+                              <TabsTrigger
+                                value={ShippingRole.PICK_UP_ON_STORE}
+                                className={cn(
+                                  'data-[state=active]:border-b-2 data-[state=active]:border-red-500 data-[state=active]:text-red-500 rounded-none h-10 font-medium shadow-none drop-shadow-none data-[state=active]:shadow-none text-gray-400',
+                                  !shippingAddress && 'col-span-2'
+                                )}
+                              >
+                                Retirada
+                              </TabsTrigger>
+                            </TabsList>
+                            <TabsContent
+                              value={ShippingRole.DELIVERY}
+                              className="mt-4 space-y-2"
+                            >
+                              <OrderShipping
+                                address={userAddress}
+                                role={ShippingRole.DELIVERY}
+                                fee={form.getValues('fee') || undefined}
+                                deadlineAt={
+                                  form.getValues('deadlineAt') || undefined
+                                }
+                              />
+                            </TabsContent>
+                            <TabsContent
+                              value={ShippingRole.PICK_UP_ON_STORE}
+                              className="mt-4 space-y-2"
+                            >
+                              <OrderShipping
+                                address={storeAddress!}
+                                role={ShippingRole.PICK_UP_ON_STORE}
+                              />
+                            </TabsContent>
+                          </Tabs>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 </div>
-                <Button variant="red">
-                  <CreditCard /> Escolher forma de pagamento
-                </Button>
-              </div>
-            </SheetFooter>
-          </form>
-        </Form>
+
+                <Separator />
+
+                <div className="space-y-2 py-2">
+                  <div className="flex justify-between">
+                    <p className="text-muted-foreground">Subtotal</p>
+                    <p className="font-medium">
+                      {formatCurrency(form.watch('subAmount'))}
+                    </p>
+                  </div>
+                  <div className="flex justify-between">
+                    <p className="text-muted-foreground">Taxa de entrega</p>
+                    {form.getValues('fee') ? (
+                      <p className="text-[#3A3A3A] font-medium">
+                        {formatCurrency(form.watch('fee') || 0)}
+                      </p>
+                    ) : (
+                      <p className="text-green-500 font-medium">Grátis</p>
+                    )}
+                  </div>
+                </div>
+
+                <Separator />
+
+                <SheetFooter>
+                  <div className="flex flex-col gap-2 w-full">
+                    <div className="flex justify-between w-full mb-4">
+                      <p className="font-medium text-lg">Total</p>
+                      <p className="font-medium text-lg">
+                        {formatCurrency(form.watch('amount'))}
+                      </p>
+                    </div>
+                    <Button variant="red">
+                      <CreditCard /> Escolher forma de pagamento
+                    </Button>
+                  </div>
+                </SheetFooter>
+              </form>
+            </Form>
+          </>
+        )}
       </SheetContent>
     </Sheet>
   )

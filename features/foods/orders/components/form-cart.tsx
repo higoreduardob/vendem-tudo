@@ -1,4 +1,5 @@
 import { toast } from 'sonner'
+import { create } from 'zustand'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -11,14 +12,7 @@ import {
   useCartStore,
 } from '@/features/foods/orders/schema'
 
-import {
-  ProductAdditionals,
-  ProductDetails,
-  ProductImage,
-  ProductPrice,
-  ProductReview,
-  ResponseType,
-} from '@/features/foods/components/card-product'
+import { useOpenOrder } from './form-order'
 
 import {
   Form,
@@ -35,6 +29,14 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
+import {
+  ProductAdditionals,
+  ProductDetails,
+  ProductImage,
+  ProductPrice,
+  ProductReview,
+  ResponseType,
+} from '@/features/foods/components/card-product'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Separator } from '@/components/ui/separator'
@@ -44,37 +46,74 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 type Props = {
   isOpen: boolean
   handleClose: () => void
+  product: ResponseType
+  defaultValues: InsertProductInCartFormValues
+  onSubmit: (values: InsertProductInCartFormValues) => void
 }
 
-export const FormCart = ({
+type OpenCartState = {
+  isOpen: boolean
+  product: ResponseType | null
+  onOpen: (product: ResponseType) => void
+  onClose: () => void
+}
+
+export const useOpenCart = create<OpenCartState>((set) => ({
+  isOpen: false,
+  product: null,
+  onOpen: (product: ResponseType) => set({ product, isOpen: true }),
+  onClose: () => set({ isOpen: false, product: null }),
+}))
+
+export const FormCart = () => {
+  const { isOpen, product, onClose } = useOpenCart()
+  const { addProduct } = useCartStore()
+  const { onOpen } = useOpenOrder()
+
+  if (!product) return null
+
+  const defaultValues: InsertProductInCartFormValues = {
+    productId: product.id,
+    name: product.name,
+    image: product.image,
+    amount: product.promotion || product.price,
+    subAmount: product.promotion || product.price,
+    quantity: 1,
+    obs: '',
+    additionals: [],
+  }
+
+  const onSubmit = (values: InsertProductInCartFormValues) => {
+    addProduct(values)
+    toast.success('Produto adicionado ao carrinho!')
+    onClose()
+    onOpen()
+  }
+
+  return (
+    <FormCartComponent
+      isOpen={isOpen}
+      handleClose={onClose}
+      product={product}
+      defaultValues={defaultValues}
+      onSubmit={onSubmit}
+    />
+  )
+}
+
+const FormCartComponent = ({
   isOpen,
   handleClose,
-  ...product
-}: Props & ResponseType) => {
-  const {
-    id,
-    name,
-    image,
-    price,
-    promotion,
-    description,
-    ingredients,
-    additionals,
-  } = product
+  product,
+  defaultValues,
+  onSubmit: onSubmitCart,
+}: Props) => {
+  const { name, price, promotion, description, ingredients, additionals } =
+    product
 
-  const { addProduct } = useCartStore()
   const form = useForm<InsertProductInCartFormValues>({
     resolver: zodResolver(insertProductInCartSchema),
-    defaultValues: {
-      productId: id,
-      name,
-      image,
-      amount: promotion || price,
-      subAmount: promotion || price,
-      quantity: 1,
-      obs: '',
-      additionals: [],
-    },
+    defaultValues,
     shouldFocusError: true,
     reValidateMode: 'onChange',
     mode: 'all',
@@ -123,10 +162,7 @@ export const FormCart = ({
     const { amount, subAmount } = calculateTotal()
     values.amount = amount
     values.subAmount = subAmount
-
-    addProduct(values)
-    toast.success('Produto adicionado ao carrinho!')
-    handleClose()
+    onSubmitCart(values)
   }
 
   const calculateTotal = () => {
