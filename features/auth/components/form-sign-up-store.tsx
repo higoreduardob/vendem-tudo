@@ -33,6 +33,9 @@ export const FormSignUpStore = () => {
       onSuccess: () => {
         router.push('/entrar')
       },
+      onError: () => {
+        router.push('/entrar')
+      },
     })
   }
 

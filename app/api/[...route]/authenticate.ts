@@ -249,6 +249,23 @@ const app = new Hono()
     }
   )
   .post(
+    '/sign-up-store/slug',
+    zValidator('json', z.object({ slug: z.string() })),
+    async (c) => {
+      const validatedFields = c.req.valid('json')
+
+      if (!validatedFields) return c.json({ error: 'Campos inválidos' }, 400)
+      const { slug } = validatedFields
+
+      const existingSlugPath = await db.store.findUnique({ where: { slug } })
+      if (existingSlugPath) {
+        return c.json({ error: 'Link já cadastrado' }, 400)
+      }
+
+      return c.json({ success: 'Link disponível' }, 200)
+    }
+  )
+  .post(
     '/sign-up-store',
     zValidator('json', insertStoreSchema),
     zValidator('query', z.object({ token: z.string().optional() })),
@@ -269,7 +286,7 @@ const app = new Hono()
 
       const hasExpired = new Date(existingUserToken.expires) < new Date()
       if (hasExpired) {
-        return c.json({ error: 'Token expirado' }, 400)
+        return c.json({ error: 'Token expirado, faça o login novamente' }, 400)
       }
 
       const existingUser = await db.user.findUnique({

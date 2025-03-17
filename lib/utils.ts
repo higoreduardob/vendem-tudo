@@ -1,5 +1,6 @@
-import { clsx, type ClassValue } from 'clsx'
+import slugify from 'slugify'
 import { twMerge } from 'tailwind-merge'
+import { clsx, type ClassValue } from 'clsx'
 
 import { ExtendedUser } from '@/types/next-auth'
 
@@ -118,4 +119,10 @@ export function mapAddress(address: AddressFormValues) {
     zipCode: address.zipCode ? zipCodeMask(address.zipCode) : '',
     complement: address.complement || '',
   }
+}
+
+export function generateSlug(name: string) {
+  const slug = slugify(name, { lower: true, strict: true, trim: true })
+
+  return slug
 }

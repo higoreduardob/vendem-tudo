@@ -15,16 +15,17 @@
 
         <Separator /> */}
 
+    10 . check rules in authenticated: Store and Customer
+    7 . Loja: 1. Melhor o dark mode do multiselector | 2. Melhorar o schema e tradução dos horários | 3. Fazer as requests corretas dos bairros da api: https://brasilaberto.com/
+    8 . Disponibilidade da loja: 1. Definir as regras de loja ser possível estar acessada, caso contrário deixar maintenance | 2. Regras: Horários de funcionamento + Métodos de pagamento
+
     3 . Cart: 4. Botão de trocar consertar o refetch state
     4 . Checkout: 1. Consertar layout do enderço de entrega para w-full | 2. Consertar layout do card product para w-full
     5 . Dark mode: Melhor a loja para dark mode
-    6 . Notificações: 1. Fazer push notifications, e pesquisar como fazer no next para os registros de pedidos
-    7 . Loja: 1. Melhor o dark mode do multiselector | 2. Melhorar o schema e tradução dos horários | 3. Fazer as requests corretas dos bairros da api: https://brasilaberto.com/ | 4. Colocar about na loja um pequeno texto informativo da loja => Atualizar no header da loja (Sobre) com modal
-    8 . Disponibilidade da loja: 1. Definir as regras de loja ser possível estar acessada, caso contrário deixar maintenance | 2. Regras: Horários de funcionamento + Métodos de pagamento
-    9 . Colocar um disabled em bairro, city, state, street quando digitar o CEP e deixei um loading de ui
-    10 . check rules in authenticated: Store and Customer
-    11 . check stages in order food
     12 . Rever o error list do card product para o toaster
+
+    6 . Notificações: 1. Fazer push notifications, e pesquisar como fazer no next para os registros de pedidos
+    11 . check stages in order food
 
 Features:
   Institucional:

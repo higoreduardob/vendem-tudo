@@ -7,10 +7,12 @@ import {
   translateStorePayment,
   translateStoreRole,
 } from '@/lib/i18n'
-import { createEnumOptions } from '@/lib/utils'
 import { cpfCnpjMask, phoneMask } from '@/lib/format'
+import { createEnumOptions, generateSlug } from '@/lib/utils'
 
 import { InsertStoreFormValues } from '@/features/stores/schema'
+
+import { useSignUpStoreSlug } from '@/features/auth/api/use-sign-up-store'
 
 import {
   Card,
@@ -45,6 +47,13 @@ export const FormDetail = ({ isPending }: { isPending?: boolean }) => {
     (key) => translateShippingRole(key as ShippingRole)
   )
 
+  const mutationSlug = useSignUpStoreSlug()
+  const onSubmitSlug = (values: { slug: string }) => {
+    if (!values.slug) return
+
+    mutationSlug.mutate(values)
+  }
+
   return (
     <Card className="w-full border-none p-0 shadow-none space-y-2">
       <CardHeader className=" border p-2 rounded-sm">
@@ -68,6 +77,11 @@ export const FormDetail = ({ isPending }: { isPending?: boolean }) => {
                   <Input
                     {...field}
                     disabled={isPending}
+                    onChange={({ target: { value } }) => {
+                      field.onChange(value)
+                      const slug = generateSlug(value)
+                      form.setValue('slug', slug)
+                    }}
                     placeholder="Nome da loja"
                   />
                 </FormControl>
@@ -75,13 +89,23 @@ export const FormDetail = ({ isPending }: { isPending?: boolean }) => {
               </FormItem>
             )}
           />
-          {/* TODO: Add slugify, suggestion */}
           <FormField
             control={form.control}
             name="slug"
             render={({ field }) => (
               <FormItem className="w-full">
-                <FormLabel>Link</FormLabel>
+                <div className="flex items-center justify-between">
+                  <FormLabel>Link</FormLabel>
+                  <button
+                    type="button"
+                    className="text-xs bg-red-500 text-white p-0.5 rounded-sm"
+                    onClick={() =>
+                      onSubmitSlug({ slug: form.getValues('slug') })
+                    }
+                  >
+                    Verificar disponibilidade
+                  </button>
+                </div>
                 <FormControl>
                   <Input
                     {...field}

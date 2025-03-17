@@ -77,7 +77,7 @@ export const FormAddress = ({ isPending }: { isPending?: boolean }) => {
                 <FormControl>
                   <Input
                     {...field}
-                    disabled={isPending}
+                    disabled
                     value={field.value || ''}
                     placeholder="Bairro da loja"
                   />
@@ -115,7 +115,7 @@ export const FormAddress = ({ isPending }: { isPending?: boolean }) => {
                 <FormControl>
                   <Input
                     {...field}
-                    disabled={isPending}
+                    disabled
                     value={field.value || ''}
                     placeholder="Cidade da loja"
                   />
@@ -135,7 +135,7 @@ export const FormAddress = ({ isPending }: { isPending?: boolean }) => {
                 <FormControl>
                   <Input
                     {...field}
-                    disabled={isPending}
+                    disabled
                     value={field.value || ''}
                     placeholder="Estado do endereço"
                   />
@@ -153,7 +153,7 @@ export const FormAddress = ({ isPending }: { isPending?: boolean }) => {
                 <FormControl>
                   <Input
                     {...field}
-                    disabled={isPending}
+                    disabled
                     value={field.value || ''}
                     placeholder="Rua do endereço"
                   />

@@ -49,3 +49,47 @@ export const useSignUpStore = (token?: string) => {
 
   return mutation
 }
+
+type ResponseTypeSlug = InferResponseType<
+  (typeof client.api.authenticate)['sign-up-store']['slug']['$post']
+>
+type RequestTypeSlug = InferRequestType<
+  (typeof client.api.authenticate)['sign-up-store']['slug']['$post']
+>['json']
+
+export const useSignUpStoreSlug = () => {
+  const mutation = useMutation<
+    ResponseTypeSlug,
+    { message: string; status: number },
+    RequestTypeSlug
+  >({
+    mutationFn: async (json) => {
+      const response = await client.api.authenticate['sign-up-store']['slug'][
+        '$post'
+      ]({
+        json,
+      })
+
+      if (!response.ok) {
+        const data = await response.json()
+
+        throw {
+          message: data.error,
+          status: response.status,
+        }
+      }
+
+      return await response.json()
+    },
+    onSuccess: (res) => {
+      if ('success' in res) {
+        toast.success(res.success)
+      }
+    },
+    onError: (err) => {
+      toast.error(err.message)
+    },
+  })
+
+  return mutation
+}

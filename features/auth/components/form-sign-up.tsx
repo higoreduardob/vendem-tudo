@@ -195,7 +195,7 @@ export const FormSignUp = ({
                   <FormControl>
                     <Input
                       {...field}
-                      disabled={isPending}
+                      disabled
                       value={field.value || ''}
                       placeholder="Bairro"
                     />
@@ -231,7 +231,7 @@ export const FormSignUp = ({
                   <FormControl>
                     <Input
                       {...field}
-                      disabled={isPending}
+                      disabled
                       value={field.value || ''}
                       placeholder="Cidade"
                     />
@@ -248,7 +248,7 @@ export const FormSignUp = ({
                   <FormControl>
                     <Input
                       {...field}
-                      disabled={isPending}
+                      disabled
                       value={field.value || ''}
                       placeholder="Estado"
                     />
@@ -267,7 +267,7 @@ export const FormSignUp = ({
                   <FormControl>
                     <Input
                       {...field}
-                      disabled={isPending}
+                      disabled
                       value={field.value || ''}
                       placeholder="Rua"
                     />

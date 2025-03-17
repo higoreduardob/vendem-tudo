@@ -43,8 +43,8 @@ export const FormStore = ({
     form.reset()
   }, [isOpen])
 
-  console.log('Erros do formulário:', form.formState.errors)
-  console.log(form.getValues())
+  // console.log('Erros do formulário:', form.formState.errors)
+  // console.log(form.getValues())
 
   return (
     <Form {...form}>
