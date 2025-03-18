@@ -26,6 +26,15 @@ const app = new Hono()
     const user = await db.user.findUnique({ where: { id: auth.token.sub } })
     if (!user) return c.json({ error: 'Usuário não autorizado' }, 401)
 
+    if (
+      ![
+        UserRole.OWNER as string,
+        UserRole.MANAGER as string,
+        UserRole.EMPLOYEE as string,
+      ].includes(user.role)
+    ) {
+      return c.json({ error: 'Usuário sem autorização' }, 400)
+    }
     const ownerId = user.role === UserRole.OWNER ? user.id : user.ownerId!
 
     const store = await db.store.findUnique({
@@ -96,6 +105,15 @@ const app = new Hono()
       const user = await db.user.findUnique({ where: { id: auth.token.sub } })
       if (!user) return c.json({ error: 'Usuário não autorizado' }, 401)
 
+      if (
+        ![
+          UserRole.OWNER as string,
+          UserRole.MANAGER as string,
+          UserRole.EMPLOYEE as string,
+        ].includes(user.role)
+      ) {
+        return c.json({ error: 'Usuário sem autorização' }, 400)
+      }
       const ownerId = user.role === UserRole.OWNER ? user.id : user.ownerId!
 
       const store = await db.store.findUnique({
@@ -136,6 +154,15 @@ const app = new Hono()
     const user = await db.user.findUnique({ where: { id: auth.token.sub } })
     if (!user) return c.json({ error: 'Usuário não autorizado' }, 401)
 
+    if (
+      ![
+        UserRole.OWNER as string,
+        UserRole.MANAGER as string,
+        UserRole.EMPLOYEE as string,
+      ].includes(user.role)
+    ) {
+      return c.json({ error: 'Usuário sem autorização' }, 400)
+    }
     const ownerId = user.role === UserRole.OWNER ? user.id : user.ownerId!
 
     const store = await db.store.findUnique({
@@ -182,6 +209,15 @@ const app = new Hono()
       const user = await db.user.findUnique({ where: { id: auth.token.sub } })
       if (!user) return c.json({ error: 'Usuário não autorizado' }, 401)
 
+      if (
+        ![
+          UserRole.OWNER as string,
+          UserRole.MANAGER as string,
+          UserRole.EMPLOYEE as string,
+        ].includes(user.role)
+      ) {
+        return c.json({ error: 'Usuário sem autorização' }, 400)
+      }
       const ownerId = user.role === UserRole.OWNER ? user.id : user.ownerId!
 
       const store = await db.store.findUnique({
@@ -226,6 +262,15 @@ const app = new Hono()
       if (user.role === UserRole.EMPLOYEE)
         return c.json({ error: 'Usuário não autorizado' }, 401)
 
+      if (
+        ![
+          UserRole.OWNER as string,
+          UserRole.MANAGER as string,
+          UserRole.EMPLOYEE as string,
+        ].includes(user.role)
+      ) {
+        return c.json({ error: 'Usuário sem autorização' }, 400)
+      }
       const ownerId = user.role === UserRole.OWNER ? user.id : user.ownerId!
 
       const store = await db.store.findUnique({
@@ -276,6 +321,15 @@ const app = new Hono()
       const user = await db.user.findUnique({ where: { id: auth.token.sub } })
       if (!user) return c.json({ error: 'Usuário não autorizado' }, 401)
 
+      if (
+        ![
+          UserRole.OWNER as string,
+          UserRole.MANAGER as string,
+          UserRole.EMPLOYEE as string,
+        ].includes(user.role)
+      ) {
+        return c.json({ error: 'Usuário sem autorização' }, 400)
+      }
       const ownerId = user.role === UserRole.OWNER ? user.id : user.ownerId!
 
       const store = await db.store.findUnique({
@@ -345,6 +399,15 @@ const app = new Hono()
       const user = await db.user.findUnique({ where: { id: auth.token.sub } })
       if (!user) return c.json({ error: 'Usuário não autorizado' }, 401)
 
+      if (
+        ![
+          UserRole.OWNER as string,
+          UserRole.MANAGER as string,
+          UserRole.EMPLOYEE as string,
+        ].includes(user.role)
+      ) {
+        return c.json({ error: 'Usuário sem autorização' }, 400)
+      }
       const ownerId = user.role === UserRole.OWNER ? user.id : user.ownerId!
 
       const store = await db.store.findUnique({

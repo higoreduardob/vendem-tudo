@@ -15,7 +15,6 @@
 
         <Separator /> */}
 
-    10 . check rules in authenticated: Store and Customer
     7 . Loja: 1. Melhor o dark mode do multiselector | 2. Melhorar o schema e tradução dos horários | 3. Fazer as requests corretas dos bairros da api: https://brasilaberto.com/
     8 . Disponibilidade da loja: 1. Definir as regras de loja ser possível estar acessada, caso contrário deixar maintenance | 2. Regras: Horários de funcionamento + Métodos de pagamento
 
