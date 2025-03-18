@@ -172,3 +172,27 @@ export const updatePasswordDefaultValues: UpdatePasswordFormValues = {
   password: '',
   repeatPassword: '',
 }
+
+export const insertMessageSchema = z.object({
+  name: z
+    .string({ message: 'Nome é obrigatório' })
+    .min(1, { message: 'Nome é obrigatório' }),
+  email: z.coerce
+    .string({ message: 'Email é obrigatório' })
+    .email({ message: 'Informe um email válido' }),
+  subject: z
+    .string({ message: 'Assunto é obrigatório' })
+    .min(1, { message: 'Assunto é obrigatório' }),
+  message: z
+    .string({ message: 'Mensagem é obrigatório' })
+    .min(1, { message: 'Mensagem é obrigatório' }),
+})
+
+export type InsertMessageFormValues = z.infer<typeof insertMessageSchema>
+
+export const insertMessageDefaultValues: InsertMessageFormValues = {
+  name: '',
+  email: '',
+  subject: '',
+  message: '',
+}

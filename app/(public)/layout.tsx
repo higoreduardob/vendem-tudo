@@ -1,5 +1,5 @@
-import { Navbar } from '@/app/(public)/_components/navbar'
-import { Footer } from '@/app/(public)/_components/footer'
+import { Header } from '@/app/(public)/(home)/_components/header'
+import { Footer } from '@/app/(public)/(home)/_components/footer'
 
 export default function PublicLayout({
   children,
@@ -7,10 +7,10 @@ export default function PublicLayout({
   children: React.ReactNode
 }) {
   return (
-    <>
-      <Navbar />
+    <section>
+      <Header />
       {children}
       <Footer />
-    </>
+    </section>
   )
 }

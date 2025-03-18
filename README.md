@@ -28,22 +28,21 @@
 
 Features:
   Institucional:
+    Cadastro: Adicionar paywall com plano escolhido
+    Melhorar o estilo do email enviado
+    Demonstrações: 1. Pesquisar como Code with Antonio faz os vídeos dele
+
     Home: 1. Pesquisar lading page SaaS
     Sobre: 1. Pesquisar sobre de SaaS
-    Planos
-    Demonstrações: 1. Pesquisar como Code with Antonio faz os vídeos dele
+    Planos colocar no cadastro como paywall
     Suporte: 1. Colocar FAQ de suporte | 2. Envio de email de perguntas
     Termos: 1. Pesquisar Termos
     Políticas de privacidade: 1. Pesquisar Políticas de privacidade
-    
-    Melhorar o estilo do email enviado
-
-    Cadastro: Adicionar paywall com plano escolhido
 
   Gestão:
     Lojistas: 1. Exibir todos os lojista e permitir o CRUD
 
-  OWNER
+  OWNER/MANAGER/EMPLOYEE
     Painel: 1. Incluir gráfico de vendas | 2. Incluir tabela de pedidos do dia com filtro e limit
       Desempenho: 1. Incluir gráficos informativos das vendas
     Alimentos: 1. Incluir analytics dos alimentos | 2. Colocar filtro e limit | 3. Definição de destaques para +vendidos e +avaliados | 4. No product card reaver as badges de destaques
@@ -52,15 +51,9 @@ Features:
     Clientes: 1. Incluir analytics dos clientes | 2. Colocar filtro e limit
 
     Suporte: 1. Colocar whatsapp de contato de suporte | 2. Colocar FAQ com tempo de solucionamento
-    Conta: OK
-    Segurança: OK
-    Planos: 1. Colocar planos para o cliente    
+    Planos: 1. Colocar planos para o cliente
 
   CUSTOMER
-    Conta: OK
-    Pedidos: OK
-    Segurança: OK
-
     Header: 4. Categorias ao selecionar devem trazer produtos daquela categoria
     Hero: 1. Pesquisa de produtos com sugestão ao digitar | 2. Ao pesquisar o produto, trazer produtos semelhantes na busca, adicionando um grid de busca no layout | 3. Ao tocar na categoria deverá trazer produtos daquela categoria
     Footer: 1. Melhorar o footer, pegar umas referências

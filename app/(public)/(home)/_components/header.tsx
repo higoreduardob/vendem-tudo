@@ -20,7 +20,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Button } from '@/components/ui/button'
 
-export const Navbar = () => {
+export const Header = () => {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="flex h-16 items-center px-4">
@@ -36,26 +36,38 @@ export const Navbar = () => {
         <NavigationMenu className="hidden md:flex mx-6">
           <NavigationMenuList>
             <NavigationMenuItem>
-              <Link href="/planos" legacyBehavior passHref>
+              <Link href="/" legacyBehavior passHref>
                 <Button variant="ghost" size="sm">
-                  Planos
+                  Início
                 </Button>
               </Link>
             </NavigationMenuItem>
             <NavigationMenuItem>
-              <NavigationMenuTrigger className="bg-transparent hover:bg-accent hover:text-accent-foreground">
+              <Link href="/suporte" legacyBehavior passHref>
+                <Button variant="ghost" size="sm">
+                  Suporte
+                </Button>
+              </Link>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <NavigationMenuTrigger className="bg-transparent hover:bg-accent hover:text-accent-foreground text-xs">
                 Recursos
               </NavigationMenuTrigger>
               <NavigationMenuContent>
                 <div className="p-2">
                   <Link href="/sobre">
                     <Button variant="ghost" size="sm" className="w-full">
-                      Sobre
+                      Sobre nós
                     </Button>
                   </Link>
                   <Link href="/demonstracoes">
                     <Button variant="ghost" size="sm" className="w-full">
                       Demonstrações
+                    </Button>
+                  </Link>
+                  <Link href="/termos-de-uso">
+                    <Button variant="ghost" size="sm" className="w-full">
+                      Termos de uso
                     </Button>
                   </Link>
                   <Link href="/politicas-privacidade">
@@ -65,13 +77,6 @@ export const Navbar = () => {
                   </Link>
                 </div>
               </NavigationMenuContent>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              <Link href="/suporte" legacyBehavior passHref>
-                <Button variant="ghost" size="sm">
-                  Suporte
-                </Button>
-              </Link>
             </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
