@@ -188,6 +188,11 @@ const app = new Hono()
       },
     })
 
+    await db.store.update({
+      where: { id: store.id, ownerId, enabled: false },
+      data: { enabled: true },
+    })
+
     return c.json({ success: 'Produto criado' }, 201)
   })
   .post(

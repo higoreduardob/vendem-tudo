@@ -7,19 +7,19 @@ import {
   Truck,
   Store,
   ShoppingBag,
-  Info,
 } from 'lucide-react'
 import { create } from 'zustand'
 import { format } from 'date-fns'
 
 import { ResponseType, useOpenStore } from '@/hooks/use-store'
 
+import { weekDays } from '@/constants'
+
 import {
   translateShippingRole,
   translateStorePayment,
   translateStoreRole,
 } from '@/lib/i18n'
-import { weekDays } from '@/constants'
 import { formatAddress } from '@/lib/utils'
 
 import {
@@ -126,14 +126,19 @@ const AboutComponent = ({ isOpen, handleClose, store }: ComponentProps) => {
                   {store.schedules.map((schedule, index) => (
                     <div
                       key={index}
-                      className="flex justify-between gap-2 text-sm"
+                      className="flex items-center justify-between gap-2 text-sm"
                     >
-                      <span className="text-muted-foreground">
-                        {
-                          weekDays.find((week) => week.value === schedule.day)
-                            ?.label
-                        }
-                      </span>
+                      <div className="flex flex-col">
+                        <span className="text-muted-foreground">
+                          {
+                            weekDays.find((week) => week.value === schedule.day)
+                              ?.label
+                          }
+                        </span>
+                        <span className="text-xs">
+                          {schedule.enabled ? 'Aberto' : 'Fechado'}
+                        </span>
+                      </div>
                       <span>
                         {format(new Date(schedule.open), 'HH:mm')} -{' '}
                         {format(new Date(schedule.close), 'HH:mm')}

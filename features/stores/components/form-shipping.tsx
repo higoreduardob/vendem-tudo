@@ -1,8 +1,11 @@
 'use client'
 
+import { toast } from 'sonner'
 import { useState } from 'react'
 import { Plus, Trash2 } from 'lucide-react'
 import { useFormContext, useFieldArray } from 'react-hook-form'
+
+import { rioDasOstras } from '@/constants/neighborhoods'
 
 import type { InsertStoreFormValues } from '@/features/stores/schema'
 
@@ -31,24 +34,14 @@ import {
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { FormControl, FormItem, FormLabel } from '@/components/ui/form'
-
-// This would typically come from an API
-const MOCK_NEIGHBORHOODS = [
-  { state: 'SP', city: 'São Paulo', neighborhood: 'Vila Mariana' },
-  { state: 'SP', city: 'São Paulo', neighborhood: 'Moema' },
-  { state: 'SP', city: 'São Paulo', neighborhood: 'Pinheiros' },
-  { state: 'SP', city: 'São Paulo', neighborhood: 'Itaim Bibi' },
-  { state: 'RJ', city: 'Rio de Janeiro', neighborhood: 'Copacabana' },
-  { state: 'RJ', city: 'Rio de Janeiro', neighborhood: 'Ipanema' },
-  { state: 'MG', city: 'Belo Horizonte', neighborhood: 'Savassi' },
-]
+import { formatCurrency } from '@/lib/utils'
 
 export const FormShipping = ({ isPending }: { isPending?: boolean }) => {
   const [availableNeighborhoods, setAvailableNeighborhoods] =
-    useState(MOCK_NEIGHBORHOODS)
+    useState(rioDasOstras)
   const [selectedNeighborhood, setSelectedNeighborhood] = useState('')
   const [fee, setFee] = useState<number | undefined>(undefined)
-  const [deadlineAt, setDeadlineAt] = useState<number | undefined>(30)
+  const [deadlineAt, setDeadlineAt] = useState<number | undefined>(undefined)
   const [minimumAmount, setMinimumAmount] = useState<number | undefined>(
     undefined
   )
@@ -64,11 +57,7 @@ export const FormShipping = ({ isPending }: { isPending?: boolean }) => {
 
   function handleAddLocation() {
     if (!selectedNeighborhood) {
-      // toast({
-      //   title: "Error",
-      //   message: "Please select a neighborhood",
-      //   variant: "destructive",
-      // })
+      toast.error('Selecione um bairro de entrega')
       return
     }
 
@@ -83,29 +72,21 @@ export const FormShipping = ({ isPending }: { isPending?: boolean }) => {
       minimumAmount: minimumAmount || null,
     })
 
-    // Remove the added neighborhood from available options
     setAvailableNeighborhoods(
       availableNeighborhoods.filter(
         (n) => `${n.state}-${n.city}-${n.neighborhood}` !== selectedNeighborhood
       )
     )
 
-    // Reset form fields
     setSelectedNeighborhood('')
     setFee(undefined)
-    setDeadlineAt(30)
+    setDeadlineAt(undefined)
     setMinimumAmount(undefined)
-
-    // toast({
-    //   title: "Success",
-    //   description: "Delivery location added successfully",
-    // })
   }
 
   function handleRemoveLocation(index: number) {
     const locationToRemove = fields[index]
 
-    // Add the removed neighborhood back to available options
     setAvailableNeighborhoods([
       ...availableNeighborhoods,
       {
@@ -115,13 +96,7 @@ export const FormShipping = ({ isPending }: { isPending?: boolean }) => {
       },
     ])
 
-    // Remove from current locations
     remove(index)
-
-    // toast({
-    //   title: "Removed",
-    //   description: "Delivery location removed successfully",
-    // })
   }
 
   return (
@@ -167,12 +142,14 @@ export const FormShipping = ({ isPending }: { isPending?: boolean }) => {
                 type="number"
                 min="0"
                 step="1"
+                placeholder="Taxa de entrega"
                 value={fee === undefined ? '' : fee}
                 onChange={(e) =>
                   setFee(
                     e.target.value ? Number.parseInt(e.target.value) : undefined
                   )
                 }
+                disabled={isPending}
               />
             </FormControl>
           </FormItem>
@@ -182,12 +159,14 @@ export const FormShipping = ({ isPending }: { isPending?: boolean }) => {
               <Input
                 type="number"
                 min="1"
+                placeholder="Tempo médio de entrega"
                 value={deadlineAt === undefined ? '' : deadlineAt}
                 onChange={(e) =>
                   setDeadlineAt(
                     e.target.value ? Number.parseInt(e.target.value) : undefined
                   )
                 }
+                disabled={isPending}
               />
             </FormControl>
           </FormItem>
@@ -198,12 +177,14 @@ export const FormShipping = ({ isPending }: { isPending?: boolean }) => {
                 type="number"
                 min="0"
                 step="1"
+                placeholder="Valor mínimo para entrega"
                 value={minimumAmount === undefined ? '' : minimumAmount}
                 onChange={(e) =>
                   setMinimumAmount(
                     e.target.value ? Number.parseInt(e.target.value) : undefined
                   )
                 }
+                disabled={isPending}
               />
             </FormControl>
           </FormItem>
@@ -250,15 +231,9 @@ export const FormShipping = ({ isPending }: { isPending?: boolean }) => {
                       <TableCell>
                         {location.city}/{location.state}
                       </TableCell>
+                      <TableCell>{formatCurrency(location.fee || 0)}</TableCell>
                       <TableCell>
-                        {location.fee
-                          ? (location.fee / 100).toFixed(2)
-                          : '0.00'}
-                      </TableCell>
-                      <TableCell>
-                        {location.minimumAmount
-                          ? (location.minimumAmount / 100).toFixed(2)
-                          : '0.00'}
+                        {formatCurrency(location.minimumAmount || 0)}
                       </TableCell>
                       <TableCell>{location.deadlineAt || '-'}</TableCell>
                       <TableCell>

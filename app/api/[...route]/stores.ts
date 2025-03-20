@@ -41,6 +41,7 @@ const app = new Hono()
           id: createId(),
           slug,
           ownerId,
+          enabled: true,
           ...values,
           address: { create: { ...address } },
           schedules: { createMany: { data: schedules } },
@@ -97,7 +98,7 @@ const app = new Hono()
       }
 
       const data = await db.store.findUnique({
-        where: { slug },
+        where: { slug, status: true },
         include: {
           address: {
             select: {

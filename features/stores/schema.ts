@@ -27,47 +27,60 @@ export const insertShippingSchema = z.object({
 
 export type InsertShippingFormValues = z.infer<typeof insertShippingSchema>
 
-export const insertStoreSchema = z.object({
-  name: z
-    .string({ message: 'Nome é obrigatório' })
-    .min(1, { message: 'Nome é obrigatório' }),
-  slug: z
-    .string({ message: 'Endereço único é obrigatório' })
-    .min(1, { message: 'Endereço único é obrigatório' }),
-  email: z.coerce
-    .string({ message: 'Email é obrigatório' })
-    .email({ message: 'Informe um email válido' })
-    .nullish(),
-  cpfCnpj: cpfCnpjSchema,
-  whatsApp: whatsAppSchema,
-  about: z.string({ message: 'Sobre é obrigatório' }),
-  role: z
-    .array(z.nativeEnum(StoreRole), {
-      message: 'Tipo de produto é obrigatório',
-    })
-    .min(1, { message: 'Pelo menos um tipo deve ser selecionado' }),
-  payment: z
-    .array(z.nativeEnum(StorePayment), {
-      message: 'forma de pagamento é obrigatório',
-    })
-    .min(1, {
-      message: 'Pelo menos um tipo de forma de pagamento deve ser selecionado',
-    }),
-  shippingRole: z
-    .array(z.nativeEnum(ShippingRole), {
-      message: 'Método de entrega é obrigatório',
-    })
-    .min(1, {
-      message: 'Pelo menos um método de entrega deve ser selecionado',
-    }),
-  schedules: z
-    .array(insertScheduleSchema)
-    .min(1, { message: 'Selecione pelo menos 1 horário de funcionamento' }),
-  shippings: z
-    .array(insertShippingSchema)
-    .min(1, { message: 'Informe ao menos 1 endereço de entrega' }),
-  address: addressSchema,
-})
+export const insertStoreSchema = z
+  .object({
+    name: z
+      .string({ message: 'Nome é obrigatório' })
+      .min(1, { message: 'Nome é obrigatório' }),
+    slug: z
+      .string({ message: 'Endereço único é obrigatório' })
+      .min(1, { message: 'Endereço único é obrigatório' }),
+    email: z.coerce
+      .string({ message: 'Email é obrigatório' })
+      .email({ message: 'Informe um email válido' })
+      .nullish(),
+    cpfCnpj: cpfCnpjSchema,
+    whatsApp: whatsAppSchema,
+    about: z
+      .string({ message: 'Sobre é obrigatório' })
+      .min(1, { message: 'Sobre é obrigatório' }),
+    role: z
+      .array(z.nativeEnum(StoreRole), {
+        message: 'Tipo de produto é obrigatório',
+      })
+      .min(1, { message: 'Pelo menos um tipo deve ser selecionado' }),
+    payment: z
+      .array(z.nativeEnum(StorePayment), {
+        message: 'forma de pagamento é obrigatório',
+      })
+      .min(1, {
+        message:
+          'Pelo menos um tipo de forma de pagamento deve ser selecionado',
+      }),
+    shippingRole: z
+      .array(z.nativeEnum(ShippingRole), {
+        message: 'Método de entrega é obrigatório',
+      })
+      .min(1, {
+        message: 'Pelo menos um método de entrega deve ser selecionado',
+      }),
+    schedules: z
+      .array(insertScheduleSchema)
+      .min(1, { message: 'Selecione pelo menos 1 horário de funcionamento' }),
+    shippings: z
+      .array(insertShippingSchema)
+      .min(1, { message: 'Informe ao menos 1 endereço de entrega' }),
+    address: addressSchema,
+  })
+  .refine(
+    (data) => {
+      return data.schedules.some((schedule) => schedule.enabled)
+    },
+    {
+      message: 'Pelo menos um dia da semana deve estar habilitado',
+      path: ['schedules'],
+    }
+  )
 
 export type InsertStoreFormValues = z.infer<typeof insertStoreSchema>
 

@@ -1,3 +1,4 @@
+import { toast } from 'sonner'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -35,6 +36,11 @@ export const FormStore = ({
     mode: 'all',
   })
 
+  const schedulesError =
+    form.formState.errors.schedules?.message ||
+    form.formState.errors.schedules?.root?.message
+  const shippingsError = form.formState.errors.shippings?.message
+
   const handleSubmit = (values: InsertStoreFormValues) => {
     onSubmit(values)
   }
@@ -43,8 +49,10 @@ export const FormStore = ({
     form.reset()
   }, [isOpen])
 
-  // console.log('Erros do formulário:', form.formState.errors)
-  // console.log(form.getValues())
+  useEffect(() => {
+    if (schedulesError) toast.error(schedulesError)
+    if (shippingsError) toast.error(shippingsError)
+  }, [schedulesError, shippingsError, toast])
 
   return (
     <Form {...form}>

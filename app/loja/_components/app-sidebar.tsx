@@ -75,7 +75,7 @@ export function AppSidebar() {
                 className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
               >
                 <Image
-                  src="/logo.svg"
+                  src="/logo-light.svg"
                   alt="Vendem Tudo"
                   width={32}
                   height={32}

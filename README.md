@@ -1,30 +1,30 @@
-       {/* <div className="flex justify-between items-center py-2">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-6 bg-gray-100 flex items-center justify-center rotate-12">
-              <div className="w-6 h-4 border border-dashed border-gray-400"></div>
-            </div>
-            <div>
-              <p className="font-medium">Cupom</p>
-              <p className="text-sm text-muted-foreground">
-                1 cupom disponível
-              </p>
-            </div>
-          </div>
-          <ChevronRight className="h-5 w-5 text-muted-foreground" />
-        </div>
-
-        <Separator /> */}
-
-    7 . Loja: 1. Melhor o dark mode do multiselector | 2. Melhorar o schema e tradução dos horários | 3. Fazer as requests corretas dos bairros da api: https://brasilaberto.com/
-    8 . Disponibilidade da loja: 1. Definir as regras de loja ser possível estar acessada, caso contrário deixar maintenance | 2. Regras: Horários de funcionamento + Métodos de pagamento
-
     3 . Cart: 4. Botão de trocar consertar o refetch state
     4 . Checkout: 1. Consertar layout do enderço de entrega para w-full | 2. Consertar layout do card product para w-full
-    5 . Dark mode: Melhor a loja para dark mode
     12 . Rever o error list do card product para o toaster
 
     6 . Notificações: 1. Fazer push notifications, e pesquisar como fazer no next para os registros de pedidos
     11 . check stages in order food
+
+    2 - Feat
+      5 . Dark mode: Melhor a loja para dark mode
+      7 . Loja: 1. Melhor o dark mode do multiselector
+      8 . Add Cupom
+        {/* <div className="flex justify-between items-center py-2">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-6 bg-gray-100 flex items-center justify-center rotate-12">
+                <div className="w-6 h-4 border border-dashed border-gray-400"></div>
+              </div>
+              <div>
+                <p className="font-medium">Cupom</p>
+                <p className="text-sm text-muted-foreground">
+                  1 cupom disponível
+                </p>
+              </div>
+            </div>
+            <ChevronRight className="h-5 w-5 text-muted-foreground" />
+          </div>
+
+          <Separator /> */}
 
 Features:
   Institucional:

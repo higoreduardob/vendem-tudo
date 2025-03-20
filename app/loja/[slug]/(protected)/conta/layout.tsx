@@ -3,7 +3,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from '@/components/ui/sidebar'
-import { ButthonTheme } from '@/components/button-custom'
+// import { ButthonTheme } from '@/components/button-custom'
 import { AppSidebar } from '@/app/loja/_components/app-sidebar'
 
 export default function AccountLayour({
@@ -19,7 +19,7 @@ export default function AccountLayour({
           <div className="flex justify-between items-center gap-2 px-4 w-full">
             <SidebarTrigger className="-ml-1" />
             <div className="flex items-center gap-2">
-              <ButthonTheme />
+              {/* <ButthonTheme /> */}
             </div>
           </div>
         </header>

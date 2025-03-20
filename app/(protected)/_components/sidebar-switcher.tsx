@@ -42,7 +42,12 @@ export function SidebarSwitcher({
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <Image src="/logo.svg" alt="Vendem Tudo" width={32} height={32} />
+              <Image
+                src="/logo-light.svg"
+                alt="Vendem Tudo"
+                width={32}
+                height={32}
+              />
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-semibold">{name}</span>
                 <span className="truncate text-xs">{storeName}</span>

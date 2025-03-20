@@ -1,5 +1,7 @@
 'use client'
 
+import type React from 'react'
+
 import { useEffect } from 'react'
 import { useParams, useRouter, usePathname } from 'next/navigation'
 
@@ -16,33 +18,36 @@ export default function StoreLayout({
 }: {
   children: React.ReactNode
 }) {
+  const router = useRouter()
   const pathname = usePathname()
   const params = useParams() as { slug?: string }
   useStore(params.slug)
 
-  // const router = useRouter()
   const { store } = useOpenStore()
+  const isMaintenancePage = pathname.includes('/manutencao')
+  const isAccountPage = pathname.includes('/conta')
 
-  // useEffect(() => {
-  //   if (!store) {
-  //     router.push('/')
-  //   }
-  // }, [store, router])
-
+  useEffect(() => {
+    if (store && !store.enabled && !isMaintenancePage) {
+      router.push(`/loja/${store.slug}/manutencao`)
+    }
+  }, [router, store, isMaintenancePage, pathname])
   // TODO: Check if store is available to sales (categories/products/payment/delivery e etc..)
 
   if (!store) {
     return null
   }
 
-  const isAccountPage = pathname.includes('/conta')
+  if (!store.enabled && !isMaintenancePage) {
+    return null
+  }
 
   return (
     <>
       <DialogProvider />
       <SheetProvider />
       <section>
-        {!isAccountPage && <Header />}
+        {!isAccountPage && !isMaintenancePage && <Header />}
         {children}
         {/* {!isAccountPage && <Footer />} */}
       </section>

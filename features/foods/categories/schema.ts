@@ -11,6 +11,7 @@ export const insertCategorySchema = z.object({
 
 export type InsertCategoryFormValues = z.infer<typeof insertCategorySchema>
 
+// TODO: Change upload image
 export const insertCategoryDefaultValues: InsertCategoryFormValues = {
   name: '',
   image: 'https://placehold.co/400',

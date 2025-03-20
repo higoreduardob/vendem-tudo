@@ -350,11 +350,11 @@ export const FormSignUp = ({
                     <FormLabel>Termos de uso</FormLabel>
                     <FormDescription>
                       Você aceita os{' '}
-                      <Link href="/termos" className="underline">
+                      <Link href="/termos-de-uso" className="underline">
                         termos
                       </Link>{' '}
                       e{' '}
-                      <Link href="/politicas-privacidade" className="underline">
+                      <Link href="/politicas-de-privacidade" className="underline">
                         políticas de privacidade
                       </Link>
                       ?

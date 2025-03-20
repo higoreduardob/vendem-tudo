@@ -21,10 +21,10 @@ function AuthLayoutComponent({ children }: { children: React.ReactNode }) {
   if (status === 'loading') {
     return (
       <section className="flex min-h-[calc(100vh-117px)] justify-center items-center max-w-6xl mx-auto">
-        <div className="flex-1 flex flex-col gap-4 p-4">
+        <div className="flex-1 flex flex-col gap-4">
           <Skeleton className="h-full w-full" />
         </div>
-        <div className="flex-1 md:flex hidden items-center justify-center p-6 lg:justify-end">
+        <div className="md:flex hidden items-center justify-center p-6 lg:justify-end">
           <div className="max-w-md space-y-3">
             <h1 className="text-2xl font-semibold">Bem vindo</h1>
             <p className="text-sm text-muted-foreground">
@@ -49,8 +49,8 @@ function AuthLayoutComponent({ children }: { children: React.ReactNode }) {
 
   return (
     <section className="flex min-h-[calc(100vh-117px)] justify-center items-center max-w-6xl mx-auto gap-2">
-      <div className="flex-1 flex flex-col gap-4 p-4">{children}</div>
-      <div className="flex-1 md:flex hidden items-center justify-center">
+      <div className="flex-1 flex flex-col gap-4">{children}</div>
+      <div className="lg:flex hidden items-center justify-center">
         <div className="max-w-md space-y-3">
           <h1 className="text-2xl font-semibold">Bem vindo</h1>
           <p className="text-sm text-muted-foreground">

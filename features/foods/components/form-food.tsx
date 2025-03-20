@@ -73,8 +73,9 @@ export const FormFood = ({
       value: category.id,
     })
   )
+  // TODO: Change rule create
   const onCreateCategory = (name: string) =>
-    categoryMutation.mutate({ name, image: '' })
+    categoryMutation.mutate({ name, image: 'https://placehold.co/400' })
   const isLoadingCreateCategory = categoryMutation.isPending
 
   const additionalsQuery = useGetFoodAdditionals()
