@@ -39,13 +39,13 @@ export const Footer = () => {
                 Início
               </Link>
               <Link
-                href="/"
+                href="/planos"
                 className="text-muted-foreground text-sm hover:text-purple-950"
               >
                 Planos
               </Link>
               <Link
-                href="/"
+                href="/sobre-nos"
                 className="text-muted-foreground text-sm hover:text-purple-950"
               >
                 Sobre nós
@@ -57,13 +57,13 @@ export const Footer = () => {
             <h3 className="text-lg font-semibold">Legal</h3>
             <div className="flex flex-col gap-2">
               <Link
-                href="/"
+                href="/termos-de-uso"
                 className="text-muted-foreground text-sm hover:text-purple-950"
               >
                 Termos de uso
               </Link>
               <Link
-                href="/"
+                href="/politicas-de-privacidade"
                 className="text-muted-foreground text-sm hover:text-purple-950"
               >
                 Políticas de privacidade
@@ -75,13 +75,13 @@ export const Footer = () => {
             <h3 className="text-lg font-semibold">Fale conosco</h3>
             <div className="flex flex-col gap-2">
               <Link
-                href="/"
+                href="/suporte"
                 className="text-muted-foreground text-sm hover:text-purple-950"
               >
                 Suporte
               </Link>
               <Link
-                href="/"
+                href="/demonstracoes"
                 className="text-muted-foreground text-sm hover:text-purple-950"
               >
                 Demonstração

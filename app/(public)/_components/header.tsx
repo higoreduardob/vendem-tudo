@@ -55,7 +55,7 @@ export const Header = () => {
               </NavigationMenuTrigger>
               <NavigationMenuContent>
                 <div className="p-2">
-                  <Link href="/sobre">
+                  <Link href="/sobre-nos">
                     <Button variant="ghost" size="sm" className="w-full">
                       Sobre nós
                     </Button>
@@ -70,7 +70,7 @@ export const Header = () => {
                       Termos de uso
                     </Button>
                   </Link>
-                  <Link href="/politicas-privacidade">
+                  <Link href="/politicas-de-privacidade">
                     <Button variant="ghost" size="sm" className="w-full">
                       Políticas de privacidade
                     </Button>
