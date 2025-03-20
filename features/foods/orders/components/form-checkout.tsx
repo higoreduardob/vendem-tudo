@@ -294,7 +294,7 @@ const FormCheckoutComponent = ({
               </form>
             </Form>
             <div className="flex flex-col gap-2">
-              <ScrollArea className="pr-4 flex-grow">
+              <ScrollArea className="flex-grow max-h-[400px]">
                 {order.items.map((item, index) => (
                   <OrderItem key={index} {...item} isNonAddedProduct />
                 ))}

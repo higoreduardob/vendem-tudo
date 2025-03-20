@@ -205,9 +205,7 @@ export const OrderShipping = ({
   const { onOpen } = useOpenUpdate()
 
   return (
-    <div
-      className={cn('space-y-2', isColumnDirection && 'grid grid-cols-2 gap-2')}
-    >
+    <div className={cn('', isColumnDirection && 'grid grid-cols-2 gap-2')}>
       <div className="flex items-center gap-2 bg-gray-50 p-2 rounded-sm">
         <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
           <MapPin className="text-red-500 w-5 h-5" />

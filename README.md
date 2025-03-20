@@ -1,7 +1,7 @@
     1 . Cadastro: Adicionar paywall com plano escolhido
     2 . Melhorar o estilo do email enviado
     3 . Cart: 4. Botão de trocar consertar o refetch state
-    4 . Checkout: 1. Consertar layout do enderço de entrega para w-full | 2. Consertar layout do card product para w-full
+
     5 . Rever o error list do card product para o toaster
     6 . Notificações: 1. Fazer push notifications, e pesquisar como fazer no next para os registros de pedidos
     7 . check stages in order food
