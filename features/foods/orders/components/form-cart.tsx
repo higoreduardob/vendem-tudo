@@ -1,7 +1,8 @@
-import { toast } from 'sonner'
 import { create } from 'zustand'
 import { useEffect } from 'react'
+import { toast as sonner } from 'sonner'
 import { useForm } from 'react-hook-form'
+import toast, { Toaster } from 'react-hot-toast'
 import { zodResolver } from '@hookform/resolvers/zod'
 
 import { formatCurrency } from '@/lib/utils'
@@ -85,19 +86,22 @@ export const FormCart = () => {
 
   const onSubmit = (values: InsertProductInCartFormValues) => {
     addProduct(values)
-    toast.success('Produto adicionado ao carrinho!')
+    sonner.success('Produto adicionado ao carrinho!')
     onClose()
     onOpen()
   }
 
   return (
-    <FormCartComponent
-      isOpen={isOpen}
-      handleClose={onClose}
-      product={product}
-      defaultValues={defaultValues}
-      onSubmit={onSubmit}
-    />
+    <>
+      <Toaster position="bottom-right" />
+      <FormCartComponent
+        isOpen={isOpen}
+        handleClose={onClose}
+        product={product}
+        defaultValues={defaultValues}
+        onSubmit={onSubmit}
+      />
+    </>
   )
 }
 
@@ -154,7 +158,9 @@ const FormCartComponent = ({
 
     if (errors.length > 0) {
       errors.forEach((error) => {
-        toast.error(error)
+        toast.error(error, {
+          duration: 3000,
+        })
       })
       return
     }

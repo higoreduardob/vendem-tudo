@@ -11,7 +11,7 @@ import { useOpenStore } from '@/hooks/use-store'
 import { Header } from '@/app/loja/_components/header'
 import { DialogProvider } from '../_providers/dialog-provider'
 import { SheetProvider } from '../_providers/sheet-provider'
-// import { Footer } from '../_components/footer'
+import { Footer } from '../_components/footer'
 
 export default function StoreLayout({
   children,
@@ -49,7 +49,7 @@ export default function StoreLayout({
       <section>
         {!isAccountPage && !isMaintenancePage && <Header />}
         {children}
-        {/* {!isAccountPage && <Footer />} */}
+        {!isAccountPage && !isMaintenancePage && <Footer />}
       </section>
     </>
   )

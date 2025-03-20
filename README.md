@@ -1,13 +1,12 @@
     1 . Cadastro: Adicionar paywall com plano escolhido
     2 . Melhorar o estilo do email enviado
-    3 . Cart: 4. Botão de trocar consertar o refetch state
+    3 . Notificações: 1. Fazer push notifications, e pesquisar como fazer no next para os registros de pedidos
+    4 . check stages in order food
+    5 . Avaliação do cliente
 
-    5 . Rever o error list do card product para o toaster
-    6 . Notificações: 1. Fazer push notifications, e pesquisar como fazer no next para os registros de pedidos
-    7 . check stages in order food
-    8 . Demonstrações: 1. Pesquisar como Code with Antonio faz os vídeos dele
-    9 . Suporte: 2. Integrar envio de email de perguntas
-    10 . Avaliação do cliente
+    6 . Cart: 4. Botão de trocar consertar o refetch state
+    7 . Demonstrações: 1. Pesquisar como Code with Antonio faz os vídeos dele
+    8 . Suporte: 2. Integrar envio de email de perguntas
 
 Features:
   Gestão:

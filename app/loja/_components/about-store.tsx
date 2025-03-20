@@ -33,6 +33,14 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
 
 type OpenAboutState = {
   isOpen: boolean
@@ -62,6 +70,7 @@ export const AboutStore = () => {
 }
 
 const AboutComponent = ({ isOpen, handleClose, store }: ComponentProps) => {
+  console.log(store.shippings)
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
@@ -199,9 +208,77 @@ const AboutComponent = ({ isOpen, handleClose, store }: ComponentProps) => {
             </div>
           </TabsContent>
 
-          <TabsContent value="about">
+          <TabsContent value="about" className="space-y-4">
             <h3 className="font-medium mb-2">Sobre Nossa Loja</h3>
             <p className="text-muted-foreground">{store.about}</p>
+
+            <Separator />
+
+            <div className="space-y-4">
+              <h3 className="font-medium">Bairros de entrega</h3>
+
+              <div className="border rounded-md">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Bairro</TableHead>
+                      <TableHead>Taxa de Entrega</TableHead>
+                      <TableHead>Tempo</TableHead>
+                      <TableHead className="hidden md:table-cell">
+                        Pedido Mínimo
+                      </TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {store.shippings.map((shipping) => (
+                      <TableRow key={shipping.id}>
+                        <TableCell className="font-medium">
+                          {shipping.neighborhood}
+                        </TableCell>
+
+                        <TableCell>
+                          {shipping.fee === 0 ? (
+                            <Badge
+                              variant="outline"
+                              className="bg-green-50 text-green-700 border-green-200"
+                            >
+                              Grátis
+                            </Badge>
+                          ) : shipping.fee ? (
+                            <span>R$ {shipping.fee.toFixed(2)}</span>
+                          ) : (
+                            <Badge
+                              variant="outline"
+                              className="bg-green-50 text-green-700 border-green-200"
+                            >
+                              Grátis
+                            </Badge>
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          {shipping.deadlineAt ? (
+                            <span>{shipping.deadlineAt} min</span>
+                          ) : (
+                            <span className="text-muted-foreground text-sm">
+                              Não informado
+                            </span>
+                          )}
+                        </TableCell>
+                        <TableCell className="hidden md:table-cell">
+                          {shipping.minimumAmount ? (
+                            <span>R$ {shipping.minimumAmount.toFixed(2)}</span>
+                          ) : (
+                            <span className="text-muted-foreground text-sm">
+                              -
+                            </span>
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </div>
           </TabsContent>
         </Tabs>
 
