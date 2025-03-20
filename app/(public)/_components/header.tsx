@@ -145,7 +145,7 @@ export const Header = () => {
           <Link href="/entrar">
             <Button size="sm">Entrar</Button>
           </Link>
-          <Link href="/cadastrar">
+          <Link href="/planos">
             <Button size="sm" variant="purple">
               Cadastrar
             </Button>

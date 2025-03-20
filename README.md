@@ -1,3 +1,4 @@
+    1 . Cadastro: Adicionar paywall com plano escolhido
     3 . Cart: 4. Botão de trocar consertar o refetch state
     4 . Checkout: 1. Consertar layout do enderço de entrega para w-full | 2. Consertar layout do card product para w-full
     12 . Rever o error list do card product para o toaster
@@ -28,13 +29,10 @@
 
 Features:
   Institucional:
-    Cadastro: Adicionar paywall com plano escolhido
     Melhorar o estilo do email enviado
     Demonstrações: 1. Pesquisar como Code with Antonio faz os vídeos dele
 
-    Home: 1. Pesquisar lading page SaaS
     Sobre: 1. Pesquisar sobre de SaaS
-    Planos colocar no cadastro como paywall
     Suporte: 1. Colocar FAQ de suporte | 2. Envio de email de perguntas
     Termos: 1. Pesquisar Termos
     Políticas de privacidade: 1. Pesquisar Políticas de privacidade

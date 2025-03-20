@@ -14,17 +14,15 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import { SubTitle } from '@/app/(public)/_components/sub-title'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 export const Guide = () => (
-  <div className="space-y-8">
-    <h2 className="text-2xl font-bold">Guia de Uso da Plataforma</h2>
-
-    <p>
-      Siga este guia passo a passo para configurar e utilizar nossa plataforma
-      de delivery. Cada seção contém instruções detalhadas para ajudar você a
-      aproveitar ao máximo todos os recursos disponíveis.
-    </p>
+  <div className="space-y-4">
+    <SubTitle
+      title="Guia de Uso da Plataforma"
+      description="Siga este guia passo a passo para configurar e utilizar nossa plataforma de delivery. Cada seção contém instruções detalhadas para ajudar você a aproveitar ao máximo todos os recursos disponíveis."
+    />
 
     <Tabs defaultValue="cadastro" className="w-full">
       <TabsList

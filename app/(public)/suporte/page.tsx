@@ -1,5 +1,5 @@
-import { Hero } from './_components/hero'
-import { MainContent } from './_components/main-content'
+import { Hero } from '@/app/(public)/suporte/_components/hero'
+import { MainContent } from '@/app/(public)/suporte/_components/main-content'
 
 export default function SupportPage() {
   return (

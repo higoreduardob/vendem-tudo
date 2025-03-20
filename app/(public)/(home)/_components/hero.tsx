@@ -198,7 +198,7 @@ export const Hero = () => {
               Cadastre sua loja, receba pedidos e gerencie tudo em um só lugar.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Link href="/cadastrar">
+              <Link href="/planos">
                 <Button size="lg" variant="purple">
                   <FileText className="mr-2 h-5 w-5" />
                   Cadastrar
