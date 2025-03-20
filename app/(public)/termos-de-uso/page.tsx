@@ -97,34 +97,44 @@ export default function TermsOfServicePage() {
 
           <ul className="list-disc pl-6 space-y-2">
             <li>
-              <span className="font-medium text-foreground">"Plataforma":</span>{' '}
+              <span className="font-medium text-foreground">
+                &quot;Plataforma&quot;:
+              </span>{' '}
               Refere-se ao site, aplicativo móvel e sistemas relacionados que
               compõem nosso serviço de delivery de comida.
             </li>
             <li>
-              <span className="font-medium text-foreground">"Usuário":</span>{' '}
+              <span className="font-medium text-foreground">
+                &quot;Usuário&quot;:
+              </span>{' '}
               Qualquer pessoa que acesse ou utilize nossa plataforma, incluindo
               clientes e representantes de estabelecimentos.
             </li>
             <li>
-              <span className="font-medium text-foreground">"Cliente":</span>{' '}
+              <span className="font-medium text-foreground">
+                &quot;Cliente&quot;:
+              </span>{' '}
               Usuário que utiliza a plataforma para realizar pedidos de
               alimentos.
             </li>
             <li>
               <span className="font-medium text-foreground">
-                "Estabelecimento":
+                &quot;Estabelecimento&quot;:
               </span>{' '}
               Restaurantes, lanchonetes e outros negócios de alimentação que
               oferecem seus produtos através da plataforma.
             </li>
             <li>
-              <span className="font-medium text-foreground">"Pedido":</span>{' '}
+              <span className="font-medium text-foreground">
+                &quot;Pedido&quot;:
+              </span>{' '}
               Solicitação de produtos realizada pelo cliente através da
               plataforma.
             </li>
             <li>
-              <span className="font-medium text-foreground">"Conteúdo":</span>{' '}
+              <span className="font-medium text-foreground">
+                &quot;Conteúdo&quot;:
+              </span>{' '}
               Textos, imagens, vídeos, logotipos, marcas, descrições de produtos
               e qualquer outro material disponibilizado na plataforma.
             </li>

@@ -418,9 +418,9 @@ export default function PrivacyPoliciesPage() {
 
           <p className="mt-4">
             Para exercer qualquer um desses direitos, entre em contato conosco
-            através dos canais indicados na seção "Contato" desta política.
-            Responderemos à sua solicitação dentro do prazo estabelecido pela
-            legislação aplicável.
+            através dos canais indicados na seção &quot;Contato&quot; desta
+            política. Responderemos à sua solicitação dentro do prazo
+            estabelecido pela legislação aplicável.
           </p>
         </div>
       </section>

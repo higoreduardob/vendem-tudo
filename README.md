@@ -7,27 +7,7 @@
     7 . check stages in order food
     8 . Demonstrações: 1. Pesquisar como Code with Antonio faz os vídeos dele
     9 . Suporte: 2. Integrar envio de email de perguntas
-
-    2 - Feat
-      1 . Dark mode: Melhor a loja para dark mode
-      2 . Loja: 1. Melhor o dark mode do multiselector
-      3 . Add Cupom
-        {/* <div className="flex justify-between items-center py-2">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-6 bg-gray-100 flex items-center justify-center rotate-12">
-                <div className="w-6 h-4 border border-dashed border-gray-400"></div>
-              </div>
-              <div>
-                <p className="font-medium">Cupom</p>
-                <p className="text-sm text-muted-foreground">
-                  1 cupom disponível
-                </p>
-              </div>
-            </div>
-            <ChevronRight className="h-5 w-5 text-muted-foreground" />
-          </div>
-
-          <Separator /> */}
+    10 . Avaliação do cliente
 
 Features:
   Gestão:
@@ -50,5 +30,27 @@ Features:
     Footer: 1. Melhorar o footer, pegar umas referências
     Carosel: 1. Ao tocar na categoria trazer os produtos
     Cardápio: 1. Exibe todos os produtos da categoria selecionada
-    
-    
+
+    MELHORIAS:
+
+    2 - Feat
+      1 . Dark mode: Melhor a loja para dark mode
+      2 . Loja: 1. Melhor o dark mode do multiselector
+      3 . Add Cupom
+        {/* <div className="flex justify-between items-center py-2">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-6 bg-gray-100 flex items-center justify-center rotate-12">
+                <div className="w-6 h-4 border border-dashed border-gray-400"></div>
+              </div>
+              <div>
+                <p className="font-medium">Cupom</p>
+                <p className="text-sm text-muted-foreground">
+                  1 cupom disponível
+                </p>
+              </div>
+            </div>
+            <ChevronRight className="h-5 w-5 text-muted-foreground" />
+          </div>
+
+          <Separator /> */}
+      4 . Favoritos do cliente
