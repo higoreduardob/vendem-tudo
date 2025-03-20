@@ -32,13 +32,22 @@ export const Footer = () => {
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Links Rápidos</h3>
             <div className="flex flex-col gap-2">
-              <Link href="/" className="text-muted-foreground text-sm">
+              <Link
+                href="/"
+                className="text-muted-foreground text-sm hover:text-purple-950"
+              >
                 Início
               </Link>
-              <Link href="/" className="text-muted-foreground text-sm">
+              <Link
+                href="/"
+                className="text-muted-foreground text-sm hover:text-purple-950"
+              >
                 Planos
               </Link>
-              <Link href="/" className="text-muted-foreground text-sm">
+              <Link
+                href="/"
+                className="text-muted-foreground text-sm hover:text-purple-950"
+              >
                 Sobre nós
               </Link>
             </div>
@@ -47,10 +56,16 @@ export const Footer = () => {
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Legal</h3>
             <div className="flex flex-col gap-2">
-              <Link href="/" className="text-muted-foreground text-sm">
+              <Link
+                href="/"
+                className="text-muted-foreground text-sm hover:text-purple-950"
+              >
                 Termos de uso
               </Link>
-              <Link href="/" className="text-muted-foreground text-sm">
+              <Link
+                href="/"
+                className="text-muted-foreground text-sm hover:text-purple-950"
+              >
                 Políticas de privacidade
               </Link>
             </div>
@@ -59,20 +74,29 @@ export const Footer = () => {
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Fale conosco</h3>
             <div className="flex flex-col gap-2">
-              <Link href="/" className="text-muted-foreground text-sm">
+              <Link
+                href="/"
+                className="text-muted-foreground text-sm hover:text-purple-950"
+              >
                 Suporte
               </Link>
-              <Link href="/" className="text-muted-foreground text-sm">
+              <Link
+                href="/"
+                className="text-muted-foreground text-sm hover:text-purple-950"
+              >
                 Demonstração
               </Link>
-              <Link href="/" className="text-muted-foreground text-sm">
+              <Link
+                href="/"
+                className="text-muted-foreground text-sm hover:text-purple-950"
+              >
                 (11) 9 9999-9999
               </Link>
             </div>
           </div>
         </div>
 
-        <p className="border-t pt-2 text-center text-muted-foreground text-sm">
+        <p className="border-t pt-6 text-center text-muted-foreground text-sm">
           <span>© {new Date().getFullYear()} Vendem Tudo</span>. Todos os
           direitos reservados.
         </p>

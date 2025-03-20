@@ -6,6 +6,7 @@ import {
   FileText,
   HeadphonesIcon,
   LayoutDashboard,
+  LucideProps,
   ShoppingBag,
   Store,
 } from 'lucide-react'
@@ -19,8 +20,149 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { Title } from '@/app/(public)/_components/title'
+
+type DetailProps = {
+  title: string
+  description: string
+  icon: React.ForwardRefExoticComponent<
+    Omit<LucideProps, 'ref'> & React.RefAttributes<SVGSVGElement>
+  >
+}
+
+const AboutDetail = ({ title, description, icon: Icon }: DetailProps) => {
+  return (
+    <div className="flex flex-col items-center text-center space-y-4">
+      <div className="h-10 w-10 rounded-full bg-purple-950/80 text-white flex items-center justify-center">
+        <Icon className="h-5 w-5" />
+      </div>
+      <div>
+        <h3 className="text-xl font-semibold">{title}</h3>
+        <p className="text-muted-foreground">{description}</p>
+      </div>
+    </div>
+  )
+}
+
+const BenefitDetail = ({ title, description, icon: Icon }: DetailProps) => {
+  return (
+    <Card className="space-y-4">
+      <CardHeader className="flex items-center flex-row gap-4">
+        <div className="h-10 w-10 rounded-full bg-purple-950/80 text-white flex items-center justify-center">
+          <Icon className="h-5 w-5" />
+        </div>
+        <CardTitle>{title}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <CardDescription>{description}</CardDescription>
+      </CardContent>
+    </Card>
+  )
+}
+
+const WorkDetail = ({
+  title,
+  description,
+}: {
+  title: string
+  description: string
+}) => {
+  return (
+    <div className="bg-purple-50 p-6 rounded-lg text-center">
+      <h3 className="font-semibold mb-2 text-purple-950">{title}</h3>
+      <p className="text-sm text-muted-foreground">{description}</p>
+    </div>
+  )
+}
 
 export const Hero = () => {
+  const details = {
+    about: {
+      title: {
+        head: 'Como Funciona',
+        description:
+          'Comece a vender online em minutos com nossa plataforma intuitiva',
+      },
+      details: [
+        {
+          title: 'Cadastre sua Loja',
+          description:
+            'Preencha seu perfil, configure sua loja e adicione seu cardápio na plataforma.',
+          icon: Store,
+        },
+        {
+          title: 'Receba Pedidos',
+          description:
+            'Notificações em tempo real e gestão integrada de todos os seus pedidos.',
+          icon: ShoppingBag,
+        },
+        {
+          title: 'Acompanhe seu Crescimento',
+          description: 'Relatórios detalhados e análise de vendas.',
+          icon: BarChart3,
+        },
+      ],
+    },
+    works: {
+      title: {
+        head: 'Quem Pode Usar?',
+        description:
+          'Nossa plataforma é ideal para diversos tipos de estabelecimentos',
+      },
+      details: [
+        {
+          title: 'Restaurantes e Lanchonetes',
+          description:
+            'Gerencie cardápios completos e pedidos de forma eficiente.',
+        },
+        {
+          title: 'Pizzarias e Hamburguerias',
+          description: 'Controle de adicionais e personalizações de pedidos.',
+        },
+        {
+          title: 'Mercados e Conveniências',
+          description: 'Gestão de estoque e entrega de produtos diversos.',
+        },
+        {
+          title: 'Docerias e Cafeterias',
+          description: 'Controle de produção e pedidos antecipados.',
+        },
+      ],
+    },
+    benefits: {
+      title: {
+        head: 'Benefícios da Plataforma',
+        description: 'Tudo o que você precisa para expandir seu negócio online',
+      },
+      details: [
+        {
+          title: 'Zero Burocracia',
+          description:
+            'Fácil de configurar e começar a vender. Sem contratos longos ou taxas escondidas.',
+          icon: CheckCircle,
+        },
+        {
+          title: 'Pagamentos Seguros',
+          description:
+            'Selecione seus métodos de pagamento PIX, cartão de crédito/débito e vale-refeição para maior conveniência.',
+          icon: CreditCard,
+        },
+        {
+          title: 'Painel Completo',
+          description:
+            'Controle total de pedidos, clientes, produtos e repasses financeiros em um só lugar.',
+          icon: LayoutDashboard,
+        },
+        {
+          title: 'Atendimento e Suporte',
+          description:
+            'Equipe dedicada para auxiliar lojistas em todas as etapas, do cadastro ao dia a dia.',
+          icon: HeadphonesIcon,
+        },
+      ],
+    },
+  }
+
   return (
     <div className="space-y-20">
       {/* Hero Section */}
@@ -52,7 +194,7 @@ export const Hero = () => {
                 Venda mais sem complicações!
               </span>
             </h1>
-            <p className="text-gray-400 text-xl">
+            <p className="text-gray-300 text-xl">
               Cadastre sua loja, receba pedidos e gerencie tudo em um só lugar.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
@@ -75,120 +217,44 @@ export const Hero = () => {
 
       {/* Como Funciona Section */}
       <section className="container mx-auto space-y-10 p-4 py-10">
-        <div className="text-center space-y-4">
-          <h2 className="text-3xl md:text-4xl font-bold">Como Funciona</h2>
-          <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-            Comece a vender online em minutos com nossa plataforma intuitiva
-          </p>
-        </div>
+        <Title
+          title={details.about.title.head}
+          description={details.about.title.description}
+        />
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="flex flex-col items-center text-center space-y-8">
-            <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-              <Store className="h-5 w-5 text-primary" />
-            </div>
-            <div className="space-y-4">
-              <h3 className="text-xl font-semibold">Cadastre sua Loja</h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                Preencha seu perfil, configure sua loja e adicione seu cardápio
-                na plataforma.
-              </p>
-            </div>
-          </div>
+          {details.about.details.map((detail, index) => (
+            <AboutDetail key={index} {...detail} />
+          ))}
+        </div>
+      </section>
 
-          <div className="flex flex-col items-center text-center space-y-8">
-            <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-              <ShoppingBag className="h-5 w-5 text-primary" />
-            </div>
-            <div className="space-y-4">
-              <h3 className="text-xl font-semibold">Receba Pedidos</h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                Notificações em tempo real e gestão integrada de todos os seus
-                pedidos.
-              </p>
-            </div>
-          </div>
+      {/* Quem Pode Usar Section */}
+      <section className="container mx-auto space-y-10 p-4 py-10">
+        <Title
+          title={details.works.title.head}
+          description={details.about.title.description}
+        />
 
-          <div className="flex flex-col items-center text-center space-y-8">
-            <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-              <BarChart3 className="h-5 w-5 text-primary" />
-            </div>
-            <div className="space-y-4">
-              <h3 className="text-xl font-semibold">
-                Acompanhe seu Crescimento
-              </h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                Relatórios detalhados e análise de vendas.
-              </p>
-            </div>
-          </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          {details.works.details.map((detail, index) => (
+            <WorkDetail key={index} {...detail} />
+          ))}
         </div>
       </section>
 
       {/* Benefícios Section */}
-      <section className="bg-gray-50 dark:bg-gray-900">
+      <section className="bg-purple-50">
         <div className="container mx-auto space-y-10 p-4 py-10">
-          <div className="text-center space-y-4">
-            <h2 className="text-3xl md:text-4xl font-bold">
-              Benefícios da Plataforma
-            </h2>
-            <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-              Tudo o que você precisa para expandir seu negócio online
-            </p>
-          </div>
+          <Title
+            title={details.benefits.title.head}
+            description={details.benefits.title.description}
+          />
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <Card>
-              <CardHeader className="pb-2">
-                <CheckCircle className="h-8 w-8 text-primary mb-2" />
-                <CardTitle>Zero Burocracia</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription>
-                  Fácil de configurar e começar a vender. Sem contratos longos
-                  ou taxas escondidas.
-                </CardDescription>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="pb-2">
-                <CreditCard className="h-8 w-8 text-primary mb-2" />
-                <CardTitle>Pagamentos Seguros</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription>
-                  Integração com PIX, cartão de crédito/débito e vale-refeição
-                  para maior conveniência.
-                </CardDescription>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="pb-2">
-                <LayoutDashboard className="h-8 w-8 text-primary mb-2" />
-                <CardTitle>Dashboard Completa</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription>
-                  Controle total de pedidos, clientes, produtos e repasses
-                  financeiros em um só lugar.
-                </CardDescription>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="pb-2">
-                <HeadphonesIcon className="h-8 w-8 text-primary mb-2" />
-                <CardTitle>Atendimento e Suporte</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription>
-                  Equipe dedicada para auxiliar lojistas em todas as etapas, do
-                  cadastro ao dia a dia.
-                </CardDescription>
-              </CardContent>
-            </Card>
+            {details.benefits.details.map((detail, index) => (
+              <BenefitDetail key={index} {...detail} />
+            ))}
           </div>
         </div>
       </section>
