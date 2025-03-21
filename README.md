@@ -1,4 +1,4 @@
-    1 . Cadastro: Adicionar paywall com plano escolhido
+    1 . Cadastro: 2. Add clear cart in form order
     2 . Melhorar o estilo do email enviado
     3 . Notificações: 1. Fazer push notifications, e pesquisar como fazer no next para os registros de pedidos
     4 . check stages in order food
@@ -53,3 +53,5 @@ Features:
 
           <Separator /> */}
       4 . Favoritos do cliente
+      5 . Adicionar nfe Focus nfe
+      6 . Adicionar paywall com plano escolhido

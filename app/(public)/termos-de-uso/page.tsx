@@ -64,10 +64,9 @@ export default function TermsOfServicePage() {
         </div>
         <div className="space-y-4 text-muted-foreground">
           <p>
-            Bem-vindo aos Termos de Uso da nossa plataforma de delivery de
-            comida. Este documento estabelece as regras e condições para
-            utilização de nossos serviços, tanto para clientes quanto para
-            estabelecimentos parceiros.
+            Bem-vindo aos Termos de Uso da nossa plataforma. Este documento
+            estabelece as regras e condições para utilização de nossos serviços,
+            tanto para clientes quanto para estabelecimentos parceiros.
           </p>
           <p>
             Ao acessar ou utilizar nossa plataforma, você concorda expressamente
@@ -101,7 +100,7 @@ export default function TermsOfServicePage() {
                 &quot;Plataforma&quot;:
               </span>{' '}
               Refere-se ao site, aplicativo móvel e sistemas relacionados que
-              compõem nosso serviço de delivery de comida.
+              compõem nossos serviços.
             </li>
             <li>
               <span className="font-medium text-foreground">
@@ -114,15 +113,14 @@ export default function TermsOfServicePage() {
               <span className="font-medium text-foreground">
                 &quot;Cliente&quot;:
               </span>{' '}
-              Usuário que utiliza a plataforma para realizar pedidos de
-              alimentos.
+              Usuário que utiliza a plataforma para realizar pedidos e compras.
             </li>
             <li>
               <span className="font-medium text-foreground">
                 &quot;Estabelecimento&quot;:
               </span>{' '}
-              Restaurantes, lanchonetes e outros negócios de alimentação que
-              oferecem seus produtos através da plataforma.
+              Restaurantes, lanchonetes e outros negócios que oferecem seus
+              produtos através da plataforma.
             </li>
             <li>
               <span className="font-medium text-foreground">
@@ -156,7 +154,9 @@ export default function TermsOfServicePage() {
           <ul className="list-disc pl-6 space-y-2">
             <li>
               Ter pelo menos 18 anos de idade ou a maioridade legal em sua
-              jurisdição;
+              jurisdição. No entanto, menores de idade podem utilizar a
+              plataforma se tiverem autorização e supervisão dos responsáveis
+              legais.;
             </li>
             <li>
               Fornecer informações precisas, completas e atualizadas durante o
@@ -241,7 +241,7 @@ export default function TermsOfServicePage() {
             <li>Realização de pedidos com opções de personalização;</li>
             <li>Acompanhamento em tempo real do status do pedido;</li>
             <li>
-              Múltiplas opções de pagamento (PIX, cartões, vouchers de refeição,
+              Múltiplas opções de pagamento (PIX, cartões, vale-refeição,
               dinheiro);
             </li>
             <li>Avaliação de produtos e estabelecimentos;</li>
@@ -436,7 +436,7 @@ export default function TermsOfServicePage() {
             <li>PIX;</li>
             <li>Cartões de crédito (Visa e Mastercard);</li>
             <li>Cartões de débito (Visa e Mastercard);</li>
-            <li>Vouchers de refeição;</li>
+            <li>Vale-refeição;</li>
             <li>Dinheiro (pagamento na entrega).</li>
           </ul>
 
@@ -447,10 +447,6 @@ export default function TermsOfServicePage() {
             Os estabelecimentos parceiros estão sujeitos às seguintes taxas:
           </p>
           <ul className="list-disc pl-6 space-y-2">
-            <li>
-              Taxa de comissão sobre o valor dos pedidos processados através da
-              plataforma;
-            </li>
             <li>Taxa de adesão (quando aplicável);</li>
             <li>Taxas por serviços adicionais contratados.</li>
           </ul>
@@ -473,20 +469,6 @@ export default function TermsOfServicePage() {
           <p>
             Todas as taxas aplicáveis serão claramente informadas antes da
             finalização do pedido.
-          </p>
-
-          <h3 className="text-xl font-semibold mt-6 mb-2 text-foreground">
-            Processamento de pagamentos
-          </h3>
-          <p>
-            Os pagamentos são processados por provedores de serviços de
-            pagamento confiáveis e seguros. Não armazenamos dados completos de
-            cartões de crédito em nossos servidores.
-          </p>
-          <p>
-            Em caso de estorno ou reembolso, o valor será creditado através do
-            mesmo método de pagamento utilizado na transação original,
-            respeitando os prazos da instituição financeira.
           </p>
         </div>
       </section>
@@ -623,11 +605,6 @@ export default function TermsOfServicePage() {
             consequenciais ou punitivos, incluindo perda de lucros, dados ou
             oportunidades de negócios, resultantes do uso ou da impossibilidade
             de uso da plataforma.
-          </p>
-          <p>
-            Nossa responsabilidade total perante você por quaisquer danos não
-            excederá o valor pago por você à plataforma nos últimos 12 meses ou
-            R$ 1.000,00, o que for menor.
           </p>
         </div>
       </section>

@@ -27,7 +27,7 @@ export const Faq = () => {
         {
           title: 'Quanto tempo leva para começar a vender?',
           description:
-            'Após o pagametno e cadastro completo, a aprovação da loja ocorre no mesmo instante. Uma vez aprovado, você pode imediatamente configurar seu cardápio e começar a receber pedidos. Todo o processo, do cadastro à primeira venda, pode ser concluído em facilmente seguindo os passo a passo dos vídeos demonstrativos, ou ainda pode contar com ajuda do suporte.',
+            'Após o pagametno e cadastro completo, a aprovação da loja ocorre no mesmo instante. Uma vez aprovado, você pode imediatamente configurar seu cardápio e começar a receber pedidos. Todo o processo, do cadastro à primeira venda, pode ser concluído facilmente seguindo os passo a passo dos vídeos demonstrativos, ou ainda pode contar com ajuda do suporte.',
         },
         {
           title: 'Como funciona o repasse dos pagamentos?',

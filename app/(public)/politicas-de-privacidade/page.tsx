@@ -107,8 +107,8 @@ export default function PrivacyPoliciesPage() {
                 Dados de pagamento:
               </span>{' '}
               Informações necessárias para processar pagamentos, como método de
-              pagamento escolhido (PIX, cartão de crédito/débito, voucher de
-              refeição ou dinheiro).
+              pagamento escolhido (PIX, cartão de crédito/débito, vale-refeição
+              ou dinheiro).
             </li>
             <li>
               <span className="font-medium text-foreground">

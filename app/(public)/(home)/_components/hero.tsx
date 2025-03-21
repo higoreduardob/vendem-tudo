@@ -150,7 +150,7 @@ export const Hero = () => {
         {
           title: 'Painel Completo',
           description:
-            'Controle total de pedidos, clientes, produtos e repasses financeiros em um só lugar.',
+            'Controle total de pedidos, clientes, produtos e financeiros em um só lugar.',
           icon: LayoutDashboard,
         },
         {
