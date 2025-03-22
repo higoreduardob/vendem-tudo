@@ -3,6 +3,7 @@
 import { columns } from '@/app/(protected)/plataforma/alimentos/categorias/_features/columns'
 
 import { useGetCategories } from '@/features/foods/categories/api/use-get-categories'
+import { useFilterCategory } from '@/features/foods/categories/hooks/use-filter-category'
 import { useBulkDeleteCategories } from '@/features/foods/categories/api/use-bulk-delete-categories'
 
 import { DataTable } from '@/components/data-table'
@@ -14,6 +15,7 @@ export default function CategoriesPage() {
   const categoriesQuery = useGetCategories()
   const categories = categoriesQuery.data || []
   const deleteCategories = useBulkDeleteCategories()
+  const { onChangeStatus } = useFilterCategory()
 
   const isLoading = categoriesQuery.isLoading || deleteCategories.isPending
 
@@ -40,6 +42,7 @@ export default function CategoriesPage() {
           const ids = row.map((r) => r.original.id)
           deleteCategories.mutate({ ids })
         }}
+        onChangeStatus={onChangeStatus}
       />
     </div>
   )

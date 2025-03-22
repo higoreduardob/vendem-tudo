@@ -6,7 +6,7 @@ export const ColumnDetail = ({
   value: string
 }) => {
   return (
-    <p className="text-sm leading-tight dark:text-white">
+    <p className="text-sm leading-tight">
       <span className="font-semibold">{title}:</span> {value}
     </p>
   )

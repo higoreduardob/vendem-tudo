@@ -16,7 +16,7 @@ import {
 } from '@tanstack/react-table'
 import { Ban, ChevronDown, Download, Trash2 } from 'lucide-react'
 
-import { FilterOptionsPageSize } from '@/constants'
+import { FilterOptionsPageSize, FilterStatus } from '@/constants'
 
 import { useConfirm } from '@/hooks/use-confirm'
 
@@ -49,8 +49,7 @@ interface DataTableProps<TData, TValue> {
   isNonExportable?: boolean
   disabled?: boolean
   onDelete: (rows: Row<TData>[]) => void
-  // filters?: JSX.Element
-  // buttonGroup?: JSX.Element
+  onChangeStatus: (status: string) => void
 }
 
 export function DataTable<TData, TValue>({
@@ -62,9 +61,8 @@ export function DataTable<TData, TValue>({
   isNonExportable,
   disabled,
   onDelete,
-}: // buttonGroup,
-// filters,
-DataTableProps<TData, TValue>) {
+  onChangeStatus,
+}: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -123,24 +121,28 @@ DataTableProps<TData, TValue>) {
               table.getColumn(filterKey)?.setFilterValue(event.target.value)
             }
             className="max-w-sm"
+            disabled={disabled}
           />
           <div className="ml-auto flex items-center gap-2">
             {table.getFilteredSelectedRowModel().rows.length > 0 && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline">
+                  <Button variant="outline" disabled={disabled}>
                     Ações ({table.getFilteredSelectedRowModel().rows.length})
                     <ChevronDown className="ml-2 h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   {!isNonExportable && (
-                    <DropdownMenuItem>
+                    <DropdownMenuItem disabled={disabled}>
                       <Download className="mr-2 h-4 w-4" />
                       Exportar selecionados
                     </DropdownMenuItem>
                   )}
-                  <DropdownMenuItem onClick={handleBulkDelete}>
+                  <DropdownMenuItem
+                    onClick={handleBulkDelete}
+                    disabled={disabled}
+                  >
                     {isNonReversibled ? (
                       <>
                         <Trash2 className="size-4 mr-2" />
@@ -153,10 +155,6 @@ DataTableProps<TData, TValue>) {
                       </>
                     )}
                   </DropdownMenuItem>
-                  {/* <DropdownMenuItem>
-                    <FolderOpen className="size-4 mr-2" />
-                    Mover para pasta
-                  </DropdownMenuItem> */}
                 </DropdownMenuContent>
               </DropdownMenu>
             )}
@@ -172,10 +170,20 @@ DataTableProps<TData, TValue>) {
                 table.setPageSize(value)
               }}
               className="w-full min-w-32"
+              isDisabled={disabled}
+            />
+            <SelectFilter
+              placeholder="Selecione status"
+              defaultValue={'none'}
+              value={status}
+              data={FilterStatus}
+              onChange={onChangeStatus}
+              className="w-full min-w-32"
+              isDisabled={disabled}
             />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline">
+                <Button variant="outline" disabled={disabled}>
                   Colunas <ChevronDown />
                 </Button>
               </DropdownMenuTrigger>

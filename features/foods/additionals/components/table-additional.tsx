@@ -6,12 +6,14 @@ import { useBulkDeleteFoodAdditionals } from '@/features/foods/additionals/api/u
 
 import { DataTable } from '@/components/data-table'
 import { ContentDialog } from '@/components/content-dialog'
+import { useFilterAdditional } from '../hooks/use-filter-additional'
 
 export const TableAdditional = () => {
   const { isOpen, onClose } = useOpenFoodAdditionalData()
   const additionalsQuery = useGetFoodAdditionals()
   const additionals = additionalsQuery.data || []
   const deleteFoodAdditionals = useBulkDeleteFoodAdditionals()
+  const { onChangeStatus } = useFilterAdditional()
 
   const isLoading =
     additionalsQuery.isLoading || deleteFoodAdditionals.isPending
@@ -38,6 +40,7 @@ export const TableAdditional = () => {
           const ids = row.map((r) => r.original.id)
           deleteFoodAdditionals.mutate({ ids })
         }}
+        onChangeStatus={onChangeStatus}
       />
     </ContentDialog>
   )

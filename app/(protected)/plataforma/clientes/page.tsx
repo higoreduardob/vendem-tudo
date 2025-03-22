@@ -3,6 +3,7 @@
 import { columns } from '@/app/(protected)/plataforma/clientes/_features/columns'
 
 import { useGetUsers } from '@/features/users/api/use-get-users'
+import { useFilterUser } from '@/features/users/hooks/use-filter-user'
 import { useBulkDeleteUsers } from '@/features/users/api/use-bulk-delete-users'
 
 import { DataTable } from '@/components/data-table'
@@ -14,6 +15,7 @@ export default function CustomersPage() {
   const customersQuery = useGetUsers('CUSTOMER')
   const customers = customersQuery.data || []
   const deleteUsers = useBulkDeleteUsers()
+  const { onChangeStatus } = useFilterUser()
 
   const isLoading = customersQuery.isLoading || deleteUsers.isPending
 
@@ -38,6 +40,7 @@ export default function CustomersPage() {
           const ids = row.map((r) => r.original.id)
           deleteUsers.mutate({ ids })
         }}
+        onChangeStatus={onChangeStatus}
       />
     </div>
   )

@@ -141,7 +141,7 @@ export default function DashboardLayout({
             </div>
             <div className="flex items-center gap-2">
               {/* <ButthonTheme /> */}
-              <Separator orientation="vertical" className="mr-2 h-4" />
+              {/* <Separator orientation="vertical" className="mr-2 h-4" /> */}
               <Button variant="ghost" className="relative">
                 <span className="absolute top-0 left-6 flex items-center justify-center h-[16px] min-w-[16px] text-[12px] text-white bg-red-600 rounded-full">
                   3

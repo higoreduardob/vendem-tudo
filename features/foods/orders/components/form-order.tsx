@@ -76,6 +76,7 @@ type FormOrderComponentProps = {
   addCart: (index: number) => void
   removeCart: (index: number) => void
   onSubmit: (order: InsertOrderFormValues) => void
+  clearCart: () => void
   defaultValues: InsertOrderFormValues
 }
 
@@ -279,7 +280,7 @@ export const FormOrder = () => {
   const { store } = useOpenStore()
   const { user } = useCurrentUser()
   const { isOpen, onClose } = useOpenOrder()
-  const { cart, addCart, removeCart } = useCartStore()
+  const { cart, addCart, removeCart, clearCart } = useCartStore()
   const { onOpen: onOpenCheckout } = useOpenCheckout()
 
   if (!store || !user) return null
@@ -321,6 +322,7 @@ export const FormOrder = () => {
       addCart={addCart}
       removeCart={removeCart}
       onSubmit={onSubmit}
+      clearCart={clearCart}
       defaultValues={defaultValues}
     />
   )
@@ -335,6 +337,7 @@ const FormOrderComponent = ({
   addCart,
   removeCart,
   onSubmit,
+  clearCart,
   defaultValues,
 }: FormOrderComponentProps) => {
   const { shippings, address: storeAddress } = store
@@ -413,13 +416,20 @@ const FormOrderComponent = ({
         <div className="space-y-2">
           <div className="flex justify-between items-center">
             <h2 className="font-medium text-lg">{store.name}</h2>
-            <Button
-              variant="ghost"
-              className="text-sm text-red-500 font-medium"
-              onClick={handleClose}
-            >
-              Ver Cardápio
-            </Button>
+            <div className="flex items-center gap-2">
+              {!isEmptyCart && (
+                <Button variant="ghost" onClick={clearCart}>
+                  Limpar carrinho
+                </Button>
+              )}
+              <Button
+                variant="ghost"
+                className="text-sm text-red-500 font-medium"
+                onClick={handleClose}
+              >
+                Ver Cardápio
+              </Button>
+            </div>
           </div>
 
           <p className="text-muted-foreground text-sm">

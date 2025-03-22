@@ -2,16 +2,18 @@
 
 import { columns } from './_features/columns'
 
+import { useOpenStore } from '@/hooks/use-store'
+import { useGetStoreOrders } from '@/features/foods/orders/api/use-get-orders'
+import { useFilterOrder } from '@/features/foods/orders/hooks/use-filter-order'
+
 import { DataTable } from '@/components/data-table'
 import { Title } from '@/app/(protected)/_components/title'
-
-import { useGetStoreOrders } from '@/features/foods/orders/api/use-get-orders'
-import { useOpenStore } from '@/hooks/use-store'
 
 export default function OrdersPage() {
   const { store } = useOpenStore()
   const ordersQuery = useGetStoreOrders(store?.id)
   const orders = ordersQuery.data || []
+  const { onChangeStatus } = useFilterOrder()
 
   console.log(orders)
 
@@ -29,6 +31,7 @@ export default function OrdersPage() {
           const ids = row.map((r) => r.original.id)
           console.log({ ids })
         }}
+        onChangeStatus={onChangeStatus}
       />
     </div>
   )

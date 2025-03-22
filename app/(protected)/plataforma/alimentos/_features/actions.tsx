@@ -1,11 +1,4 @@
-import {
-  MoreHorizontal,
-  Eye,
-  Ban,
-  Download,
-  FolderOpen,
-  PencilRuler,
-} from 'lucide-react'
+import { Eye, Ban, Download, PencilRuler } from 'lucide-react'
 
 import { useConfirm } from '@/hooks/use-confirm'
 import { useOpenFood } from '@/features/foods/hooks/use-open-food'
@@ -50,9 +43,7 @@ export const Actions = ({ id, status }: Props) => {
       <ConfirmationDialog />
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="size-8 p-0">
-            <MoreHorizontal className="size-4" />
-          </Button>
+          <Button variant="ghost">Ações</Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuItem className="cursor-pointer">
@@ -73,10 +64,6 @@ export const Actions = ({ id, status }: Props) => {
           <DropdownMenuItem className="cursor-pointer">
             <Download className="size-4 mr-2" />
             Exportar
-          </DropdownMenuItem>
-          <DropdownMenuItem className="cursor-pointer">
-            <FolderOpen className="size-4 mr-2" />
-            Mover
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

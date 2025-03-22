@@ -3,6 +3,7 @@
 import { columns } from '@/app/(protected)/plataforma/alimentos/_features/columns'
 
 import { useGetFoods } from '@/features/foods/api/use-get-foods'
+import { useFilterFood } from '@/features/foods/hooks/use-filter-food'
 import { useBulkDeleteFoods } from '@/features/foods/api/use-bulk-delete-foods'
 
 import { DataTable } from '@/components/data-table'
@@ -14,6 +15,7 @@ export default function ProductsPage() {
   const foodsQuery = useGetFoods()
   const foods = foodsQuery.data || []
   const deleteFoods = useBulkDeleteFoods()
+  const { onChangeStatus } = useFilterFood()
 
   const isLoading = foodsQuery.isLoading || deleteFoods.isPending
 
@@ -38,6 +40,7 @@ export default function ProductsPage() {
           const ids = row.map((r) => r.original.id)
           deleteFoods.mutate({ ids })
         }}
+        onChangeStatus={onChangeStatus}
       />
     </div>
   )

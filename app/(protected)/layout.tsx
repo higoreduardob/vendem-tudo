@@ -20,7 +20,7 @@ function ProtectedLayoutComponent({ children }: { children: React.ReactNode }) {
     }
   }, [user, status, router])
 
-  if (status === 'loading') {
+  if (status === 'loading' || !user) {
     return (
       <section className="grid min-h-svh">
         <Skeleton className="h-full w-full" />
@@ -28,9 +28,9 @@ function ProtectedLayoutComponent({ children }: { children: React.ReactNode }) {
     )
   }
 
-  if (!user) {
-    return null
-  }
+  // if (!user) {
+  //   return null
+  // }
 
   return (
     <>

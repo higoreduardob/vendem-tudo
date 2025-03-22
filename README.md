@@ -1,4 +1,3 @@
-    1 . Cadastro: 2. Add clear cart in form order
     2 . Melhorar o estilo do email enviado
     3 . Notificações: 1. Fazer push notifications, e pesquisar como fazer no next para os registros de pedidos
     4 . check stages in order food
@@ -15,10 +14,10 @@ Features:
   OWNER/MANAGER/EMPLOYEE
     Painel: 1. Incluir gráfico de vendas | 2. Incluir tabela de pedidos do dia com filtro e limit
       Desempenho: 1. Incluir gráficos informativos das vendas
-    Alimentos: 1. Incluir analytics dos alimentos | 2. Colocar filtro e limit | 3. Definição de destaques para +vendidos e +avaliados | 4. No product card reaver as badges de destaques
-      Categorias: 1. Incluir analytics das categorias | 2. Colocar filtro e limit
-    Pedidos: 1. Incluir analytics dos pedidos | 2. Colocar filtro e limit | 3. Colocar date range
-    Clientes: 1. Incluir analytics dos clientes | 2. Colocar filtro e limit
+    Alimentos: 1. Incluir analytics dos alimentos | 3. Definição de destaques para +vendidos e +avaliados | 4. No product card reaver as badges de destaques
+      Categorias: 1. Incluir analytics das categorias
+    Pedidos: 1. Incluir analytics dos pedidos | 3. Colocar date range
+    Clientes: 1. Incluir analytics dos clientes
 
     Suporte: 1. Colocar whatsapp de contato de suporte | 2. Colocar FAQ com tempo de solucionamento
     Planos: 1. Colocar planos para o cliente

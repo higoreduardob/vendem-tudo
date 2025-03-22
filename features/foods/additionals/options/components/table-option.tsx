@@ -6,12 +6,14 @@ import { useBulkDeleteFoodOptions } from '@/features/foods/additionals/options/a
 
 import { DataTable } from '@/components/data-table'
 import { ContentDialog } from '@/components/content-dialog'
+import { useFilterOption } from '../hooks/use-filter-option'
 
 export const TableOption = () => {
   const { isOpen, onClose } = useOpenFoodOptionData()
   const optionsQuery = useGetFoodOptions()
   const options = optionsQuery.data || []
   const deleteFoodOptions = useBulkDeleteFoodOptions()
+  const { onChangeStatus } = useFilterOption()
 
   const isLoading = optionsQuery.isLoading || deleteFoodOptions.isPending
 
@@ -37,6 +39,7 @@ export const TableOption = () => {
           const ids = row.map((r) => r.original.id)
           deleteFoodOptions.mutate({ ids })
         }}
+        onChangeStatus={onChangeStatus}
       />
     </ContentDialog>
   )
