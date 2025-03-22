@@ -110,8 +110,8 @@ export function DataTable<TData, TValue>({
   return (
     <>
       <ConfirmationDialog />
-      <div className="w-full">
-        <div className="flex items-center py-4">
+      <div className="w-full space-y-2">
+        <div className="flex items-center">
           <Input
             placeholder={`Filtrar por ${placeholder}`}
             value={

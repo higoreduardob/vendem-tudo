@@ -17,3 +17,5 @@ export const weekDays = [
   { value: 5, label: 'Sexta-feira' },
   { value: 6, label: 'Sábado' },
 ]
+
+export const numericFieldsFilter = ['quantity', 'total', 'count', 'amount']

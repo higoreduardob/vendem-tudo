@@ -2,10 +2,8 @@
     3 . Notificações: 1. Fazer push notifications, e pesquisar como fazer no next para os registros de pedidos
     4 . check stages in order food
     5 . Avaliação do cliente
-
     6 . Cart: 4. Botão de trocar consertar o refetch state
-    7 . Demonstrações: 1. Pesquisar como Code with Antonio faz os vídeos dele
-    8 . Suporte: 2. Integrar envio de email de perguntas
+    7 . Suporte: 2. Integrar envio de email de perguntas
 
 Features:
   Gestão:
@@ -54,3 +52,4 @@ Features:
       4 . Favoritos do cliente
       5 . Adicionar nfe Focus nfe
       6 . Adicionar paywall com plano escolhido
+      7 . Demonstrações: 1. Pesquisar como Code with Antonio faz os vídeos dele

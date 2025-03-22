@@ -1,6 +1,6 @@
 'use client'
 
-import { columns } from './_features/columns'
+import { columns } from '@/app/(protected)/plataforma/pedidos/_features/columns'
 
 import { useGetOrders } from '@/features/foods/orders/api/use-get-orders'
 import { useFilterOrder } from '@/features/foods/orders/hooks/use-filter-order'
@@ -16,7 +16,7 @@ export default function OrdersPage() {
   const { onChangeStatus } = useFilterOrder()
 
   return (
-    <div className="w-full flex flex-col gap-2">
+    <div className="w-full flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <Title>Pedidos</Title>
         <Actions />

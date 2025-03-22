@@ -25,7 +25,7 @@ export default function CategoriesPage() {
   }
 
   return (
-    <div className="w-full flex flex-col gap-2">
+    <div className="w-full flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <Title>Categorias</Title>
         <Actions />

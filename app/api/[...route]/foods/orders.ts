@@ -4,7 +4,7 @@ import { verifyAuth } from '@hono/auth-js'
 import { createId } from '@paralleldrive/cuid2'
 import { zValidator } from '@hono/zod-validator'
 
-import { UserRole } from '@prisma/client'
+import { Prisma, UserRole } from '@prisma/client'
 
 import { db } from '@/lib/db'
 
@@ -129,6 +129,158 @@ const app = new Hono()
     })
 
     return c.json({ data }, 200)
+  })
+  .get('/summary', verifyAuth(), async (c) => {
+    const auth = c.get('authUser')
+
+    if (!auth.token?.sub) {
+      return c.json({ error: 'Usuário não autorizado' }, 401)
+    }
+
+    if (!auth.token?.selectedStore) {
+      return c.json({ error: 'Usuário não autorizado' }, 401)
+    }
+
+    const user = await db.user.findUnique({ where: { id: auth.token.sub } })
+    if (!user) return c.json({ error: 'Usuário não autorizado' }, 401)
+
+    if (
+      ![
+        UserRole.OWNER as string,
+        UserRole.MANAGER as string,
+        UserRole.EMPLOYEE as string,
+      ].includes(user.role)
+    ) {
+      return c.json({ error: 'Usuário sem autorização' }, 400)
+    }
+    const ownerId = user.role === UserRole.OWNER ? user.id : user.ownerId!
+
+    const store = await db.store.findUnique({
+      where: { id: auth.token.selectedStore.id, ownerId },
+    })
+
+    if (!store) {
+      return c.json({ error: 'Usuário não autorizado' }, 401)
+    }
+
+    // Get query parameters for date range with defaults
+    const { startDate: startDateParam, endDate: endDateParam } = c.req.query()
+
+    // Default to current month if not provided
+    const now = new Date()
+    const startDate = startDateParam
+      ? new Date(startDateParam)
+      : new Date(now.getFullYear(), now.getMonth(), 1)
+
+    const endDate = endDateParam
+      ? new Date(endDateParam)
+      : new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59)
+
+    type SummaryResult = {
+      summary: Array<{
+        date: string
+        count: number
+        total: number
+        delivered: number
+        cancelled: number
+        invoicing: number
+      }>
+      mostSales: Array<{
+        id: string
+        name: string
+        quantity: number
+        total_amount: number
+      }>
+    }
+
+    // Combined query that returns properly typed results
+    const result = await db.$queryRaw<SummaryResult[]>(
+      Prisma.sql`
+      WITH order_data AS (
+        SELECT 
+          fo.id as order_id,
+          fo."createdAt" as created_at,
+          fo.amount as amount,
+          fo."storeId" as store_id,
+          MAX(CASE WHEN oh.progress = 'DELIVERED' THEN 1 ELSE 0 END) as is_delivered,
+          MAX(CASE WHEN oh.progress = 'CANCELLED' THEN 1 ELSE 0 END) as is_cancelled
+        FROM "FoodOrder" fo
+        LEFT JOIN "OrderHistoryFoodOrder" ohfo ON fo.id = ohfo."foodOrderId"
+        LEFT JOIN "OrderHistory" oh ON ohfo."orderHistoryId" = oh.id
+        WHERE 
+          fo."storeId" = ${store.id}
+          AND fo."createdAt" >= ${startDate}
+          AND fo."createdAt" <= ${endDate}
+        GROUP BY fo.id, fo."createdAt", fo.amount, fo."storeId"
+      ),
+      daily_summary AS (
+        SELECT 
+          TO_CHAR(DATE(o.created_at), 'YYYY-MM-DD') as date,
+          COUNT(o.order_id)::float as count,
+          SUM(o.amount)::float as total,
+          COUNT(CASE WHEN o.is_delivered = 1 THEN 1 END)::float as delivered,
+          COUNT(CASE WHEN o.is_cancelled = 1 THEN 1 END)::float as cancelled,
+          SUM(CASE WHEN o.is_delivered = 1 THEN o.amount ELSE 0 END)::float as invoicing
+        FROM order_data o
+        GROUP BY DATE(o.created_at)
+        ORDER BY date ASC
+      ),
+      top_products AS (
+        SELECT 
+          f.id,
+          f.name,
+          SUM(fi.quantity)::float as quantity,
+          SUM(fi.amount * fi.quantity)::float as total_amount
+        FROM "Food" f
+        JOIN "FoodItem" fi ON f.id = fi."foodId"
+        JOIN "FoodOrder" fo ON fi."orderId" = fo.id
+        WHERE 
+          fo."storeId" = ${store.id}
+          AND fo."createdAt" >= ${startDate}
+          AND fo."createdAt" <= ${endDate}
+        GROUP BY f.id, f.name
+        ORDER BY quantity DESC
+        LIMIT 5
+      )
+      SELECT 
+        (
+          SELECT COALESCE(jsonb_agg(
+            jsonb_build_object(
+              'date', date,
+              'count', count,
+              'total', total,
+              'delivered', delivered,
+              'cancelled', cancelled,
+              'invoicing', invoicing
+            )
+          ), '[]'::jsonb) FROM daily_summary
+        ) as "summary",
+        (
+          SELECT COALESCE(jsonb_agg(
+            jsonb_build_object(
+              'id', id,
+              'name', name,
+              'quantity', quantity,
+              'total_amount', total_amount
+            )
+          ), '[]'::jsonb) FROM top_products
+        ) as "mostSales"
+      `
+    )
+
+    // The result is already properly typed
+    const { summary, mostSales } = result[0]
+
+    return c.json(
+      {
+        data: { summary, mostSales },
+        meta: {
+          startDate: startDate.toISOString(),
+          endDate: endDate.toISOString(),
+        },
+      },
+      200
+    )
   })
   .get(
     '/stores/:storeId',
