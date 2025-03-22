@@ -10,6 +10,7 @@ import { Actions } from '@/app/(protected)/plataforma/alimentos/categorias/_feat
 
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
+import { ImageSlider } from '@/components/image-slider'
 
 export type ResponseType = InferResponseType<
   (typeof client.api)['food-categories']['$get'],
@@ -40,6 +41,15 @@ export const columns: ColumnDef<ResponseType>[] = [
     enableHiding: false,
   },
   {
+    accessorKey: 'imagens',
+    header: () => {
+      return <Button variant="ghost">Imagens</Button>
+    },
+    cell: ({ row }) => (
+      <ImageSlider images={[row.original.image]} product={row.original.name} />
+    ),
+  },
+  {
     accessorKey: 'name',
     enableHiding: false,
     header: ({ column }) => {
@@ -54,21 +64,21 @@ export const columns: ColumnDef<ResponseType>[] = [
       )
     },
   },
-  // {
-  //   accessorKey: 'produtos',
-  //   header: ({ column }) => {
-  //     return (
-  //       <Button
-  //         variant="ghost"
-  //         onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-  //       >
-  //         Produtos
-  //         <ArrowUpDown className="ml-2 h-4 w-4" />
-  //       </Button>
-  //     )
-  //   },
-  //   cell: ({ row }) => row.original.products,
-  // },
+  {
+    accessorKey: 'produtos',
+    header: () => {
+      return <Button variant="ghost">Produtos</Button>
+    },
+    cell: ({ row }) => {
+      const products = row.original._count.foods
+
+      return (
+        <span className="text-muted-foreground text-sm">
+          {products ? `${products} unids` : 'Nenhum registro cadastro'}
+        </span>
+      )
+    },
+  },
   {
     id: 'actions',
     enableHiding: false,

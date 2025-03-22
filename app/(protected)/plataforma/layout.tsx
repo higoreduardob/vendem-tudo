@@ -35,10 +35,10 @@ const DASHBOARD_NAV_MAIN = [
         title: 'Desempenho',
         url: '/plataforma/desempenho',
       },
-      {
-        title: 'Automação',
-        url: '/plataforma/automacao',
-      },
+      // {
+      //   title: 'Automação',
+      //   url: '/plataforma/automacao',
+      // },
     ],
   },
   {
@@ -51,14 +51,14 @@ const DASHBOARD_NAV_MAIN = [
         title: 'Categorias',
         url: '/plataforma/alimentos/categorias',
       },
-      {
-        title: 'Inventário',
-        url: '/plataforma/alimentos/inventario',
-      },
-      {
-        title: 'Descontos',
-        url: '/plataforma/produtos/descontos',
-      },
+      // {
+      //   title: 'Inventário',
+      //   url: '/plataforma/alimentos/inventario',
+      // },
+      // {
+      //   title: 'Descontos',
+      //   url: '/plataforma/produtos/descontos',
+      // },
     ],
   },
   {

@@ -58,47 +58,27 @@ export const columns: ColumnDef<ResponseType>[] = [
   {
     accessorKey: 'whatsApp',
     header: () => {
-      return (
-        <Button variant="ghost">
-          WhatsApp
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      )
+      return <Button variant="ghost">WhatsApp</Button>
     },
     cell: ({ row }) => phoneMask(row.original.whatsApp),
   },
   {
     accessorKey: 'email',
     header: () => {
-      return (
-        <Button variant="ghost">
-          Email
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      )
+      return <Button variant="ghost">Email</Button>
     },
   },
   {
     accessorKey: 'CPF/CNPJ',
     header: () => {
-      return (
-        <Button variant="ghost">
-          CPF/CNPJ
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      )
+      return <Button variant="ghost">CPF/CNPJ</Button>
     },
     cell: ({ row }) => cpfCnpjMask(row.original.cpfCnpj),
   },
   {
     accessorKey: 'endereço',
     header: () => {
-      return (
-        <Button variant="ghost">
-          Endereço
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      )
+      return <Button variant="ghost">Endereço</Button>
     },
     cell: ({ row }) => (
       <div className="flex flex-col">

@@ -5,6 +5,7 @@ import { ArrowUpDown } from 'lucide-react'
 import { ColumnDef } from '@tanstack/react-table'
 
 import { client } from '@/lib/hono'
+import { formatCurrency } from '@/lib/utils'
 
 import { Actions } from '@/features/foods/additionals/options/components/_features/actions'
 
@@ -54,21 +55,20 @@ export const columns: ColumnDef<ResponseType>[] = [
       )
     },
   },
-  // {
-  //   accessorKey: 'produtos',
-  //   header: ({ column }) => {
-  //     return (
-  //       <Button
-  //         variant="ghost"
-  //         onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-  //       >
-  //         Produtos
-  //         <ArrowUpDown className="ml-2 h-4 w-4" />
-  //       </Button>
-  //     )
-  //   },
-  //   cell: ({ row }) => row.original.products,
-  // },
+  {
+    accessorKey: 'preço',
+    header: () => {
+      return <Button variant="ghost">Preço</Button>
+    },
+    cell: ({ row }) => formatCurrency(row.original.price),
+  },
+  {
+    accessorKey: 'descrição',
+    header: () => {
+      return <Button variant="ghost">Descrição</Button>
+    },
+    cell: ({ row }) => row.original.description,
+  },
   {
     id: 'actions',
     enableHiding: false,

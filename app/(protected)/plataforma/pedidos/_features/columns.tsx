@@ -1,8 +1,8 @@
 'use client'
 
 import Image from 'next/image'
+import { Clock } from 'lucide-react'
 import { InferResponseType } from 'hono'
-import { ArrowUpDown, Clock } from 'lucide-react'
 import { ColumnDef } from '@tanstack/react-table'
 
 import { OrderHistoryProgress } from '@prisma/client'
@@ -11,20 +11,21 @@ import { client } from '@/lib/hono'
 import { translateOrderHistoryProgress } from '@/lib/i18n'
 import { createEnumOptions, formatCurrency } from '@/lib/utils'
 
+import { useUpdateHistory } from '@/features/foods/orders/api/use-update-history'
+
 import { Actions } from './actions'
 
-import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
-import { ColumnDetail } from '@/components/column-detail'
-import { SelectFilter } from '@/components/select-filter'
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { useUpdateHistory } from '@/features/foods/orders/api/use-update-history'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
+import { SelectFilter } from '@/components/select-filter'
+import { ColumnDetail } from '@/components/column-detail'
 
 export type ResponseType = InferResponseType<
   (typeof client.api)['food-orders']['$get'],
@@ -62,16 +63,8 @@ export const columns: ColumnDef<ResponseType>[] = [
   },
   {
     accessorKey: 'pagamento',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Pagamento
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      )
+    header: () => {
+      return <Button variant="ghost">Pagamento</Button>
     },
     cell: ({ row }) => (
       <div className="flex flex-col gap-2">
@@ -115,16 +108,8 @@ export const columns: ColumnDef<ResponseType>[] = [
   },
   {
     accessorKey: 'entrega',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Entrega
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      )
+    header: () => {
+      return <Button variant="ghost">Entrega</Button>
     },
     cell: ({ row }) => (
       <div className="flex flex-col">
@@ -175,16 +160,8 @@ export const columns: ColumnDef<ResponseType>[] = [
   },
   {
     accessorKey: 'carrinho',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Carrinho
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      )
+    header: () => {
+      return <Button variant="ghost">Carrinho</Button>
     },
     cell: ({ row }) => (
       <div className="grid grid-cols-3 gap-4">
@@ -202,14 +179,12 @@ export const columns: ColumnDef<ResponseType>[] = [
                       className="h-full object-cover transition-transform hover:scale-105 rounded-md"
                     />
                   </TooltipTrigger>
-                  <TooltipContent>
+                  <TooltipContent className="max-w-xs">
                     <div className="flex flex-col gap-1">
                       <p className="text-xs">Ingredientes</p>
-                      <ul className="list-inside list-disc text-sm">
-                        {item.food.ingredients.map((ingredient, index) => (
-                          <li key={index}>{ingredient}</li>
-                        ))}
-                      </ul>
+                      <span className="text-muted-foreground text-xs">
+                        {item.food.ingredients.join(', ')}
+                      </span>
                     </div>
                   </TooltipContent>
                 </Tooltip>
@@ -259,16 +234,8 @@ export const columns: ColumnDef<ResponseType>[] = [
   },
   {
     accessorKey: 'situação',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Situação
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      )
+    header: () => {
+      return <Button variant="ghost">Situação</Button>
     },
     cell: ({ row }) => {
       const mutation = useUpdateHistory(row.original.id)

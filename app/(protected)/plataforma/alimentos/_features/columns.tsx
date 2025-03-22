@@ -13,7 +13,6 @@ import { Actions } from '@/app/(protected)/plataforma/alimentos/_features/action
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { ImageSlider } from '@/components/image-slider'
-import { ScrollArea } from '@/components/ui/scroll-area'
 import { ColumnDetail } from '@/components/column-detail'
 
 export type ResponseType = InferResponseType<
@@ -136,23 +135,14 @@ export const columns: ColumnDef<ResponseType>[] = [
       return <Button variant="ghost">Ingredientes</Button>
     },
     cell: ({ row }) => {
-      const ingredients = row.original.ingredients
-      return (
-        <ScrollArea className="max-h-[100px] overflow-y-auto">
-          <div className="flex flex-col">
-            {ingredients.length > 0 ? (
-              ingredients.map((ingredient, index) => (
-                <span key={index} className="text-muted-foreground text-xs">
-                  {ingredient}
-                </span>
-              ))
-            ) : (
-              <span className="text-muted-foreground text-sm">
-                Nenhum registro cadastro
-              </span>
-            )}
-          </div>
-        </ScrollArea>
+      const ingredients = row.original.ingredients.join(', ')
+
+      return ingredients.length > 0 ? (
+        <span className="text-muted-foreground text-xs">{ingredients}</span>
+      ) : (
+        <span className="text-muted-foreground text-sm">
+          Nenhum registro cadastro
+        </span>
       )
     },
   },

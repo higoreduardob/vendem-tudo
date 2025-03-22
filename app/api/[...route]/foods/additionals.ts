@@ -47,6 +47,10 @@ const app = new Hono()
 
     const data = await db.foodAdditional.findMany({
       where: { storeId: store.id },
+      include: {
+        options: { select: { foodOption: { select: { name: true } } } },
+        _count: { select: { foods: true } },
+      },
     })
 
     return c.json({ data }, 200)

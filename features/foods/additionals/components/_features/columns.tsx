@@ -54,21 +54,47 @@ export const columns: ColumnDef<ResponseType>[] = [
       )
     },
   },
-  // {
-  //   accessorKey: 'produtos',
-  //   header: ({ column }) => {
-  //     return (
-  //       <Button
-  //         variant="ghost"
-  //         onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-  //       >
-  //         Produtos
-  //         <ArrowUpDown className="ml-2 h-4 w-4" />
-  //       </Button>
-  //     )
-  //   },
-  //   cell: ({ row }) => row.original.products,
-  // },
+  {
+    accessorKey: 'descrição',
+    header: () => {
+      return <Button variant="ghost">Descrição</Button>
+    },
+    cell: ({ row }) => row.original.description,
+  },
+  {
+    accessorKey: 'opções',
+    header: () => {
+      return <Button variant="ghost">Opções</Button>
+    },
+    cell: ({ row }) => {
+      const options = row.original.options
+        .map((option) => option.foodOption.name)
+        .join(', ')
+
+      return options.length > 0 ? (
+        <span className="text-muted-foreground text-xs">{options}</span>
+      ) : (
+        <span className="text-muted-foreground text-sm">
+          Nenhum registro cadastro
+        </span>
+      )
+    },
+  },
+  {
+    accessorKey: 'produtos',
+    header: () => {
+      return <Button variant="ghost">Produtos</Button>
+    },
+    cell: ({ row }) => {
+      const products = row.original._count.foods
+
+      return (
+        <span className="text-muted-foreground text-sm">
+          {products ? `${products} unids` : 'Nenhum registro cadastro'}
+        </span>
+      )
+    },
+  },
   {
     id: 'actions',
     enableHiding: false,
