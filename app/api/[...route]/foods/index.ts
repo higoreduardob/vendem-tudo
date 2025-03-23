@@ -4,7 +4,7 @@ import { verifyAuth } from '@hono/auth-js'
 import { createId } from '@paralleldrive/cuid2'
 import { zValidator } from '@hono/zod-validator'
 
-import { UserRole } from '@prisma/client'
+import { Prisma, UserRole } from '@prisma/client'
 
 import { db } from '@/lib/db'
 import { getAddedAndRemoved } from '@/lib/utils'
@@ -58,8 +58,16 @@ const app = new Hono()
   .get(
     '/stores/:storeId',
     zValidator('param', z.object({ storeId: z.string().optional() })),
+    zValidator(
+      'query',
+      z.object({
+        categoryId: z.string().optional(),
+        search: z.string().optional(),
+      })
+    ),
     async (c) => {
       const { storeId } = c.req.valid('param')
+      const { categoryId, search } = c.req.valid('query')
 
       if (!storeId) {
         return c.json({ error: 'Identificador não encontrado' }, 400)
@@ -70,8 +78,32 @@ const app = new Hono()
         return c.json({ error: 'Loja não cadastrada' }, 404)
       }
 
+      const filters: Prisma.FoodWhereInput[] = []
+
+      if (categoryId) {
+        filters.push({ categoryId })
+      }
+
+      if (search) {
+        filters.push({
+          OR: [
+            { name: { contains: search, mode: Prisma.QueryMode.insensitive } },
+            {
+              description: {
+                contains: search,
+                mode: Prisma.QueryMode.insensitive,
+              },
+            },
+            { ingredients: { hasSome: [search] } },
+          ],
+        })
+      }
+
       const data = await db.food.findMany({
-        where: { storeId: store.id },
+        where: {
+          storeId: store.id,
+          OR: filters.length > 0 ? filters : undefined,
+        },
         include: {
           additionals: {
             select: {

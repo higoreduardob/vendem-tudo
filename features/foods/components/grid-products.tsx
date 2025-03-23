@@ -19,11 +19,17 @@ export function GridProducts({
         <Title title={title} />
         {children}
       </div>
-      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6">
-        {products.map((product, index) => (
-          <CardProduct key={index} {...product} />
-        ))}
-      </div>
+      {!!products.length ? (
+        <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6">
+          {products.map((product, index) => (
+            <CardProduct key={index} {...product} />
+          ))}
+        </div>
+      ) : (
+        <span className="h-full w-full flex items-center justify-center text-base text-muted-foreground">
+          Nenhum produto encontrado
+        </span>
+      )}
     </div>
   )
 }

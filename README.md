@@ -20,13 +20,6 @@ Features:
     Suporte: 1. Colocar whatsapp de contato de suporte | 2. Colocar FAQ com tempo de solucionamento
     Planos: 1. Colocar planos para o cliente
 
-  CUSTOMER
-    Header: 4. Categorias ao selecionar devem trazer produtos daquela categoria
-    Hero: 1. Pesquisa de produtos com sugestão ao digitar | 2. Ao pesquisar o produto, trazer produtos semelhantes na busca, adicionando um grid de busca no layout | 3. Ao tocar na categoria deverá trazer produtos daquela categoria
-    Footer: 1. Melhorar o footer, pegar umas referências
-    Carosel: 1. Ao tocar na categoria trazer os produtos
-    Cardápio: 1. Exibe todos os produtos da categoria selecionada
-
     MELHORIAS:
 
     2 - Feat

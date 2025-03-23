@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { client } from '@/lib/hono'
 
 import { convertAmountFromMiliunits } from '@/lib/utils'
+import { useSearchFood } from '../hooks/use-filter-food'
 
 export const useGetFoods = () => {
   const query = useQuery({
@@ -29,12 +30,15 @@ export const useGetFoods = () => {
 }
 
 export const useGetStoreFoods = (storeId?: string) => {
+  const { categoryId, search } = useSearchFood()
+
   const query = useQuery({
     enabled: !!storeId,
-    queryKey: ['store-foods'],
+    queryKey: ['store-foods', categoryId, search],
     queryFn: async () => {
       const response = await client.api.foods.stores[':storeId'].$get({
         param: { storeId },
+        query: { categoryId, search },
       })
 
       if (!response.ok) {

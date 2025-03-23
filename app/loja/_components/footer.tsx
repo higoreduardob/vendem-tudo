@@ -4,6 +4,9 @@ export const Footer = () => {
   return (
     <footer className="flex flex-wrap items-center justify-center gap-4 py-4 text-sm text-muted-foreground">
       <span>© {new Date().getFullYear()} Vendem Tudo</span>
+      <Link href="/planos" className="hover:text-foreground">
+        Cadastrar loja
+      </Link>
       <Link href="/politicas-de-privacidade" className="hover:text-foreground">
         Políticas de privacidade
       </Link>

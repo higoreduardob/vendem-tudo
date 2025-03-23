@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/navigation-menu'
 import { Button } from '@/components/ui/button'
 import { useOpenOrder } from '@/features/foods/orders/components/form-order'
+import { useSearchFood } from '@/features/foods/hooks/use-filter-food'
 
 export const Header = () => {
   const router = useRouter()
@@ -26,6 +27,7 @@ export const Header = () => {
   const { user, status } = useCurrentUser()
   const { onOpen: onOpenAbout } = useOpenAbout()
   const { onOpen: onOpenOrder } = useOpenOrder()
+  const { onChange } = useSearchFood()
 
   if (!store) {
     return null
@@ -41,8 +43,8 @@ export const Header = () => {
     },
     {
       title: 'Categorias',
-      onClick: () => {},
       items: categories.map((category) => ({
+        id: category.id,
         title: category.name,
         count: category._count.foods,
       })),
@@ -82,7 +84,7 @@ export const Header = () => {
                               key={key}
                               variant="ghost"
                               className="w-full flex items-center justify-between"
-                              onClick={item.onClick}
+                              onClick={() => onChange(value.id)}
                             >
                               {value.title}
                               <span className="text-sm opacity-50">

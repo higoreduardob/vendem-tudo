@@ -2,8 +2,10 @@
 
 import Image from 'next/image'
 import { Search } from 'lucide-react'
+import { useState, useEffect } from 'react'
 
 import { useOpenStore } from '@/hooks/use-store'
+import { useSearchFood } from '@/features/foods/hooks/use-filter-food'
 import { useGetStoreCategories } from '@/features/foods/categories/api/use-get-categories'
 
 import { Input } from '@/components/ui/input'
@@ -14,6 +16,19 @@ export function MainBanner() {
   const { store } = useOpenStore()
   const categoriesQuery = useGetStoreCategories(store?.id)
   const categories = categoriesQuery.data || []
+  const { categoryId, search, onChange, clear } = useSearchFood()
+
+  const [tempSearch, setTempSearch] = useState(search || '')
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (tempSearch !== search) {
+        onChange(categoryId, tempSearch)
+      }
+    }, 600)
+
+    return () => clearTimeout(timeout)
+  }, [tempSearch])
 
   if (!store) {
     return null
@@ -47,13 +62,22 @@ export function MainBanner() {
                 <div className="relative flex-1">
                   <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5" />
                   <Input
+                    value={tempSearch}
                     type="text"
                     placeholder="O que você está procurando?"
                     className="w-full pl-12 h-12 text-base placeholder:text-white"
+                    onChange={({ target: { value } }) => setTempSearch(value)}
                   />
                 </div>
-                <Button variant="red" className="h-12 px-8 font-medium">
-                  Pesquisar
+                <Button
+                  variant="destructive"
+                  className="h-12 px-8 font-medium"
+                  onClick={() => {
+                    setTempSearch('')
+                    clear()
+                  }}
+                >
+                  Limpar
                 </Button>
               </div>
             </div>
@@ -66,47 +90,15 @@ export function MainBanner() {
                   <Badge
                     key={index}
                     className="p-2 text-muted-foreground font-normal rounded-full bg-white border border-gray-200 text-black hover:border-gray-300 hover:bg-gray-50 transition-colors cursor-pointer"
+                    onClick={() => onChange(category.id, search)}
                   >
                     {category.name}
                   </Badge>
                 ))}
-                {/* {[
-                  'Lanches',
-                  'Bebidas',
-                  'Combos',
-                  'Promocionais',
-                  'Doces',
-                  'Porções',
-                  'Fritas',
-                  'Peixes',
-                  'Camarões',
-                  'Sushi',
-                  'Carnes',
-                  'Cerveja',
-                ].map((category) => (
-                  <Badge
-                    key={category}
-                    className="p-2 text-muted-foreground font-normal rounded-full bg-white border border-gray-200 text-black hover:border-gray-300 hover:bg-gray-50 transition-colors cursor-pointer"
-                  >
-                    {category}
-                  </Badge>
-                ))} */}
               </nav>
             </div>
           </div>
         </div>
-
-        {/* <div className="container mx-auto flex h-full flex-col justify-center px-4 text-white">
-          <h1 className="max-w-md text-3xl font-bold md:text-4xl lg:text-5xl">
-            Promoção Especial de Lançamento
-          </h1>
-          <p className="mt-2 max-w-md text-lg md:text-xl">
-            Peça agora e ganhe 20% de desconto no seu primeiro pedido
-          </p>
-          <Button variant="destructive" size="lg" className="mt-4 w-fit">
-            Pedir Agora
-          </Button>
-        </div> */}
       </div>
     </div>
   )
