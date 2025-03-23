@@ -50,6 +50,7 @@ interface DataTableProps<TData, TValue> {
   disabled?: boolean
   onDelete: (rows: Row<TData>[]) => void
   onChangeStatus: (status: string) => void
+  filters?: React.JSX.Element
 }
 
 export function DataTable<TData, TValue>({
@@ -62,6 +63,7 @@ export function DataTable<TData, TValue>({
   disabled,
   onDelete,
   onChangeStatus,
+  filters,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -158,6 +160,7 @@ export function DataTable<TData, TValue>({
                 </DropdownMenuContent>
               </DropdownMenu>
             )}
+            {filters}
             <SelectFilter
               placeholder="Selecione limite"
               defaultValue={10}

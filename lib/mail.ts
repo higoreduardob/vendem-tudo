@@ -76,3 +76,17 @@ export const sendPasswordResetEmailWithSlug = async (
     html: `<p>Acesse <a href="${resetLink}">aqui</a> para redefinir sua senha.</p>`,
   })
 }
+
+export const sendPasswordSignInEmail = async (
+  email: string,
+  password: string
+) => {
+  const url = `${process.env.NEXT_PUBLIC_APP_URL}/entrar`
+
+  await resend.emails.send({
+    from: 'onboarding@resend.dev',
+    to: email,
+    subject: 'Acesso',
+    html: `<p>Acesse sua loja <a href="${url}">aqui</a> e insira seu email e senha abaixo</p><p>Email: ${email} | Senha: ${password}</p>`,
+  })
+}

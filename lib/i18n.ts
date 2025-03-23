@@ -4,6 +4,7 @@ import {
   ShippingRole,
   StorePayment,
   StoreRole,
+  UserRole,
 } from '@prisma/client'
 
 export function translatePasswordOptionsProps(option: PasswordOptionsProps) {
@@ -75,5 +76,20 @@ export function translateOrderHistoryProgress(progress: OrderHistoryProgress) {
       return 'Entregue'
     default:
       return 'Em trânsito'
+  }
+}
+
+export function translateUserRole(role: UserRole) {
+  switch (role) {
+    case 'ADMINISTRATOR':
+      return 'Administrador'
+    case 'OWNER':
+      return 'Proprietário'
+    case 'MANAGER':
+      return 'Gerente'
+    case 'EMPLOYEE':
+      return 'Colaborador'
+    default:
+      return 'Cliente'
   }
 }

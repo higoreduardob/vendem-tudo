@@ -60,7 +60,13 @@ export const FormForgotPassword = ({
       description="Informe o email da sua conta"
       footerTitle="Entrar"
       footerDescription="Lembrou sua senha?"
-      footerLink={!isCustomer ? '/entrar' : `/loja/${slug}/entrar`}
+      footerLink={
+        role !== 'ADMINISTRATOR'
+          ? !isCustomer
+            ? '/entrar'
+            : `/loja/${slug}/entrar`
+          : '/gestao/entrar'
+      }
     >
       <Form {...form}>
         <form

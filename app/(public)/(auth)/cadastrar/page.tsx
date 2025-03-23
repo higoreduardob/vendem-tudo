@@ -1,5 +1,5 @@
-import { FormSignUp } from '@/features/auth/components/form-sign-up'
+import { FormWrapperSignUp } from '@/features/auth/components/form-wrapper-sign-up'
 
 export default function SignUpPage() {
-  return <FormSignUp role="OWNER" />
+  return <FormWrapperSignUp role="OWNER" />
 }

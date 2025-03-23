@@ -15,7 +15,7 @@ export default function CustomersPage() {
   const customersQuery = useGetUsers('CUSTOMER')
   const customers = customersQuery.data || []
   const deleteUsers = useBulkDeleteUsers()
-  const { onChangeStatus } = useFilterUser()
+  const { onChange } = useFilterUser()
 
   const isLoading = customersQuery.isLoading || deleteUsers.isPending
 
@@ -40,7 +40,7 @@ export default function CustomersPage() {
           const ids = row.map((r) => r.original.id)
           deleteUsers.mutate({ ids })
         }}
-        onChangeStatus={onChangeStatus}
+        onChangeStatus={onChange}
       />
     </div>
   )

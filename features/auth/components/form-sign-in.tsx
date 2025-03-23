@@ -98,9 +98,17 @@ export const FormSignIn = ({
       description={`Digite seu ${
         twoFactor ? 'código' : 'e-mail e senha'
       } abaixo para acessar em sua conta`}
-      footerTitle="Cadastrar"
-      footerDescription="Não possui uma conta?"
-      footerLink={!isCustomer ? '/cadastrar' : `/loja/${slug}/cadastrar`}
+      footerTitle={role !== 'ADMINISTRATOR' ? 'Cadastrar' : undefined}
+      footerDescription={
+        role !== 'ADMINISTRATOR' ? 'Não possui uma conta?' : undefined
+      }
+      footerLink={
+        role !== 'ADMINISTRATOR'
+          ? !isCustomer
+            ? '/cadastrar'
+            : `/loja/${slug}/cadastrar`
+          : undefined
+      }
     >
       <Form {...form}>
         <form
@@ -162,9 +170,11 @@ export const FormSignIn = ({
               />
               <Link
                 href={
-                  !isCustomer
-                    ? '/recuperar-senha'
-                    : `/loja/${slug}/recuperar-senha`
+                  role !== 'ADMINISTRATOR'
+                    ? !isCustomer
+                      ? '/recuperar-senha'
+                      : `/loja/${slug}/recuperar-senha`
+                    : '/gestao/recuperar-senha'
                 }
                 className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
               >

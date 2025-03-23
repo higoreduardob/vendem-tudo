@@ -2,17 +2,12 @@
 
 import { useOpenStore } from '@/hooks/use-store'
 
-import { FormSignUp } from '@/features/auth/components/form-sign-up'
+import { FormWrapperSignUp } from '@/features/auth/components/form-wrapper-sign-up'
 
 export default function SignUpPage() {
   const { store } = useOpenStore()
 
   return (
-    <FormSignUp
-      role="CUSTOMER"
-      storeId={store?.id}
-      slug={store?.slug}
-      isCustomer
-    />
+    <FormWrapperSignUp role="CUSTOMER" storeId={store?.id} slug={store?.slug} />
   )
 }

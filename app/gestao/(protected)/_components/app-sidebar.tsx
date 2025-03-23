@@ -1,19 +1,12 @@
 'use client'
 
-import {
-  Package,
-  ShieldCheck,
-  User,
-  LogOut,
-  Utensils,
-  Store,
-} from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { signOut } from 'next-auth/react'
 import { usePathname } from 'next/navigation'
 
-import { useOpenStore } from '@/hooks/use-store'
+import { Users, ShieldCheck, User, LogOut, Store } from 'lucide-react'
+
 import { useCurrentUser } from '@/features/auth/hooks/use-current-user'
 
 import {
@@ -31,36 +24,28 @@ import { Collapsible } from '@/components/ui/collapsible'
 
 export function AppSidebar() {
   const pathname = usePathname()
-  const { store } = useOpenStore()
   const { user } = useCurrentUser()
-
-  if (!store) return null
 
   const DASHBOARD_NAV_MAIN = [
     {
+      title: 'Gestão',
+      href: '/gestao',
+      icon: Store,
+    },
+    {
       title: 'Minha Conta',
-      href: `/loja/${store.slug}/conta`,
+      href: '/gestao/conta',
       icon: User,
     },
     {
-      title: 'Meus Pedidos',
-      href: `/loja/${store.slug}/conta/pedidos`,
-      icon: Package,
+      title: 'Usuários',
+      href: '/gestao/usuarios',
+      icon: Users,
     },
-    // {
-    //   title: 'Favoritos',
-    //   href: `/loja/${store.slug}/conta/favoritos`,
-    //   icon: Heart,
-    // },
     {
       title: 'Segurança',
-      href: `/loja/${store.slug}/conta/seguranca`,
+      href: '/gestao/seguranca',
       icon: ShieldCheck,
-    },
-    {
-      title: 'Cardápio',
-      href: `/loja/${store.slug}`,
-      icon: Utensils,
     },
   ]
 
@@ -69,7 +54,7 @@ export function AppSidebar() {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <Link href={`/loja/${store.slug}`}>
+            <Link href="/gestao">
               <SidebarMenuButton
                 size="lg"
                 className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
@@ -81,11 +66,9 @@ export function AppSidebar() {
                   height={32}
                 />
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">{store.name}</span>
+                  <span className="truncate font-semibold">Vendem Tudo</span>
                   <span className="truncate text-xs">{user?.name}</span>
                 </div>
-
-                <Store className="ml-auto" />
               </SidebarMenuButton>
             </Link>
           </SidebarMenuItem>

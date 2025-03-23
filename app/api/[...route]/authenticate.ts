@@ -365,7 +365,7 @@ const app = new Hono()
 
       if (!role) return c.json({ error: 'Usuário inválido' }, 400)
 
-      if (role !== 'OWNER' && !storeId) {
+      if (role !== 'OWNER' && role !== 'ADMINISTRATOR' && !storeId) {
         return c.json({ error: 'Identificador não encontrado' }, 400)
       }
 
@@ -373,15 +373,15 @@ const app = new Hono()
       const { email, password, code } = validatedFields
 
       const store =
-        role !== 'OWNER'
+        role !== 'OWNER' && role !== 'ADMINISTRATOR'
           ? await db.store.findUnique({ where: { id: storeId } })
           : null
-      if (role !== 'OWNER' && !store) {
+      if (role !== 'OWNER' && role !== 'ADMINISTRATOR' && !store) {
         return c.json({ error: 'Loja não cadastrada' }, 404)
       }
 
       const existingUser =
-        role === 'OWNER'
+        role === 'OWNER' || role === 'ADMINISTRATOR'
           ? await db.user.findUnique({
               where: {
                 unique_email_per_role: { email, role },
@@ -400,6 +400,7 @@ const app = new Hono()
       if (!existingUser || !existingUser.email || !existingUser.password) {
         return c.json({ error: 'Email não cadastrado' }, 400)
       }
+      console.log(existingUser)
 
       if (!code) {
         const passwordsMatch = await bcrypt.compare(

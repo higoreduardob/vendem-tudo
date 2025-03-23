@@ -16,7 +16,7 @@ export default {
         const { email, password, role, storeId } = validatedFields.data
 
         const existingUser =
-          role === 'OWNER'
+          role === 'OWNER' || role === 'ADMINISTRATOR'
             ? await db.user.findUnique({
                 where: {
                   unique_email_per_role: { email, role },

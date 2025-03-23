@@ -2,8 +2,8 @@
 
 import { useMountedState } from 'react-use'
 
-import { FormNewStore } from '@/features/stores/components/form-new-store'
 import { FormEditStore } from '@/features/stores/components/form-edit-store'
+import { FormOwnerNewStore as FormNewStore } from '@/features/stores/components/form-new-store'
 
 import { FormNewFood } from '@/features/foods/components/form-new-food'
 import { FormEditFood } from '@/features/foods/components/form-edit-food'
