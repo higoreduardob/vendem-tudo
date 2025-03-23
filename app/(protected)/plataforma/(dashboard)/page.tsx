@@ -10,13 +10,11 @@ import { Title } from '@/app/(protected)/_components/title'
 import { WrapperVariant } from '../_components/wrapper-variant'
 import { Analytics } from './_components/analytics'
 import { DataTable } from '@/components/data-table'
-import { BarVariant } from '@/components/bar-variant'
 
 import { PieVariant } from '@/components/pie-variant'
-import { useGetSummary } from '@/features/foods/orders/summary/api/use-get-summary'
+import { useGetSummary } from '@/features/foods/orders/api/use-get-summary'
 import { InferResponseType } from 'hono'
 import { client } from '@/lib/hono'
-import { RadarVariant } from '@/components/radar-variant'
 
 export type SummaryResponseType = InferResponseType<
   (typeof client.api)['food-orders']['summary']['$get'],
@@ -36,7 +34,7 @@ export default function DashboardPage() {
         {/* Actions */}
       </div>
       <Analytics />
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-3 gap-4">
         <WrapperVariant title="Movimentações">
           <AreaVariant
             data={summary.data?.summary || []}
@@ -47,11 +45,6 @@ export default function DashboardPage() {
                 label: 'Pedidos',
               },
               {
-                key: 'total',
-                color: 'hsl(var(--chart-2))',
-                label: 'Vendas',
-              },
-              {
                 key: 'delivered',
                 color: 'hsl(var(--chart-3))',
                 label: 'Entregas',
@@ -61,37 +54,17 @@ export default function DashboardPage() {
                 color: 'hsl(var(--chart-4))',
                 label: 'Canceladas',
               },
-              {
-                key: 'invoicing',
-                color: 'hsl(var(--chart-5))',
-                label: 'Faturamento',
-              },
             ]}
           />
         </WrapperVariant>
-        <WrapperVariant title="Cancelamentos">
-          <BarVariant
+        <WrapperVariant title="Financeiro">
+          <AreaVariant
             data={summary.data?.summary || []}
             fields={[
               {
-                key: 'count',
-                color: 'hsl(var(--chart-1))',
-                label: 'Pedidos',
-              },
-              {
                 key: 'total',
                 color: 'hsl(var(--chart-2))',
                 label: 'Vendas',
-              },
-              {
-                key: 'delivered',
-                color: 'hsl(var(--chart-3))',
-                label: 'Entregas',
-              },
-              {
-                key: 'cancelled',
-                color: 'hsl(var(--chart-4))',
-                label: 'Canceladas',
               },
               {
                 key: 'invoicing',
@@ -100,25 +73,26 @@ export default function DashboardPage() {
               },
             ]}
           />
-        </WrapperVariant>
-        <WrapperVariant title="Faturamento">
-          <RadarVariant />
         </WrapperVariant>
         <WrapperVariant title="Mais vendidos">
           <PieVariant
             data={summary.data?.mostSales || []}
-            fields={[
-              {
-                key: 'quantity',
-                color: 'hsl(var(--chart-1))',
-                label: 'Quantidade',
-              },
-              {
-                key: 'name',
-                color: 'hsl(var(--chart-2))',
-                label: 'Quantidade',
-              },
-            ]}
+            fields={
+              summary.data?.mostSales && summary.data?.mostSales.length > 0
+                ? [
+                    ...summary.data.mostSales.map((sale, index) => ({
+                      key: `name`,
+                      color: `hsl(var(--chart-${index}))`,
+                      label: 'Quantidade',
+                    })),
+                    {
+                      key: 'quantity',
+                      color: 'hsl(var(--chart-1))',
+                      label: 'Quantidade',
+                    },
+                  ]
+                : []
+            }
           />
         </WrapperVariant>
       </div>

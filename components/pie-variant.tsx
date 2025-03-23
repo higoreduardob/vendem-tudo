@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo } from 'react'
-import { Label, Pie, PieChart, ResponsiveContainer, LabelList } from 'recharts'
+import { Label, Pie, PieChart, ResponsiveContainer } from 'recharts'
 
 import { numericFieldsFilter } from '@/constants'
 
@@ -91,14 +91,7 @@ export const PieVariant = ({ data, fields }: VariantProps) => {
             nameKey={nameKey}
             innerRadius={60}
             strokeWidth={5}
-            label={(entry) => entry[nameKey] as string}
           >
-            <LabelList
-              dataKey={nameKey}
-              position="outside"
-              className="fill-foreground text-xs"
-            />
-
             <Label
               content={({ viewBox }) => {
                 if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
