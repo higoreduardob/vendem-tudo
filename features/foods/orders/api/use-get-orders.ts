@@ -4,12 +4,15 @@ import { AddressFormValues } from '@/features/common/schema'
 
 import { client } from '@/lib/hono'
 import { phoneMask, zipCodeMask } from '@/lib/format'
+import { convertAmountFromMiliunits } from '@/lib/utils'
 
-export const useGetOrders = () => {
+export const useGetOrders = (today?: boolean) => {
   const query = useQuery({
     queryKey: ['food-orders'],
     queryFn: async () => {
-      const response = await client.api['food-orders'].$get()
+      const response = await client.api['food-orders'].$get({
+        query: { today: String(today) },
+      })
 
       if (!response.ok) {
         const data = await response.json()
@@ -39,6 +42,8 @@ export const useGetOrders = () => {
           whatsApp: phoneMask(item.customer.whatsApp),
         },
         address: formattedAddress(item.address),
+        amount: convertAmountFromMiliunits(item.amount),
+        moneyChange: convertAmountFromMiliunits(item.moneyChange),
       }))
     },
   })

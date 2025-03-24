@@ -8,12 +8,13 @@ import { StorePayment } from '@prisma/client'
 
 import { ExtendedUser } from '@/types/next-auth'
 
+import { useOpenCheckoutDialog } from './checkout-dialog'
 import { ResponseType, useOpenStore } from '@/hooks/use-store'
 import { useCurrentUser } from '@/features/auth/hooks/use-current-user'
 import { useCreateOrder } from '@/features/foods/orders/api/use-create-order'
 
-import { cn, formatCurrency } from '@/lib/utils'
 import { translateStorePayment } from '@/lib/i18n'
+import { cn, convertAmountToMiliunits, formatCurrency } from '@/lib/utils'
 
 import {
   type InsertCheckoutFormValues,
@@ -43,7 +44,6 @@ import {
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { useOpenCheckoutDialog } from './checkout-dialog'
 
 type PaymentOptionType = {
   currValue: StorePayment
@@ -162,13 +162,16 @@ export const FormCheckout = () => {
     const deadlineAt =
       shippingRole === 'DELIVERY' ? shippingDeadlineAt || undefined : undefined
 
-    mutation.mutate(values, {
-      onSuccess: () => {
-        onClose()
-        onOpen(deadlineAt)
-        clearCart()
-      },
-    })
+    mutation.mutate(
+      { ...values, moneyChange: convertAmountToMiliunits(values.moneyChange) },
+      {
+        onSuccess: () => {
+          onClose()
+          onOpen(deadlineAt)
+          clearCart()
+        },
+      }
+    )
   }
 
   return (

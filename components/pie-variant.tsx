@@ -12,20 +12,6 @@ import {
   ChartTooltipContent,
 } from '@/components/ui/chart'
 
-declare type DataField = {
-  key: string
-  color: string
-  label: string
-}
-
-declare type VariantProps = {
-  data: {
-    date?: string
-    [key: string]: number | string | undefined
-  }[]
-  fields: DataField[]
-}
-
 export const PieVariant = ({ data, fields }: VariantProps) => {
   const dataKey = useMemo(() => {
     const numericField = fields.find((field) =>
@@ -52,27 +38,37 @@ export const PieVariant = ({ data, fields }: VariantProps) => {
     }, 0)
   }, [data, dataKey])
 
-  const customConfig = fields.reduce((acc, field) => {
-    acc[field.key] = {
-      label: field.label,
-      color: field.color,
+  const customConfig = useMemo(() => {
+    const config: ChartConfig = {}
+
+    config[dataKey] = {
+      label: fields.find((f) => f.key === dataKey)?.label || 'Quantidade',
     }
-    return acc
-  }, {} as ChartConfig)
+
+    data.forEach((item, index) => {
+      const itemKey = typeof item.id === 'string' ? item.id : `item-${index}`
+      config[itemKey] = {
+        label: typeof item.name === 'string' ? item.name : `Item ${index + 1}`,
+        color: `hsl(var(--chart-${(index % 5) + 1}))`,
+      }
+    })
+
+    return config
+  }, [data, dataKey, fields])
 
   const chartData = useMemo(() => {
     if (!data || data.length === 0) return []
 
     return data.map((item, index) => {
-      const fieldKey = fields[index % fields.length]?.key || fields[0]?.key
-      const field = fields.find((f) => f.key === fieldKey) || fields[0]
+      const colorIndex = (index % 5) + 1
 
       return {
         ...item,
-        fill: field?.color || `hsl(var(--chart-${(index % 5) + 1}))`,
+        fill: `hsl(var(--chart-${colorIndex}))`,
+        itemId: typeof item.id === 'string' ? item.id : `item-${index}`,
       }
     })
-  }, [data, fields])
+  }, [data])
 
   return (
     <ResponsiveContainer width="100%" height={350}>

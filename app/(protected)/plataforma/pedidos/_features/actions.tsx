@@ -8,7 +8,7 @@ type Props = {
 
 export const Actions = ({ id }: Props) => {
   return (
-    <Button variant="ghost">
+    <Button variant="outline">
       <Printer className="size-4 mr-2" />
       Imprimir
     </Button>

@@ -51,6 +51,29 @@ export const AreaVariant = ({ data, fields }: VariantProps) => {
                 right: 12,
               }}
             >
+              <defs>
+                {fields.map((field) => (
+                  <linearGradient
+                    key={field.key}
+                    id={field.key}
+                    x1="0"
+                    y1="0"
+                    x2="0"
+                    y2="1"
+                  >
+                    <stop
+                      offset="5%"
+                      stopColor={field.color}
+                      stopOpacity={0.8}
+                    />
+                    <stop
+                      offset="95%"
+                      stopColor={field.color}
+                      stopOpacity={0.1}
+                    />
+                  </linearGradient>
+                ))}
+              </defs>
               <CartesianGrid vertical={false} />
               <XAxis
                 dataKey="date"

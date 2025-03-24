@@ -10,8 +10,6 @@ Features:
     Lojistas: 1. Exibir todos os lojista e permitir o CRUD
 
   OWNER/MANAGER/EMPLOYEE
-    Painel: 1. Incluir gráfico de vendas | 2. Incluir tabela de pedidos do dia com filtro e limit
-      Desempenho: 1. Incluir gráficos informativos das vendas
     Alimentos: 1. Incluir analytics dos alimentos | 3. Definição de destaques para +vendidos e +avaliados | 4. No product card reaver as badges de destaques
       Categorias: 1. Incluir analytics das categorias
     Pedidos: 1. Incluir analytics dos pedidos | 3. Colocar date range

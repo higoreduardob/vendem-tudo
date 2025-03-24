@@ -7,7 +7,7 @@ import { PieVariant } from '@/components/pie-variant'
 import { BarVariant } from '@/components/bar-variant'
 import { LineVariant } from '@/components/line-variant'
 import { RadarVariant } from '@/components/radar-variant'
-import { Analytics } from '../_components/analytics'
+import { Analytics } from './_components/analytics'
 import { useGetAnalytics } from '@/features/foods/orders/api/use-get-analytics'
 
 const Options = () => (
@@ -28,6 +28,7 @@ export default function AnalyticsPage() {
         {/* Actions */}
       </div>
       <Analytics />
+      {/* TODO: Change charts rules */}
       <div className="grid grid-cols-5 gap-4">
         <WrapperVariant title="Pedidos" options={<Options />}>
           <AreaVariant
@@ -94,35 +95,44 @@ export default function AnalyticsPage() {
         <WrapperVariant title="Métodos de pagamento">
           <PieVariant
             data={analytics?.paymentMethods || []}
-            fields={[
-              {
-                key: 'count',
-                color: 'hsl(var(--chart-1))',
-                label: 'Quantidade',
-              },
-              {
-                key: 'payment',
-                color: 'hsl(var(--chart-2))',
-                label: 'Quantidade',
-              },
-            ]}
+            fields={
+              analytics?.paymentMethods && analytics?.paymentMethods.length > 0
+                ? [
+                    ...analytics.paymentMethods.map((_, index) => ({
+                      key: `payment`,
+                      color: `hsl(var(--chart-${index}))`,
+                      label: 'Quantidade',
+                    })),
+                    {
+                      key: 'count',
+                      color: 'hsl(var(--chart-1))',
+                      label: 'Quantidade',
+                    },
+                  ]
+                : []
+            }
           />
         </WrapperVariant>
+        {/* TODO: Fix error quantity elements */}
         <WrapperVariant title="Mais vendidos">
           <PieVariant
             data={analytics?.topProducts || []}
-            fields={[
-              {
-                key: 'quantity',
-                color: 'hsl(var(--chart-1))',
-                label: 'Quantidade',
-              },
-              {
-                key: 'name',
-                color: 'hsl(var(--chart-2))',
-                label: 'Quantidade',
-              },
-            ]}
+            fields={
+              analytics?.topProducts && analytics?.topProducts.length > 0
+                ? [
+                    ...analytics.topProducts.map((_, index) => ({
+                      key: `name`,
+                      color: `hsl(var(--chart-${index}))`,
+                      label: 'Quantidade',
+                    })),
+                    {
+                      key: 'quantity',
+                      color: 'hsl(var(--chart-1))',
+                      label: 'Quantidade',
+                    },
+                  ]
+                : []
+            }
           />
         </WrapperVariant>
         <WrapperVariant title="Carrinhos abandonados" options={<Options />}>

@@ -1,3 +1,5 @@
+import { format } from 'date-fns'
+import { ptBR } from 'date-fns/locale'
 import { useQuery } from '@tanstack/react-query'
 
 import { client } from '@/lib/hono'
@@ -19,11 +21,18 @@ export const useGetSummary = () => {
         ...data,
         summary: data.summary.map((summary) => ({
           ...summary,
-          invoicing: formatCurrency(
-            convertAmountFromMiliunits(summary.invoicing)
-          ),
-          total: formatCurrency(convertAmountFromMiliunits(summary.total)),
+          date: format(new Date(summary.date + 'T00:00:00'), 'dd MMM', {
+            locale: ptBR,
+          }),
+          invoicing: convertAmountFromMiliunits(summary.invoicing),
+          total: convertAmountFromMiliunits(summary.total),
         })),
+        overview: {
+          ...data.overview,
+          dailySales: formatCurrency(
+            convertAmountFromMiliunits(data.overview.dailySales)
+          ),
+        },
       }
     },
   })

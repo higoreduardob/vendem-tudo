@@ -7,8 +7,12 @@ import { ColumnDef } from '@tanstack/react-table'
 
 import { OrderHistoryProgress } from '@prisma/client'
 
+import {
+  translateOrderHistoryProgress,
+  translateShippingRole,
+  translateStorePayment,
+} from '@/lib/i18n'
 import { client } from '@/lib/hono'
-import { translateOrderHistoryProgress } from '@/lib/i18n'
 import { createEnumOptions, formatCurrency } from '@/lib/utils'
 
 import { useUpdateHistory } from '@/features/foods/orders/api/use-update-history'
@@ -79,7 +83,10 @@ export const columns: ColumnDef<ResponseType>[] = [
           <ColumnDetail title="Email" value={row.original.customer.email} />
         </div>
         <div className="flex flex-col">
-          <ColumnDetail title="Entrega" value={row.original.shippingRole} />
+          <ColumnDetail
+            title="Entrega"
+            value={translateShippingRole(row.original.shippingRole)}
+          />
           <ColumnDetail
             title="Taxa da entrega"
             value={
@@ -90,7 +97,7 @@ export const columns: ColumnDef<ResponseType>[] = [
           />
           <ColumnDetail
             title="Forma de pagamento"
-            value={row.original.payment}
+            value={translateStorePayment(row.original.payment)}
           />
           <ColumnDetail
             title="Total"
@@ -164,7 +171,7 @@ export const columns: ColumnDef<ResponseType>[] = [
       return <Button variant="ghost">Carrinho</Button>
     },
     cell: ({ row }) => (
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 gap-4">
         {row.original.items.map((item, index) => (
           <div className="grid grid-cols-3 gap-2 items-start" key={index}>
             <div className="flex flex-col gap-2">
@@ -179,14 +186,16 @@ export const columns: ColumnDef<ResponseType>[] = [
                       className="h-full object-cover transition-transform hover:scale-105 rounded-md"
                     />
                   </TooltipTrigger>
-                  <TooltipContent className="max-w-xs">
-                    <div className="flex flex-col gap-1">
-                      <p className="text-xs">Ingredientes</p>
-                      <span className="text-muted-foreground text-xs">
-                        {item.food.ingredients.join(', ')}
-                      </span>
-                    </div>
-                  </TooltipContent>
+                  {!!item.food.ingredients.length && (
+                    <TooltipContent className="max-w-xs">
+                      <div className="flex flex-col gap-1">
+                        <p className="text-xs">Ingredientes</p>
+                        <span className="text-muted-foreground text-xs">
+                          {item.food.ingredients.join(', ')}
+                        </span>
+                      </div>
+                    </TooltipContent>
+                  )}
                 </Tooltip>
               </TooltipProvider>
               {item.obs && <ColumnDetail title="Observação" value={item.obs} />}
@@ -256,6 +265,7 @@ export const columns: ColumnDef<ResponseType>[] = [
 
       return (
         <div className="flex flex-col gap-2">
+          <Actions id={row.original.id} />
           <SelectFilter
             placeholder="Selecione o método"
             defaultValue={progress}
@@ -291,10 +301,5 @@ export const columns: ColumnDef<ResponseType>[] = [
         </div>
       )
     },
-  },
-  {
-    id: 'actions',
-    enableHiding: false,
-    cell: ({ row }) => <Actions id={row.original.id} />,
   },
 ]

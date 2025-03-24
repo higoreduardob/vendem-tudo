@@ -48,6 +48,7 @@ interface DataTableProps<TData, TValue> {
   isNonReversibled?: boolean
   isNonExportable?: boolean
   disabled?: boolean
+  status: string
   onDelete: (rows: Row<TData>[]) => void
   onChangeStatus: (status: string) => void
   filters?: React.JSX.Element
@@ -61,6 +62,7 @@ export function DataTable<TData, TValue>({
   isNonReversibled,
   isNonExportable,
   disabled,
+  status,
   onDelete,
   onChangeStatus,
   filters,

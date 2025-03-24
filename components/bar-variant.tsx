@@ -12,7 +12,7 @@ import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 
 import {
-  ChartConfig,
+  type ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
@@ -62,8 +62,8 @@ export const BarVariant = ({ data, fields }: VariantProps) => {
                   <Bar
                     key={field.key}
                     dataKey={field.key}
-                    stackId={field.key}
-                    fill={`url(#${field.key})`}
+                    stackId="a"
+                    fill={`var(--color-${field.key})`}
                     radius={[0, 0, 4, 4]}
                   />
                 ))}

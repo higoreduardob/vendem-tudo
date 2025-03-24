@@ -2,7 +2,7 @@ import { cn } from '@/lib/utils'
 
 type Props = {
   title: string
-  value: string | undefined
+  value: string | undefined | number
   isLastItem?: boolean
 }
 

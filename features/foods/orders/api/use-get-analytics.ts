@@ -1,7 +1,11 @@
+import { format } from 'date-fns'
+import { ptBR } from 'date-fns/locale'
 import { useQuery } from '@tanstack/react-query'
 
 import { client } from '@/lib/hono'
-import { convertAmountFromMiliunits, formatCurrency } from '@/lib/utils'
+import { convertAmountFromMiliunits } from '@/lib/utils'
+import { translateStorePayment } from '@/lib/i18n'
+import { StorePayment } from '@prisma/client'
 
 export const useGetAnalytics = () => {
   const query = useQuery({
@@ -15,7 +19,21 @@ export const useGetAnalytics = () => {
       }
 
       const { data } = await response.json()
-      return data
+      return {
+        ...data,
+        dailyMetrics: data.dailyMetrics.map((metric) => ({
+          ...metric,
+          date: format(new Date(metric.date + 'T00:00:00'), 'dd MMM', {
+            locale: ptBR,
+          }),
+          avgTicket: convertAmountFromMiliunits(metric.avgTicket),
+          invoicing: convertAmountFromMiliunits(metric.invoicing),
+        })),
+        paymentMethods: data.paymentMethods.map((item) => ({
+          ...item,
+          payment: translateStorePayment(item.payment as StorePayment),
+        })),
+      }
     },
   })
 

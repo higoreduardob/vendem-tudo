@@ -3,28 +3,20 @@
 import { columns } from '@/app/(protected)/plataforma/pedidos/_features/columns'
 
 import { useGetOrders } from '@/features/foods/orders/api/use-get-orders'
+import { useGetSummary } from '@/features/foods/orders/api/use-get-summary'
 import { useFilterOrder } from '@/features/foods/orders/hooks/use-filter-order'
 
-import { AreaVariant } from '@/components/area-variant'
-import { Title } from '@/app/(protected)/_components/title'
-import { WrapperVariant } from '../_components/wrapper-variant'
-import { Analytics } from './_components/analytics'
 import { DataTable } from '@/components/data-table'
-
 import { PieVariant } from '@/components/pie-variant'
-import { useGetSummary } from '@/features/foods/orders/api/use-get-summary'
-import { InferResponseType } from 'hono'
-import { client } from '@/lib/hono'
-
-export type SummaryResponseType = InferResponseType<
-  (typeof client.api)['food-orders']['summary']['$get'],
-  200
->['data']['summary'][0]
+import { Title } from '@/app/(protected)/_components/title'
+import { ChartVariant } from '@/app/(protected)/plataforma/_components/chart-variant'
+import { WrapperVariant } from '@/app/(protected)/plataforma/_components/wrapper-variant'
+import { Analytics } from '@/app/(protected)/plataforma/(dashboard)/_components/analytics'
 
 export default function DashboardPage() {
-  const ordersQuery = useGetOrders()
+  const { onChangeStatus, status } = useFilterOrder()
+  const ordersQuery = useGetOrders(true)
   const orders = ordersQuery.data || []
-  const { onChangeStatus } = useFilterOrder()
   const summary = useGetSummary()
 
   return (
@@ -33,54 +25,52 @@ export default function DashboardPage() {
         <Title>Painel</Title>
         {/* Actions */}
       </div>
-      <Analytics />
+      <Analytics {...summary.data?.overview!} />
       <div className="grid grid-cols-3 gap-4">
-        <WrapperVariant title="Movimentações">
-          <AreaVariant
-            data={summary.data?.summary || []}
-            fields={[
-              {
-                key: 'count',
-                color: 'hsl(var(--chart-1))',
-                label: 'Pedidos',
-              },
-              {
-                key: 'delivered',
-                color: 'hsl(var(--chart-3))',
-                label: 'Entregas',
-              },
-              {
-                key: 'cancelled',
-                color: 'hsl(var(--chart-4))',
-                label: 'Canceladas',
-              },
-            ]}
-          />
-        </WrapperVariant>
-        <WrapperVariant title="Financeiro">
-          <AreaVariant
-            data={summary.data?.summary || []}
-            fields={[
-              {
-                key: 'total',
-                color: 'hsl(var(--chart-2))',
-                label: 'Vendas',
-              },
-              {
-                key: 'invoicing',
-                color: 'hsl(var(--chart-5))',
-                label: 'Faturamento',
-              },
-            ]}
-          />
-        </WrapperVariant>
+        <ChartVariant
+          title="Movimentações"
+          data={summary.data?.summary || []}
+          fields={[
+            {
+              key: 'count',
+              color: 'hsl(var(--chart-1))',
+              label: 'Pedidos',
+            },
+            {
+              key: 'delivered',
+              color: 'hsl(var(--chart-3))',
+              label: 'Entregas',
+            },
+            {
+              key: 'cancelled',
+              color: 'hsl(var(--chart-4))',
+              label: 'Canceladas',
+            },
+          ]}
+        />
+        <ChartVariant
+          title="Financeiro"
+          data={summary.data?.summary || []}
+          fields={[
+            {
+              key: 'total',
+              color: 'hsl(var(--chart-2))',
+              label: 'Vendas',
+            },
+            {
+              key: 'invoicing',
+              color: 'hsl(var(--chart-5))',
+              label: 'Faturamento',
+            },
+          ]}
+        />
         <WrapperVariant title="Mais vendidos">
           <PieVariant
             data={summary.data?.mostSales || []}
             fields={
               summary.data?.mostSales && summary.data?.mostSales.length > 0
                 ? [
-                    ...summary.data.mostSales.map((sale, index) => ({
+                    ...summary.data.mostSales.map((_, index) => ({
                       key: `name`,
                       color: `hsl(var(--chart-${index}))`,
                       label: 'Quantidade',
@@ -96,6 +86,7 @@ export default function DashboardPage() {
           />
         </WrapperVariant>
       </div>
+      {/* TODO: Change filter status options */}
       <DataTable
         filterKey="código"
         placeholder="pedido"
@@ -105,6 +96,7 @@ export default function DashboardPage() {
           const ids = row.map((r) => r.original.id)
           console.log({ ids })
         }}
+        status={status}
         onChangeStatus={onChangeStatus}
       />
     </div>

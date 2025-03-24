@@ -3,108 +3,134 @@ import { Hono } from 'hono'
 import { verifyAuth } from '@hono/auth-js'
 import { createId } from '@paralleldrive/cuid2'
 import { zValidator } from '@hono/zod-validator'
+import { differenceInDays, subDays } from 'date-fns'
 
 import { Prisma, UserRole } from '@prisma/client'
 
 import { db } from '@/lib/db'
+import { fillMissingDays } from '@/lib/utils'
 
 import {
   insertCheckoutSchema,
   updateHistorySchema,
 } from '@/features/foods/orders/schema'
-import { differenceInDays, subDays } from 'date-fns'
 
 const app = new Hono()
-  .get('/', verifyAuth(), async (c) => {
-    const auth = c.get('authUser')
+  .get(
+    '/',
+    verifyAuth(),
+    zValidator(
+      'query',
+      z.object({
+        today: z.preprocess((val) => val === 'true', z.boolean().optional()),
+      })
+    ),
+    async (c) => {
+      const auth = c.get('authUser')
+      const { today } = c.req.valid('query')
 
-    if (!auth.token?.sub) {
-      return c.json({ error: 'Usuário não autorizado' }, 401)
-    }
+      if (!auth.token?.sub) {
+        return c.json({ error: 'Usuário não autorizado' }, 401)
+      }
 
-    if (!auth.token?.selectedStore) {
-      return c.json({ error: 'Usuário não autorizado' }, 401)
-    }
+      if (!auth.token?.selectedStore) {
+        return c.json({ error: 'Usuário não autorizado' }, 401)
+      }
 
-    const user = await db.user.findUnique({ where: { id: auth.token.sub } })
-    if (!user) return c.json({ error: 'Usuário não autorizado' }, 401)
+      const user = await db.user.findUnique({ where: { id: auth.token.sub } })
+      if (!user) return c.json({ error: 'Usuário não autorizado' }, 401)
 
-    if (
-      ![
-        UserRole.OWNER as string,
-        UserRole.MANAGER as string,
-        UserRole.EMPLOYEE as string,
-      ].includes(user.role)
-    ) {
-      return c.json({ error: 'Usuário sem autorização' }, 400)
-    }
-    const ownerId = user.role === UserRole.OWNER ? user.id : user.ownerId!
+      if (
+        ![
+          UserRole.OWNER as string,
+          UserRole.MANAGER as string,
+          UserRole.EMPLOYEE as string,
+        ].includes(user.role)
+      ) {
+        return c.json({ error: 'Usuário sem autorização' }, 400)
+      }
+      const ownerId = user.role === UserRole.OWNER ? user.id : user.ownerId!
 
-    const store = await db.store.findUnique({
-      where: { id: auth.token.selectedStore.id, ownerId },
-    })
+      const store = await db.store.findUnique({
+        where: { id: auth.token.selectedStore.id, ownerId },
+      })
 
-    if (!store) {
-      return c.json({ error: 'Usuário não autorizado' }, 401)
-    }
+      if (!store) {
+        return c.json({ error: 'Usuário não autorizado' }, 401)
+      }
 
-    const data = await db.foodOrder.findMany({
-      where: { storeId: store.id },
-      select: {
-        id: true,
-        code: true,
-        shippingRole: true,
-        amount: true,
-        moneyChange: true,
-        payment: true,
-        address: {
-          select: {
-            city: true,
-            complement: true,
-            neighborhood: true,
-            number: true,
-            state: true,
-            street: true,
-            zipCode: true,
-          },
-        },
-        customer: {
-          select: {
-            name: true,
-            whatsApp: true,
-            email: true,
-          },
-        },
-        items: {
-          select: {
-            id: true,
-            reviewed: true,
-            quantity: true,
-            amount: true,
-            obs: true,
+      let whereCondition: any = { storeId: store.id }
 
-            food: {
-              select: {
-                name: true,
-                image: true,
-                ingredients: true,
-              },
+      if (today) {
+        const today = new Date()
+        today.setHours(0, 0, 0, 0)
+        const tomorrow = new Date(today)
+        tomorrow.setDate(tomorrow.getDate() + 1)
+
+        whereCondition.createdAt = {
+          gte: today,
+          lt: tomorrow,
+        }
+      }
+
+      const data = await db.foodOrder.findMany({
+        where: whereCondition,
+        select: {
+          id: true,
+          code: true,
+          shippingRole: true,
+          amount: true,
+          moneyChange: true,
+          payment: true,
+          address: {
+            select: {
+              city: true,
+              complement: true,
+              neighborhood: true,
+              number: true,
+              state: true,
+              street: true,
+              zipCode: true,
             },
+          },
+          customer: {
+            select: {
+              name: true,
+              whatsApp: true,
+              email: true,
+            },
+          },
+          items: {
+            select: {
+              id: true,
+              reviewed: true,
+              quantity: true,
+              amount: true,
+              obs: true,
 
-            additionals: {
-              select: {
-                additional: {
-                  select: {
-                    name: true,
-                  },
+              food: {
+                select: {
+                  name: true,
+                  image: true,
+                  ingredients: true,
                 },
-                options: {
-                  select: {
-                    amount: true,
-                    quantity: true,
-                    option: {
-                      select: {
-                        name: true,
+              },
+
+              additionals: {
+                select: {
+                  additional: {
+                    select: {
+                      name: true,
+                    },
+                  },
+                  options: {
+                    select: {
+                      amount: true,
+                      quantity: true,
+                      option: {
+                        select: {
+                          name: true,
+                        },
                       },
                     },
                   },
@@ -112,25 +138,25 @@ const app = new Hono()
               },
             },
           },
-        },
-        shipping: {
-          select: {
-            fee: true,
-            deadlineAt: true,
+          shipping: {
+            select: {
+              fee: true,
+              deadlineAt: true,
+            },
+          },
+          histories: {
+            select: {
+              orderHistory: true,
+            },
+            orderBy: { orderHistory: { createdAt: 'desc' } },
+            take: 1,
           },
         },
-        histories: {
-          select: {
-            orderHistory: true,
-          },
-          orderBy: { orderHistory: { createdAt: 'desc' } },
-          take: 1,
-        },
-      },
-    })
+      })
 
-    return c.json({ data }, 200)
-  })
+      return c.json({ data }, 200)
+    }
+  )
   .get('/analytics', verifyAuth(), async (c) => {
     const auth = c.get('authUser')
 
@@ -396,15 +422,65 @@ const app = new Hono()
       return c.json({ error: 'Usuário não autorizado' }, 401)
     }
 
+    // const { startDate: startDateParam, endDate: endDateParam } = c.req.query()
+    // const now = new Date()
+    // const startDate = startDateParam
+    //   ? new Date(startDateParam)
+    //   : new Date(now.getFullYear(), now.getMonth(), 1)
+
+    // const endDate = endDateParam
+    //   ? new Date(endDateParam)
+    //   : new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59)
+
+    // const { startDate: startDateParam, endDate: endDateParam } = c.req.query()
+    // const now = new Date()
+
+    // const startDate = startDateParam
+    //   ? new Date(startDateParam)
+    //   : new Date(now.getFullYear(), now.getMonth(), now.getDate())
+
+    // const endDate = endDateParam
+    //   ? new Date(endDateParam)
+    //   : new Date(startDate.getTime() + 6 * 24 * 60 * 60 * 1000)
+    // endDate.setHours(23, 59, 59)
+
     const { startDate: startDateParam, endDate: endDateParam } = c.req.query()
     const now = new Date()
-    const startDate = startDateParam
-      ? new Date(startDateParam)
-      : new Date(now.getFullYear(), now.getMonth(), 1)
 
     const endDate = endDateParam
       ? new Date(endDateParam)
-      : new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59)
+      : new Date(
+          now.getFullYear(),
+          now.getMonth(),
+          now.getDate(),
+          23,
+          59,
+          59,
+          999
+        )
+
+    const startDate = startDateParam
+      ? new Date(startDateParam)
+      : new Date(endDate.getTime() - 6 * 24 * 60 * 60 * 1000)
+
+    const todayStart = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate(),
+      0,
+      0,
+      0,
+      0
+    )
+    const todayEnd = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate(),
+      23,
+      59,
+      59,
+      999
+    )
 
     type SummaryResult = {
       summary: Array<{
@@ -421,6 +497,12 @@ const app = new Hono()
         quantity: number
         total_amount: number
       }>
+      overview: {
+        totalOrders: number
+        pendingOrders: number
+        customers: number
+        dailySales: number
+      }
     }
 
     const result = await db.$queryRaw<SummaryResult[]>(
@@ -431,16 +513,16 @@ const app = new Hono()
           fo."createdAt" as created_at,
           fo.amount as amount,
           fo."storeId" as store_id,
+          fo."customerId" as customer_id,
           MAX(CASE WHEN oh.progress = 'DELIVERED' THEN 1 ELSE 0 END) as is_delivered,
-          MAX(CASE WHEN oh.progress = 'CANCELLED' THEN 1 ELSE 0 END) as is_cancelled
+          MAX(CASE WHEN oh.progress = 'CANCELLED' THEN 1 ELSE 0 END) as is_cancelled,
+          MAX(CASE WHEN oh.progress = 'PENDING' THEN 1 ELSE 0 END) as is_pending
         FROM "FoodOrder" fo
         LEFT JOIN "OrderHistoryFoodOrder" ohfo ON fo.id = ohfo."foodOrderId"
         LEFT JOIN "OrderHistory" oh ON ohfo."orderHistoryId" = oh.id
         WHERE 
           fo."storeId" = ${store.id}
-          AND fo."createdAt" >= ${startDate}
-          AND fo."createdAt" <= ${endDate}
-        GROUP BY fo.id, fo."createdAt", fo.amount, fo."storeId"
+        GROUP BY fo.id, fo."createdAt", fo.amount, fo."storeId", fo."customerId"
       ),
       daily_summary AS (
         SELECT 
@@ -451,6 +533,9 @@ const app = new Hono()
           COUNT(CASE WHEN o.is_cancelled = 1 THEN 1 END)::float as cancelled,
           SUM(CASE WHEN o.is_delivered = 1 THEN o.amount ELSE 0 END)::float as invoicing
         FROM order_data o
+        WHERE 
+          o.created_at >= ${startDate}
+          AND o.created_at <= ${endDate}
         GROUP BY DATE(o.created_at)
         ORDER BY date ASC
       ),
@@ -470,6 +555,18 @@ const app = new Hono()
         GROUP BY f.id, f.name
         ORDER BY quantity DESC
         LIMIT 5
+      ),
+      today_orders AS (
+        SELECT 
+          COUNT(o.order_id)::float as total_orders,
+          COUNT(CASE WHEN o.is_pending = 1 AND o.is_delivered = 0 AND o.is_cancelled = 0 THEN 1 END)::float as pending_orders,
+          COUNT(DISTINCT o.customer_id)::float as customers,
+          SUM(o.amount)::float as daily_sales
+        FROM order_data o
+        WHERE 
+          o.created_at >= ${todayStart}
+          AND o.created_at <= ${todayEnd}
+          AND o.store_id = ${store.id}
       )
       SELECT 
         (
@@ -493,15 +590,29 @@ const app = new Hono()
               'total_amount', total_amount
             )
           ), '[]'::jsonb) FROM top_products
-        ) as "mostSales"
+        ) as "mostSales",
+        (
+          SELECT jsonb_build_object(
+            'totalOrders', COALESCE(total_orders, 0),
+            'pendingOrders', COALESCE(pending_orders, 0),
+            'customers', COALESCE(customers, 0),
+            'dailySales', COALESCE(daily_sales, 0)
+          ) FROM today_orders
+        ) as "overview"
       `
     )
 
-    const { summary, mostSales } = result[0]
+    const { summary, mostSales, overview } = result[0]
+
+    const fillSummary = fillMissingDays(
+      summary,
+      startDate,
+      endDate
+    ) as SummaryResult['summary']
 
     return c.json(
       {
-        data: { summary, mostSales },
+        data: { summary: fillSummary, mostSales, overview },
         meta: {
           startDate: startDate.toISOString(),
           endDate: endDate.toISOString(),
