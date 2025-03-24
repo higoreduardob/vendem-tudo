@@ -3,7 +3,19 @@ import { Calendar } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { AnalyticItem } from '@/app/(protected)/plataforma/_components/analytic-item'
 
-export const Analytics = () => {
+type Props = {
+  totalCustomers: number
+  avgTicket: string
+  mostDeliveredNeighborhood: string
+  leastDeliveredNeighborhood: string
+}
+
+export const Analytics = ({
+  totalCustomers,
+  avgTicket,
+  mostDeliveredNeighborhood,
+  leastDeliveredNeighborhood,
+}: Props) => {
   return (
     <Card>
       <CardContent className="flex items-center gap-4">
@@ -13,10 +25,17 @@ export const Analytics = () => {
         </div>
 
         <div className="flex flex-1 items-center gap-4">
-          <AnalyticItem title="Prato mais pedido" value="Pizza Pepperoni" />
-          <AnalyticItem title="Ticket médio" value="R$ 52,30" />
-          <AnalyticItem title="Pedidos" value="28" />
-          <AnalyticItem title="Avaliação média" value="4.7 ★" />
+          <AnalyticItem title="Total de clientes" value={totalCustomers} />
+          <AnalyticItem title="Ticket médio" value={avgTicket} />
+          <AnalyticItem
+            title="Bairro mais entregue"
+            value={mostDeliveredNeighborhood}
+          />
+          <AnalyticItem
+            title="Bairro menos entregue"
+            value={leastDeliveredNeighborhood}
+            isLastItem
+          />
         </div>
       </CardContent>
     </Card>

@@ -8,7 +8,7 @@ import { client } from '@/lib/hono'
 import { translateUserRole } from '@/lib/i18n'
 import { cpfCnpjMask, phoneMask, zipCodeMask } from '@/lib/format'
 
-import { Actions } from '@/app/(protected)/plataforma/clientes/_features/actions'
+import { Actions } from '@/app/gestao/(protected)/(dashboard)/usuarios/_features/actions'
 
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'

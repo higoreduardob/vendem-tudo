@@ -4,7 +4,7 @@ import { verifyAuth } from '@hono/auth-js'
 import { createId } from '@paralleldrive/cuid2'
 import { zValidator } from '@hono/zod-validator'
 
-import { UserRole } from '@prisma/client'
+import { Prisma, UserRole } from '@prisma/client'
 
 import { db } from '@/lib/db'
 
@@ -50,6 +50,99 @@ const app = new Hono()
     })
 
     return c.json({ data }, 200)
+  })
+  .get('/analytics', verifyAuth(), async (c) => {
+    const auth = c.get('authUser')
+
+    if (!auth.token?.sub || !auth.token?.selectedStore) {
+      return c.json({ error: 'Usuário não autorizado' }, 401)
+    }
+
+    const user = await db.user.findUnique({ where: { id: auth.token.sub } })
+    if (!user) return c.json({ error: 'Usuário não autorizado' }, 401)
+
+    if (
+      ![
+        UserRole.OWNER as string,
+        UserRole.MANAGER as string,
+        UserRole.EMPLOYEE as string,
+      ].includes(user.role)
+    ) {
+      return c.json({ error: 'Usuário sem autorização' }, 400)
+    }
+    const ownerId = user.role === UserRole.OWNER ? user.id : user.ownerId!
+
+    const store = await db.store.findUnique({
+      where: { id: auth.token.selectedStore.id, ownerId },
+    })
+
+    if (!store) {
+      return c.json({ error: 'Usuário não autorizado' }, 401)
+    }
+
+    type AnalyticsResult = {
+      mostSoldCategory: {
+        id: string
+        name: string
+        count: number
+      }
+      leastSoldCategory: {
+        id: string
+        name: string
+        count: number
+      }
+    }
+
+    const result = await db.$queryRaw<AnalyticsResult[]>(
+      Prisma.sql`
+      WITH category_sales AS (
+        SELECT 
+          fc.id,
+          fc.name,
+          COUNT(fi.id)::integer as count
+        FROM "FoodCategory" fc
+        LEFT JOIN "Food" f ON f."categoryId" = fc.id
+        LEFT JOIN "FoodItem" fi ON fi."foodId" = f.id
+        LEFT JOIN "FoodOrder" fo ON fi."orderId" = fo.id
+        WHERE fc."storeId" = ${store.id}
+        GROUP BY fc.id, fc.name
+      ),
+      most_sold_category AS (
+        SELECT 
+          id,
+          name,
+          count
+        FROM category_sales
+        ORDER BY count DESC
+        LIMIT 1
+      ),
+      least_sold_category AS (
+        SELECT 
+          id,
+          name,
+          count
+        FROM category_sales
+        WHERE count > 0
+        ORDER BY count ASC
+        LIMIT 1
+      )
+      SELECT 
+        jsonb_build_object(
+          'id', (SELECT id FROM most_sold_category),
+          'name', (SELECT name FROM most_sold_category),
+          'count', (SELECT count FROM most_sold_category)
+        ) as "mostSoldCategory",
+        jsonb_build_object(
+          'id', (SELECT id FROM least_sold_category),
+          'name', (SELECT name FROM least_sold_category),
+          'count', (SELECT count FROM least_sold_category)
+        ) as "leastSoldCategory"
+      `
+    )
+
+    const { mostSoldCategory, leastSoldCategory } = result[0]
+
+    return c.json({ data: { mostSoldCategory, leastSoldCategory } }, 200)
   })
   .get(
     '/stores/:storeId',

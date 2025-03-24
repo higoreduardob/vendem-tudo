@@ -160,6 +160,99 @@ const app = new Hono()
   .get('/analytics', verifyAuth(), async (c) => {
     const auth = c.get('authUser')
 
+    if (!auth.token?.sub || !auth.token?.selectedStore) {
+      return c.json({ error: 'Usuário não autorizado' }, 401)
+    }
+
+    const user = await db.user.findUnique({ where: { id: auth.token.sub } })
+    if (!user) return c.json({ error: 'Usuário não autorizado' }, 401)
+
+    if (
+      ![
+        UserRole.OWNER as string,
+        UserRole.MANAGER as string,
+        UserRole.EMPLOYEE as string,
+      ].includes(user.role)
+    ) {
+      return c.json({ error: 'Usuário sem autorização' }, 400)
+    }
+    const ownerId = user.role === UserRole.OWNER ? user.id : user.ownerId!
+
+    const store = await db.store.findUnique({
+      where: { id: auth.token.selectedStore.id, ownerId },
+    })
+
+    if (!store) {
+      return c.json({ error: 'Usuário não autorizado' }, 401)
+    }
+
+    type AnalyticsResult = {
+      totalOrders: number
+      totalCancelled: number
+      totalRevenue: number
+      averageTicket: number
+    }
+
+    const result = await db.$queryRaw<AnalyticsResult[]>(
+      Prisma.sql`
+        WITH order_data AS (
+          SELECT 
+            fo.id,
+            fo.amount,
+            oh.progress
+          FROM "FoodOrder" fo
+          JOIN "OrderHistoryFoodOrder" ohfo ON fo.id = ohfo."foodOrderId"
+          JOIN "OrderHistory" oh ON ohfo."orderHistoryId" = oh.id
+          WHERE fo."storeId" = ${store.id}
+        ),
+        total_orders AS (
+          SELECT 
+            COUNT(DISTINCT id)::int as count
+          FROM order_data
+        ),
+        cancelled_orders AS (
+          SELECT 
+            COUNT(DISTINCT id)::int as count
+          FROM order_data
+          WHERE progress = 'CANCELLED'
+        ),
+        delivered_orders AS (
+          SELECT 
+            COUNT(DISTINCT id)::int as count,
+            COALESCE(SUM(amount), 0)::float as total_amount
+          FROM order_data
+          WHERE progress = 'DELIVERED'
+        )
+        SELECT 
+          (SELECT count FROM total_orders) as "totalOrders",
+          (SELECT count FROM cancelled_orders) as "totalCancelled",
+          (SELECT total_amount FROM delivered_orders) as "totalRevenue",
+          CASE 
+            WHEN (SELECT count FROM delivered_orders) > 0 
+            THEN (SELECT total_amount FROM delivered_orders) / (SELECT count FROM delivered_orders)
+            ELSE 0
+          END as "averageTicket"
+        `
+    )
+
+    const { totalOrders, totalCancelled, totalRevenue, averageTicket } =
+      result[0]
+
+    return c.json(
+      {
+        data: {
+          totalOrders,
+          totalCancelled,
+          totalRevenue,
+          averageTicket,
+        },
+      },
+      200
+    )
+  })
+  .get('/overview', verifyAuth(), async (c) => {
+    const auth = c.get('authUser')
+
     if (!auth.token?.sub) {
       return c.json({ error: 'Usuário não autorizado' }, 401)
     }
@@ -386,7 +479,7 @@ const app = new Hono()
     )
 
     const { dailyMetrics, paymentMethods, topProducts } = result[0]
-    console.log({ dailyMetrics, paymentMethods, topProducts })
+
     return c.json({ data: { dailyMetrics, paymentMethods, topProducts } }, 200)
   })
   .get('/summary', verifyAuth(), async (c) => {
@@ -884,6 +977,20 @@ const app = new Hono()
           },
         },
       })
+
+      for (const food of foodItems) {
+        const currentFood = await db.food.findUnique({
+          where: { id: food.foodId },
+          select: { sales: true },
+        })
+
+        await db.food.update({
+          where: { id: food.foodId },
+          data: {
+            sales: (currentFood?.sales || 0) + food.quantity,
+          },
+        })
+      }
 
       return c.json({ success: 'Pedido realizado com sucesso' }, 201)
     }

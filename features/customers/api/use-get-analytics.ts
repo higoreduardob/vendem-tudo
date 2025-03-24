@@ -7,7 +7,7 @@ export const useGetAnalytics = () => {
   const query = useQuery({
     queryKey: ['orders-analytics'],
     queryFn: async () => {
-      const response = await client.api['food-orders'].analytics.$get({})
+      const response = await client.api['customers'].analytics.$get({})
 
       if (!response.ok) {
         const data = await response.json()
@@ -17,12 +17,7 @@ export const useGetAnalytics = () => {
       const { data } = await response.json()
       return {
         ...data,
-        averageTicket: formatCurrency(
-          convertAmountFromMiliunits(data.averageTicket)
-        ),
-        totalRevenue: formatCurrency(
-          convertAmountFromMiliunits(data.totalRevenue)
-        ),
+        avgTicket: formatCurrency(convertAmountFromMiliunits(data.avgTicket)),
       }
     },
   })

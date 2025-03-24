@@ -10,19 +10,27 @@ import { DataTable } from '@/components/data-table'
 import { Title } from '@/app/(protected)/_components/title'
 import { Actions } from '@/app/(protected)/plataforma/alimentos/categorias/_components/actions'
 import { Analytics } from '@/app/(protected)/plataforma/alimentos/categorias/_components/analytics'
+import { useGetAnalytics } from '@/features/foods/categories/api/use-get-analytics'
 
 export default function CategoriesPage() {
   const categoriesQuery = useGetCategories()
   const categories = categoriesQuery.data || []
   const deleteCategories = useBulkDeleteCategories()
-  const { onChangeStatus } = useFilterCategory()
+  const { onChangeStatus, status } = useFilterCategory()
+  const analyticsQuery = useGetAnalytics()
+  const analytics = analyticsQuery.data
 
-  const isLoading = categoriesQuery.isLoading || deleteCategories.isPending
+  const isLoading =
+    categoriesQuery.isLoading ||
+    deleteCategories.isPending ||
+    analyticsQuery.isLoading
 
   // TODO: Create skeleton
   if (isLoading) {
     return <>Skeleton</>
   }
+
+  if (!analytics) return null
 
   return (
     <div className="w-full flex flex-col gap-4">
@@ -31,7 +39,7 @@ export default function CategoriesPage() {
         <Actions />
       </div>
       {/* TODO: Get analytics */}
-      <Analytics />
+      <Analytics {...analytics} />
       <DataTable
         filterKey="name"
         placeholder="categoria"
@@ -42,6 +50,7 @@ export default function CategoriesPage() {
           const ids = row.map((r) => r.original.id)
           deleteCategories.mutate({ ids })
         }}
+        status={status}
         onChangeStatus={onChangeStatus}
       />
     </div>

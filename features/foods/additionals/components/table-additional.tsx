@@ -13,7 +13,7 @@ export const TableAdditional = () => {
   const additionalsQuery = useGetFoodAdditionals()
   const additionals = additionalsQuery.data || []
   const deleteFoodAdditionals = useBulkDeleteFoodAdditionals()
-  const { onChangeStatus } = useFilterAdditional()
+  const { onChangeStatus, status } = useFilterAdditional()
 
   const isLoading =
     additionalsQuery.isLoading || deleteFoodAdditionals.isPending
@@ -40,6 +40,7 @@ export const TableAdditional = () => {
           const ids = row.map((r) => r.original.id)
           deleteFoodAdditionals.mutate({ ids })
         }}
+        status={status}
         onChangeStatus={onChangeStatus}
       />
     </ContentDialog>

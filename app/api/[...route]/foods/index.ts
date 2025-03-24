@@ -49,11 +49,110 @@ const app = new Hono()
       where: { storeId: store.id },
       include: {
         category: { select: { name: true } },
-        _count: { select: { items: true } },
       },
     })
 
     return c.json({ data }, 200)
+  })
+  .get('/analytics', verifyAuth(), async (c) => {
+    const auth = c.get('authUser')
+
+    if (!auth.token?.sub || !auth.token?.selectedStore) {
+      return c.json({ error: 'Usuário não autorizado' }, 401)
+    }
+
+    const user = await db.user.findUnique({ where: { id: auth.token.sub } })
+    if (!user) return c.json({ error: 'Usuário não autorizado' }, 401)
+
+    if (
+      ![
+        UserRole.OWNER as string,
+        UserRole.MANAGER as string,
+        UserRole.EMPLOYEE as string,
+      ].includes(user.role)
+    ) {
+      return c.json({ error: 'Usuário sem autorização' }, 400)
+    }
+    const ownerId = user.role === UserRole.OWNER ? user.id : user.ownerId!
+
+    const store = await db.store.findUnique({
+      where: { id: auth.token.selectedStore.id, ownerId },
+    })
+
+    if (!store) {
+      return c.json({ error: 'Usuário não autorizado' }, 401)
+    }
+
+    type AnalyticsResult = {
+      mostSoldProduct: {
+        id: string
+        name: string
+        sales: number
+      }
+      leastSoldProduct: {
+        id: string
+        name: string
+        sales: number
+      }
+      totalRevenue: number
+    }
+
+    const result = await db.$queryRaw<AnalyticsResult[]>(
+      Prisma.sql`
+      WITH food_sales AS (
+        SELECT 
+          f.id,
+          f.name,
+          COALESCE(f.sales, 0)::float as sales
+        FROM "Food" f
+        WHERE f."storeId" = ${store.id}
+      ),
+      most_sold AS (
+        SELECT 
+          id,
+          name,
+          sales
+        FROM food_sales
+        ORDER BY sales DESC
+        LIMIT 1
+      ),
+      least_sold AS (
+        SELECT 
+          id,
+          name,
+          sales
+        FROM food_sales
+        WHERE sales > 0
+        ORDER BY sales ASC
+        LIMIT 1
+      ),
+      total_revenue AS (
+        SELECT 
+          COALESCE(SUM(fo.amount), 0)::float as total
+        FROM "FoodOrder" fo
+        WHERE fo."storeId" = ${store.id}
+      )
+      SELECT 
+        jsonb_build_object(
+          'id', (SELECT id FROM most_sold),
+          'name', (SELECT name FROM most_sold),
+          'sales', (SELECT sales FROM most_sold)
+        ) as "mostSoldProduct",
+        jsonb_build_object(
+          'id', (SELECT id FROM least_sold),
+          'name', (SELECT name FROM least_sold),
+          'sales', (SELECT sales FROM least_sold)
+        ) as "leastSoldProduct",
+        (SELECT total FROM total_revenue) as "totalRevenue"
+      `
+    )
+
+    const { mostSoldProduct, leastSoldProduct, totalRevenue } = result[0]
+
+    return c.json(
+      { data: { mostSoldProduct, leastSoldProduct, totalRevenue } },
+      200
+    )
   })
   .get(
     '/stores/:storeId',

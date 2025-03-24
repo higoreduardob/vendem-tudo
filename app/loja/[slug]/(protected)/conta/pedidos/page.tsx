@@ -13,7 +13,7 @@ export default function OrdersPage() {
   const { store } = useOpenStore()
   const ordersQuery = useGetStoreOrders(store?.id)
   const orders = ordersQuery.data || []
-  const { onChangeStatus } = useFilterOrder()
+  const { onChangeStatus, status } = useFilterOrder()
 
   console.log(orders)
 
@@ -31,6 +31,7 @@ export default function OrdersPage() {
           const ids = row.map((r) => r.original.id)
           console.log({ ids })
         }}
+        status={status}
         onChangeStatus={onChangeStatus}
       />
     </div>

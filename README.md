@@ -10,13 +10,11 @@ Features:
     Lojistas: 1. Exibir todos os lojista e permitir o CRUD
 
   OWNER/MANAGER/EMPLOYEE
-    Alimentos: 1. Incluir analytics dos alimentos | 3. Definição de destaques para +vendidos e +avaliados | 4. No product card reaver as badges de destaques
-      Categorias: 1. Incluir analytics das categorias
-    Pedidos: 1. Incluir analytics dos pedidos | 3. Colocar date range
-    Clientes: 1. Incluir analytics dos clientes
+    Pedidos: 3. Colocar date range
 
-    Suporte: 1. Colocar whatsapp de contato de suporte | 2. Colocar FAQ com tempo de solucionamento
-    Planos: 1. Colocar planos para o cliente
+    Suporte: 1. Colocar whatsapp de contato de suporte
+
+    TODO: Fix: features/auth/api/use-update.ts (19:5) @ useUpdate in sign-in customer
 
     MELHORIAS:
 
@@ -44,3 +42,7 @@ Features:
       5 . Adicionar nfe Focus nfe
       6 . Adicionar paywall com plano escolhido
       7 . Demonstrações: 1. Pesquisar como Code with Antonio faz os vídeos dele
+      8 . Definição de destaques para +vendidos e +avaliados
+      9 . No product card reaver as badges de destaques
+      10 . Suporte colocar FAQ com tempo de solucionamento
+      11 . Colocar planos para o cliente (lojista)

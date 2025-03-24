@@ -9,11 +9,13 @@ import { DataTable } from '@/components/data-table'
 import { Title } from '@/app/(protected)/_components/title'
 import { Actions } from '@/app/(protected)/plataforma/pedidos/_components/actions'
 import { Analytics } from '@/app/(protected)/plataforma/pedidos/_components/analytics'
+import { useGetAnalytics } from '@/features/foods/orders/api/use-get-analytics'
 
 export default function OrdersPage() {
   const ordersQuery = useGetOrders()
   const orders = ordersQuery.data || []
-  const { onChangeStatus } = useFilterOrder()
+  const { onChangeStatus, status } = useFilterOrder()
+  const analytics = useGetAnalytics()
 
   return (
     <div className="w-full flex flex-col gap-4">
@@ -21,7 +23,7 @@ export default function OrdersPage() {
         <Title>Pedidos</Title>
         <Actions />
       </div>
-      <Analytics />
+      <Analytics {...analytics.data!} />
       <DataTable
         filterKey="código"
         placeholder="pedido"
@@ -31,6 +33,7 @@ export default function OrdersPage() {
           const ids = row.map((r) => r.original.id)
           console.log({ ids })
         }}
+        status={status}
         onChangeStatus={onChangeStatus}
       />
     </div>

@@ -8,7 +8,7 @@ import { BarVariant } from '@/components/bar-variant'
 import { LineVariant } from '@/components/line-variant'
 import { RadarVariant } from '@/components/radar-variant'
 import { Analytics } from './_components/analytics'
-import { useGetAnalytics } from '@/features/foods/orders/api/use-get-analytics'
+import { useGetOverview } from '@/features/foods/orders/api/use-get-overview'
 
 const Options = () => (
   <div className="flex flex-col items-end">
@@ -18,8 +18,8 @@ const Options = () => (
 )
 
 export default function AnalyticsPage() {
-  const analyticsQuery = useGetAnalytics()
-  const analytics = analyticsQuery.data
+  const overviewsQuery = useGetOverview()
+  const overviews = overviewsQuery.data
 
   return (
     <div className="w-full flex flex-col gap-4">
@@ -32,7 +32,7 @@ export default function AnalyticsPage() {
       <div className="grid grid-cols-5 gap-4">
         <WrapperVariant title="Pedidos" options={<Options />}>
           <AreaVariant
-            data={analytics?.dailyMetrics || []}
+            data={overviews?.dailyMetrics || []}
             fields={[
               {
                 key: 'count',
@@ -44,7 +44,7 @@ export default function AnalyticsPage() {
         </WrapperVariant>
         <WrapperVariant title="Vendidos" options={<Options />}>
           <AreaVariant
-            data={analytics?.dailyMetrics || []}
+            data={overviews?.dailyMetrics || []}
             fields={[
               {
                 key: 'delivered',
@@ -56,7 +56,7 @@ export default function AnalyticsPage() {
         </WrapperVariant>
         <WrapperVariant title="Canceladas" options={<Options />}>
           <AreaVariant
-            data={analytics?.dailyMetrics || []}
+            data={overviews?.dailyMetrics || []}
             fields={[
               {
                 key: 'cancelled',
@@ -68,7 +68,7 @@ export default function AnalyticsPage() {
         </WrapperVariant>
         <WrapperVariant title="Faturamento" options={<Options />}>
           <AreaVariant
-            data={analytics?.dailyMetrics || []}
+            data={overviews?.dailyMetrics || []}
             fields={[
               {
                 key: 'invoicing',
@@ -80,7 +80,7 @@ export default function AnalyticsPage() {
         </WrapperVariant>
         <WrapperVariant title="Ticket médio" options={<Options />}>
           <AreaVariant
-            data={analytics?.dailyMetrics || []}
+            data={overviews?.dailyMetrics || []}
             fields={[
               {
                 key: 'avgTicket',
@@ -94,11 +94,11 @@ export default function AnalyticsPage() {
       <div className="grid grid-cols-4 gap-4">
         <WrapperVariant title="Métodos de pagamento">
           <PieVariant
-            data={analytics?.paymentMethods || []}
+            data={overviews?.paymentMethods || []}
             fields={
-              analytics?.paymentMethods && analytics?.paymentMethods.length > 0
+              overviews?.paymentMethods && overviews?.paymentMethods.length > 0
                 ? [
-                    ...analytics.paymentMethods.map((_, index) => ({
+                    ...overviews.paymentMethods.map((_, index) => ({
                       key: `payment`,
                       color: `hsl(var(--chart-${index}))`,
                       label: 'Quantidade',
@@ -116,11 +116,11 @@ export default function AnalyticsPage() {
         {/* TODO: Fix error quantity elements */}
         <WrapperVariant title="Mais vendidos">
           <PieVariant
-            data={analytics?.topProducts || []}
+            data={overviews?.topProducts || []}
             fields={
-              analytics?.topProducts && analytics?.topProducts.length > 0
+              overviews?.topProducts && overviews?.topProducts.length > 0
                 ? [
-                    ...analytics.topProducts.map((_, index) => ({
+                    ...overviews.topProducts.map((_, index) => ({
                       key: `name`,
                       color: `hsl(var(--chart-${index}))`,
                       label: 'Quantidade',

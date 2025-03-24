@@ -1,9 +1,9 @@
 import { Eye, Ban, Download, PencilRuler } from 'lucide-react'
 
 import { useConfirm } from '@/hooks/use-confirm'
-import { useOpenUser } from '@/features/users/hooks/use-open-user'
-import { useDeleteUser } from '@/features/users/api/use-delete-user'
-import { useUndeleteUser } from '@/features/users/api/use-undelete-user'
+import { useOpenUser } from '@/features/management/hooks/use-open-user'
+import { useDeleteUser } from '@/features/management/api/use-delete-user'
+import { useUndeleteUser } from '@/features/management/api/use-undelete-user'
 
 import {
   DropdownMenu,

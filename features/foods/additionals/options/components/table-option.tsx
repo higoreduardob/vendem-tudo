@@ -13,7 +13,7 @@ export const TableOption = () => {
   const optionsQuery = useGetFoodOptions()
   const options = optionsQuery.data || []
   const deleteFoodOptions = useBulkDeleteFoodOptions()
-  const { onChangeStatus } = useFilterOption()
+  const { onChangeStatus, status } = useFilterOption()
 
   const isLoading = optionsQuery.isLoading || deleteFoodOptions.isPending
 
@@ -39,6 +39,7 @@ export const TableOption = () => {
           const ids = row.map((r) => r.original.id)
           deleteFoodOptions.mutate({ ids })
         }}
+        status={status}
         onChangeStatus={onChangeStatus}
       />
     </ContentDialog>

@@ -102,7 +102,7 @@ export const columns: ColumnDef<ResponseType>[] = [
       return <Button variant="ghost">Vendas</Button>
     },
     cell: ({ row }) => {
-      const sales = row.original._count.items
+      const sales = row.original.sales
 
       return (
         <span className="text-muted-foreground text-sm">
