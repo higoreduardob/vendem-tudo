@@ -1,9 +1,7 @@
-    2 . Melhorar o estilo do email enviado
-    3 . Notificações: 1. Fazer push notifications, e pesquisar como fazer no next para os registros de pedidos
-    4 . check stages in order food
-    5 . Avaliação do cliente
-    6 . Cart: 4. Botão de trocar consertar o refetch state
-    7 . Suporte: 2. Integrar envio de email de perguntas
+    1 . Melhorar o estilo do email enviado
+    2 . Notificações: 1. Fazer push notifications, e pesquisar como fazer no next para os registros de pedidos
+    3 . check stages in order food
+    4 . Cart: 4. Botão de trocar consertar o refetch state
 
 Features:
   Gestão:
@@ -46,3 +44,4 @@ Features:
       9 . No product card reaver as badges de destaques
       10 . Suporte colocar FAQ com tempo de solucionamento
       11 . Colocar planos para o cliente (lojista)
+      12 . Suporte integrar envio de email de perguntas

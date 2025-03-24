@@ -10,6 +10,8 @@ import { CheckoutDialog } from '@/features/foods/orders/components/checkout-dial
 
 import { FormEditUpdate } from '@/features/auth/components/form-edit-update'
 
+import { FormNewReview } from '@/features/foods/orders/components/form-review'
+
 export const DialogProvider = () => {
   const isMounted = useMountedState()
 
@@ -24,6 +26,8 @@ export const DialogProvider = () => {
       <CheckoutDialog />
 
       <FormEditUpdate />
+
+      <FormNewReview />
     </>
   )
 }

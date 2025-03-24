@@ -12,6 +12,7 @@ import { fillMissingDays } from '@/lib/utils'
 
 import {
   insertCheckoutSchema,
+  insertReviewSchema,
   updateHistorySchema,
 } from '@/features/foods/orders/schema'
 
@@ -768,6 +769,7 @@ const app = new Hono()
             select: {
               id: true,
               reviewed: true,
+              review: true,
               quantity: true,
               amount: true,
               obs: true,
@@ -993,6 +995,92 @@ const app = new Hono()
       }
 
       return c.json({ success: 'Pedido realizado com sucesso' }, 201)
+    }
+  )
+  .post(
+    '/review/:id',
+    verifyAuth(),
+    zValidator('param', z.object({ id: z.string().optional() })),
+    zValidator('query', z.object({ itemId: z.string().optional() })),
+    zValidator('json', insertReviewSchema),
+    async (c) => {
+      const auth = c.get('authUser')
+      const { id } = c.req.valid('param')
+      const { itemId } = c.req.valid('query')
+      const validatedFields = c.req.valid('json')
+      const { review } = validatedFields
+
+      if (!validatedFields) return c.json({ error: 'Campos inválidos' }, 400)
+
+      if (!id) {
+        return c.json({ error: 'Identificador não encontrado' }, 400)
+      }
+
+      if (!auth.token?.sub) {
+        return c.json({ error: 'Usuário não autorizado' }, 401)
+      }
+
+      const user = await db.user.findUnique({
+        where: { id: auth.token.sub },
+      })
+      if (!user) return c.json({ error: 'Usuário não autorizado' }, 401)
+
+      if (![UserRole.CUSTOMER as string].includes(user.role)) {
+        return c.json({ error: 'Usuário sem autorização' }, 400)
+      }
+
+      const order = await db.foodOrder.findUnique({
+        where: { id, customerId: user.id },
+        select: {
+          id: true,
+          items: {
+            select: {
+              id: true,
+              reviewed: true,
+              foodId: true,
+            },
+          },
+        },
+      })
+      if (!order) return c.json({ error: 'Pedido inválido' }, 200)
+
+      await Promise.all(
+        order.items.map(async (item) => {
+          if (item.id === itemId && id === order.id) {
+            if (item.reviewed) return c.json({ error: 'Item já avaliado' }, 400)
+
+            await db.$transaction([
+              db.foodItem.update({
+                where: { id: itemId },
+                data: { reviewed: true, review },
+              }),
+              db.food.update({
+                where: { id: item.foodId },
+                data: {
+                  reviewsAmount: { increment: 1 },
+                  reviews: { increment: review },
+                  reviewsAvg: {
+                    set: await (async () => {
+                      const food = await db.food.findUnique({
+                        where: { id: item.foodId },
+                        select: { reviews: true, reviewsAmount: true },
+                      })
+                      if (!food) return review
+
+                      const totalReviews = (food.reviews ?? 0) + review
+                      const totalReviewsAmount = (food.reviewsAmount ?? 0) + 1
+
+                      return totalReviews / totalReviewsAmount
+                    })(),
+                  },
+                },
+              }),
+            ])
+          }
+        })
+      )
+
+      return c.json({ success: 'Avaliação registrada com sucesso' }, 200)
     }
   )
   .patch(

@@ -1,6 +1,6 @@
 'use client'
 
-import { columns } from './_features/columns'
+import { columns } from '@/app/loja/[slug]/(protected)/conta/pedidos/_features/columns'
 
 import { useOpenStore } from '@/hooks/use-store'
 import { useGetStoreOrders } from '@/features/foods/orders/api/use-get-orders'

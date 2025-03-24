@@ -50,8 +50,7 @@ model User {
 
   stores Store[]
 
-  foodOrders  FoodOrder[]
-  foodReviews FoodReview[]
+  foodOrders FoodOrder[]
 
   @@unique([email, role], name: "unique_email_per_role")
   @@unique([email, storeId], name: "unique_email_per_store")
@@ -220,9 +219,9 @@ model Food {
   items       FoodItem[]
   sales       Int?
 
-  reviews       FoodReview[]
   reviewsAvg    Int?
   reviewsAmount Int?
+  reviews       Int?
 }
 
 model FoodCategory {
@@ -359,6 +358,7 @@ model OrderHistoryFoodOrder {
 model FoodItem {
   id       String  @id @default(cuid())
   reviewed Boolean @default(false)
+  review   Int?
   quantity Int     @default(1)
   amount   Int
   obs      String?
@@ -394,17 +394,4 @@ model FoodItemOption {
   amount   Int
 
   @@unique([foodItemAdditionalId, optionId])
-}
-
-model FoodReview {
-  id          String  @id @default(cuid())
-  stars       Int?    @default(0) @db.SmallInt
-  description String?
-
-  createdAt DateTime @default(now())
-
-  foodId     String
-  food       Food   @relation(fields: [foodId], references: [id])
-  customerId String
-  customer   User   @relation(fields: [customerId], references: [id])
 }

@@ -177,3 +177,11 @@ export const updateHistorySchema = z.object({
     message: 'Situação é obrigatório',
   }),
 })
+
+export const insertReviewSchema = z.object({
+  review: z
+    .number({ message: 'Avaliação é obrigatório' })
+    .positive({ message: 'Avaliação é obrigatório' }),
+})
+
+export type InsertReviewFormValues = z.infer<typeof insertReviewSchema>

@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import { InferResponseType } from 'hono'
-import { ArrowUpDown, Clock } from 'lucide-react'
+import { ArrowUpDown, Clock, Star } from 'lucide-react'
 import { ColumnDef } from '@tanstack/react-table'
 
 import { OrderHistoryProgress } from '@prisma/client'
@@ -11,19 +11,21 @@ import { client } from '@/lib/hono'
 import { translateOrderHistoryProgress } from '@/lib/i18n'
 import { createEnumOptions, formatCurrency } from '@/lib/utils'
 
+import { useOpenStore } from '@/hooks/use-store'
+import { useNewReview } from '@/features/foods/orders/hooks/use-new-review'
+
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { ColumnDetail } from '@/components/column-detail'
-import { SelectFilter } from '@/components/select-filter'
 import { OrderProgress } from '@/components/order-progress'
-import { Badge } from '@/components/ui/badge'
-import { useOpenStore } from '@/hooks/use-store'
+import { StarFilledIcon } from '@radix-ui/react-icons'
 
 export type ResponseType = InferResponseType<
   (typeof client.api)['food-orders']['stores'][':storeId']['$get'],
@@ -177,76 +179,99 @@ export const columns: ColumnDef<ResponseType>[] = [
         </Button>
       )
     },
-    cell: ({ row }) => (
-      <div className="grid grid-cols-3 gap-4">
-        {row.original.items.map((item, index) => (
-          <div className="grid grid-cols-3 gap-2 items-start" key={index}>
-            <div className="flex flex-col gap-2">
-              <TooltipProvider>
-                <Tooltip delayDuration={100}>
-                  <TooltipTrigger asChild>
-                    <Image
-                      src={item.food.image || '/placeholder.svg'}
-                      alt={item.food.name}
-                      width={200}
-                      height={200}
-                      className="h-full object-cover transition-transform hover:scale-105 rounded-md"
-                    />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <div className="flex flex-col gap-1">
-                      <p className="text-xs">Ingredientes</p>
-                      <ul className="list-inside list-disc text-sm">
-                        {item.food.ingredients.map((ingredient, index) => (
-                          <li key={index}>{ingredient}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-              {item.obs && <ColumnDetail title="Observação" value={item.obs} />}
-            </div>
-            <div className="col-span-2 space-y-4">
-              <ColumnDetail
-                title={item.food.name}
-                value={`${item.quantity} unids`}
-              />
-              {item.additionals.length > 0 ? (
-                <div className="flex flex-col gap-2">
-                  <p className="text-sm leading-tight dark:text-white">
-                    <span className="font-semibold">Adicionais</span>
-                  </p>
+    cell: ({ row }) => {
+      const { onOpen } = useNewReview()
 
-                  {item.additionals.map((additional, key) => (
-                    <div key={key}>
-                      <p className="text-xs">{additional.additional.name}</p>
-                      <ul>
-                        {additional.options?.map((option, i) => (
-                          <li
-                            key={i}
-                            className="list-inside text-xs list-disc text-muted-foreground"
-                          >
-                            <span className="font-semibold">
-                              {option.option.name}:
-                            </span>{' '}
-                            {option.quantity} unids
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-xs leading-tight dark:text-white">
-                  <span className="font-semibold">Sem adicionais</span>
-                </p>
-              )}
+      return (
+        <div className="grid grid-cols-3 gap-4">
+          {row.original.items.map((item, index) => (
+            <div className="grid grid-cols-3 gap-2 items-start" key={index}>
+              <div className="flex flex-col gap-2">
+                <TooltipProvider>
+                  <Tooltip delayDuration={100}>
+                    <TooltipTrigger asChild>
+                      <Image
+                        src={item.food.image || '/placeholder.svg'}
+                        alt={item.food.name}
+                        width={200}
+                        height={200}
+                        className="h-full object-cover transition-transform hover:scale-105 rounded-md"
+                      />
+                    </TooltipTrigger>
+                    {!!item.food.ingredients.length && (
+                      <TooltipContent>
+                        <div className="flex flex-col gap-1">
+                          <p className="text-xs">Ingredientes</p>
+                          <ul className="list-inside list-disc text-sm">
+                            {item.food.ingredients.map((ingredient, index) => (
+                              <li key={index}>{ingredient}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      </TooltipContent>
+                    )}
+                  </Tooltip>
+                </TooltipProvider>
+                {item.obs && (
+                  <ColumnDetail title="Observação" value={item.obs} />
+                )}
+              </div>
+              <div className="col-span-2 space-y-4">
+                <Button
+                  variant={item.reviewed ? 'outline' : 'red'}
+                  disabled={item.reviewed}
+                  onClick={() => onOpen(row.original.id, item.id)}
+                  className="disabled:opacity-100"
+                >
+                  {item.reviewed && item.review ? (
+                    <>
+                      <Star className="fill-yellow-400 text-yellow-400" />
+                      Avaliado ({item.review})
+                    </>
+                  ) : (
+                    'Avaliar'
+                  )}
+                </Button>
+                <ColumnDetail
+                  title={item.food.name}
+                  value={`${item.quantity} unids`}
+                />
+                {item.additionals.length > 0 ? (
+                  <div className="flex flex-col gap-2">
+                    <p className="text-sm leading-tight dark:text-white">
+                      <span className="font-semibold">Adicionais</span>
+                    </p>
+
+                    {item.additionals.map((additional, key) => (
+                      <div key={key}>
+                        <p className="text-xs">{additional.additional.name}</p>
+                        <ul>
+                          {additional.options?.map((option, i) => (
+                            <li
+                              key={i}
+                              className="list-inside text-xs list-disc text-muted-foreground"
+                            >
+                              <span className="font-semibold">
+                                {option.option.name}:
+                              </span>{' '}
+                              {option.quantity} unids
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-xs leading-tight dark:text-white">
+                    <span className="font-semibold">Sem adicionais</span>
+                  </p>
+                )}
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
-    ),
+          ))}
+        </div>
+      )
+    },
   },
   {
     accessorKey: 'situação',
