@@ -21,9 +21,10 @@ export default function OrdersPage() {
   const orders = ordersQuery.data || []
   const analyticsQuery = useGetAnalytics()
   const analytics = analyticsQuery.data
-  const isLoading = ordersQuery.isLoading || analyticsQuery.isLoading
 
   const { status, onChangeStatus } = useFilterOrder()
+
+  const isLoading = ordersQuery.isLoading || analyticsQuery.isLoading
 
   const progressOptions: FilterOptionsProps = [
     { label: 'Todos', value: undefined },

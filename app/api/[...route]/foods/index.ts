@@ -84,6 +84,7 @@ const app = new Hono()
       return c.json({ error: 'Usuário não autorizado' }, 401)
     }
 
+    // TODO: Fix error in mostSold and bestRated in empty sales
     type AnalyticsResult = {
       mostSoldProduct: string
       leastSoldProduct: string
@@ -325,10 +326,11 @@ const app = new Hono()
       },
     })
 
-    await db.store.update({
-      where: { id: store.id, ownerId, enabled: false },
-      data: { enabled: true },
-    })
+    // TODO: Fix error in update enabled store in new owners
+    // await db.store.update({
+    //   where: { id: store.id, ownerId, enabled: false },
+    //   data: { enabled: true },
+    // })
 
     return c.json({ success: 'Produto criado' }, 201)
   })

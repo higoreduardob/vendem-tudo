@@ -15,10 +15,11 @@ import { useGetAnalytics } from '@/features/foods/categories/api/use-get-analyti
 export default function CategoriesPage() {
   const categoriesQuery = useGetCategories()
   const categories = categoriesQuery.data || []
-  const deleteCategories = useBulkDeleteCategories()
-  const { onChangeStatus, status } = useFilterCategory()
   const analyticsQuery = useGetAnalytics()
   const analytics = analyticsQuery.data
+  const deleteCategories = useBulkDeleteCategories()
+
+  const { onChangeStatus, status } = useFilterCategory()
 
   const isLoading =
     categoriesQuery.isLoading ||

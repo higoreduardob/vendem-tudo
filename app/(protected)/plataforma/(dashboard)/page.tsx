@@ -23,9 +23,10 @@ export default function DashboardPage() {
   const orders = ordersQuery.data || []
   const summaryQuery = useGetSummary()
   const summary = summaryQuery.data
-  const isLoading = ordersQuery.isLoading || summaryQuery.isLoading
 
   const { onChangeStatus, status } = useFilterOrder()
+
+  const isLoading = ordersQuery.isLoading || summaryQuery.isLoading
 
   const progressOptions: FilterOptionsProps = [
     { label: 'Todos', value: undefined },

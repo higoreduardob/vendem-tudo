@@ -44,6 +44,9 @@ export const useUpdateHistory = (id?: string) => {
       }
       queryClient.invalidateQueries({ queryKey: ['food-orders', id] })
       queryClient.invalidateQueries({ queryKey: ['food-orders'] })
+      queryClient.invalidateQueries({ queryKey: ['orders-analytics'] })
+      queryClient.invalidateQueries({ queryKey: ['orders-overview'] })
+      queryClient.invalidateQueries({ queryKey: ['orders-summary'] })
     },
     onError: (err) => {
       toast.error(err.message)

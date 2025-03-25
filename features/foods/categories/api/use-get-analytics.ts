@@ -1,11 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
 
 import { client } from '@/lib/hono'
-import { convertAmountFromMiliunits, formatCurrency } from '@/lib/utils'
 
 export const useGetAnalytics = () => {
   const query = useQuery({
-    queryKey: ['orders-analytics'],
+    queryKey: ['food-categories-analytics'],
     queryFn: async () => {
       const response = await client.api['food-categories'].analytics.$get({})
 

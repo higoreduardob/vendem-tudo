@@ -46,6 +46,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session.user.cpfCnpj = token.cpfCnpj
         session.user.address = token.address
         session.user.isTwoFactorEnabled = token.isTwoFactorEnabled
+        session.user.status = token.status
         session.user.selectedStore = token.selectedStore
       }
 
@@ -85,6 +86,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       token.cpfCnpj = existingUser.cpfCnpj
       token.address = existingUser.address!
       token.isTwoFactorEnabled = existingUser.isTwoFactorEnabled
+      token.status = existingUser.status
       token.selectedStore = existingUser.store
 
       return token

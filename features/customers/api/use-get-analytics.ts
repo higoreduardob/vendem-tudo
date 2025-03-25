@@ -5,7 +5,7 @@ import { convertAmountFromMiliunits, formatCurrency } from '@/lib/utils'
 
 export const useGetAnalytics = () => {
   const query = useQuery({
-    queryKey: ['orders-analytics'],
+    queryKey: ['customers-analytics'],
     queryFn: async () => {
       const response = await client.api['customers'].analytics.$get({})
 

@@ -9,7 +9,7 @@ import { StorePayment } from '@prisma/client'
 
 export const useGetOverview = () => {
   const query = useQuery({
-    queryKey: ['orders-analytics'],
+    queryKey: ['orders-overview'],
     queryFn: async () => {
       const response = await client.api['food-orders'].overview.$get({})
 

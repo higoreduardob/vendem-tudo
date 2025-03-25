@@ -1202,41 +1202,42 @@ const app = new Hono()
       })
       if (!order) return c.json({ error: 'Pedido inválido' }, 200)
 
-      await Promise.all(
-        order.items.map(async (item) => {
-          if (item.id === itemId && id === order.id) {
-            if (item.reviewed) return c.json({ error: 'Item já avaliado' }, 400)
+      const itemToReview = order.items.find((item) => item.id === itemId)
+      if (!itemToReview) {
+        return c.json({ error: 'Item não encontrado no pedido' }, 400)
+      }
+      if (itemToReview.reviewed) {
+        return c.json({ error: 'Item já avaliado' }, 400)
+      }
 
-            await db.$transaction([
-              db.foodItem.update({
-                where: { id: itemId },
-                data: { reviewed: true, review },
-              }),
-              db.food.update({
-                where: { id: item.foodId },
-                data: {
-                  reviewsAmount: { increment: 1 },
-                  reviews: { increment: review },
-                  reviewsAvg: {
-                    set: await (async () => {
-                      const food = await db.food.findUnique({
-                        where: { id: item.foodId },
-                        select: { reviews: true, reviewsAmount: true },
-                      })
-                      if (!food) return review
+      const food = await db.food.findUnique({
+        where: { id: itemToReview.foodId },
+        select: { reviews: true, reviewsAmount: true },
+      })
+      if (!food) {
+        return c.json({ error: 'Produto não encontrado' }, 400)
+      }
 
-                      const totalReviews = (food.reviews ?? 0) + review
-                      const totalReviewsAmount = (food.reviewsAmount ?? 0) + 1
+      const currentReviews = food.reviews || 0
+      const currentReviewsAmount = food.reviewsAmount || 0
+      const newReviewsAmount = currentReviewsAmount + 1
+      const newTotalReviews = currentReviews + review
+      const newAverage = newTotalReviews / newReviewsAmount
 
-                      return totalReviews / totalReviewsAmount
-                    })(),
-                  },
-                },
-              }),
-            ])
-          }
-        })
-      )
+      await db.$transaction([
+        db.foodItem.update({
+          where: { id: itemId },
+          data: { reviewed: true, review },
+        }),
+        db.food.update({
+          where: { id: itemToReview.foodId },
+          data: {
+            reviewsAmount: newReviewsAmount,
+            reviews: newTotalReviews,
+            reviewsAvg: newAverage,
+          },
+        }),
+      ])
 
       return c.json({ success: 'Avaliação registrada com sucesso' }, 200)
     }

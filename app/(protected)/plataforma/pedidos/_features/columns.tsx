@@ -38,6 +38,7 @@ export type ResponseType = InferResponseType<
 
 export const columns: ColumnDef<ResponseType>[] = [
   {
+    // TODO: hidden checkbox
     id: 'select',
     header: ({ table }) => (
       <Checkbox
@@ -72,6 +73,7 @@ export const columns: ColumnDef<ResponseType>[] = [
     },
     cell: ({ row }) => (
       <div className="flex flex-col gap-2">
+        {/* TODO: filter code in input */}
         <ColumnDetail title="Código" value={row.original.code} />
 
         <div className="flex flex-col">
@@ -259,6 +261,7 @@ export const columns: ColumnDef<ResponseType>[] = [
         (key) => translateOrderHistoryProgress(key as OrderHistoryProgress)
       )
 
+      // TODO: if history 'CANCELLED' or 'DELIVERED' not change
       const onChange = (progress: OrderHistoryProgress) => {
         mutation.mutate({ progress })
       }

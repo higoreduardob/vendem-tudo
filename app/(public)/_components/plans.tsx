@@ -4,7 +4,7 @@ import {
   LayoutGrid,
   BarChart3,
   ShoppingCart,
-  Image,
+  Image as ImageIcon,
   Users,
   FileStack,
 } from 'lucide-react'
@@ -95,7 +95,7 @@ export const Plans = () => {
                 <span className="text-sm">Produtos ilimitados</span>
               </div>
               <div className="flex items-center rounded-md bg-zinc-800 p-3">
-                <Image className="mr-2 h-5 w-5 text-purple-500" />
+                <ImageIcon className="mr-2 h-5 w-5 text-purple-500" />
                 <span className="text-sm">Fotos nos produtos</span>
               </div>
               <div className="flex items-center rounded-md bg-zinc-800 p-3">

@@ -81,6 +81,7 @@ const app = new Hono()
       return c.json({ error: 'Usuário não autorizado' }, 401)
     }
 
+    // TODO: Fix error in mostSold in empty sales
     type AnalyticsResult = {
       mostSoldCategory: string
       leastSoldCategory: string

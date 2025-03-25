@@ -1,14 +1,15 @@
 'use client'
 
-import { Title } from '@/app/(protected)/_components/title'
-import { WrapperVariant } from '../../_components/wrapper-variant'
-import { AreaVariant } from '@/components/area-variant'
-import { PieVariant } from '@/components/pie-variant'
-import { BarVariant } from '@/components/bar-variant'
-import { LineVariant } from '@/components/line-variant'
-import { RadarVariant } from '@/components/radar-variant'
-import { Analytics } from './_components/analytics'
 import { useGetOverview } from '@/features/foods/orders/api/use-get-overview'
+
+import { PieVariant } from '@/components/pie-variant'
+// import { BarVariant } from '@/components/bar-variant'
+import { LineVariant } from '@/components/line-variant'
+import { AreaVariant } from '@/components/area-variant'
+import { RadarVariant } from '@/components/radar-variant'
+import { Title } from '@/app/(protected)/_components/title'
+import { WrapperVariant } from '@/app/(protected)/plataforma/_components/wrapper-variant'
+import { Analytics } from '@/app/(protected)/plataforma/(dashboard)/_desempenho/_components/analytics'
 
 const Options = () => (
   <div className="flex flex-col items-end">
@@ -17,16 +18,20 @@ const Options = () => (
   </div>
 )
 
-export default function AnalyticsPage() {
+export default function OverviewPage() {
   const overviewsQuery = useGetOverview()
   const overviews = overviewsQuery.data
 
+  const isLoading = overviewsQuery.isLoading
+
+  // TODO: Add skeleton
+  if (isLoading) {
+    return <>Skeleton</>
+  }
+
   return (
     <div className="w-full flex flex-col gap-4">
-      <div className="flex items-center justify-between">
-        <Title>Desempenho</Title>
-        {/* Actions */}
-      </div>
+      <Title>Desempenho</Title>
       <Analytics />
       {/* TODO: Change charts rules */}
       <div className="grid grid-cols-5 gap-4">

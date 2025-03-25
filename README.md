@@ -1,10 +1,11 @@
     1 . Melhorar o estilo do email enviado
-    2 . Notificações: 1. Fazer push notifications, e pesquisar como fazer no next para os registros de pedidos
+    2 . Notificações: 1. Fazer push notifications, e pesquisar como fazer no next para os registros de pedidos | 2 . check stages in order food
+    3 . Upload de images
+    4 . Implement print order
 
-    3 . check stages in order food
-    8 . Check todos
-    9 . Check all codes
-    10 . Upload de images
+    4 . Check todos
+    5 . Check all codes
+    6 . TODO: Check status in categories and foods in search customers
 
     MELHORIAS:
 

@@ -28,7 +28,7 @@ export function MainBanner() {
     }, 600)
 
     return () => clearTimeout(timeout)
-  }, [tempSearch])
+  }, [tempSearch, search, categoryId, onChange])
 
   if (!store) {
     return null

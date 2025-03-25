@@ -15,10 +15,11 @@ import { Analytics } from '@/app/(protected)/plataforma/alimentos/_components/an
 export default function ProductsPage() {
   const foodsQuery = useGetFoods()
   const foods = foodsQuery.data || []
-  const deleteFoods = useBulkDeleteFoods()
-  const { onChangeStatus, status } = useFilterFood()
   const analyticsQuery = useGetAnalytics()
   const analytics = analyticsQuery.data
+  const deleteFoods = useBulkDeleteFoods()
+
+  const { onChangeStatus, status } = useFilterFood()
 
   const isLoading =
     foodsQuery.isLoading || deleteFoods.isPending || analyticsQuery.isLoading

@@ -31,6 +31,7 @@ export type ResponseType = InferResponseType<
 
 export const columns: ColumnDef<ResponseType>[] = [
   {
+    // TODO: hidden checkbox
     id: 'select',
     header: ({ table }) => (
       <Checkbox
@@ -53,6 +54,7 @@ export const columns: ColumnDef<ResponseType>[] = [
     enableHiding: false,
   },
   {
+    // TODO: filter code in input
     accessorKey: 'código',
     enableHiding: false,
     header: () => null,
@@ -217,6 +219,7 @@ export const columns: ColumnDef<ResponseType>[] = [
                 )}
               </div>
               <div className="col-span-2 space-y-4">
+                {/* TODO: Review after history 'DELIVERED' */}
                 <Button
                   variant={item.reviewed ? 'outline' : 'red'}
                   disabled={item.reviewed}

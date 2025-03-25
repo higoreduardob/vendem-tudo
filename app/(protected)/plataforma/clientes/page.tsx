@@ -14,21 +14,28 @@ import { Analytics } from '@/app/(protected)/plataforma/clientes/_components/ana
 export default function CustomersPage() {
   const customersQuery = useGetUsers('CUSTOMER')
   const customers = customersQuery.data || []
+  const analyticsQuery = useGetAnalytics()
+  const analytics = analyticsQuery.data
   const deleteUsers = useBulkDeleteUsers()
-  const { onChange, status } = useFilterUser()
-  const analytics = useGetAnalytics()
 
-  const isLoading = customersQuery.isLoading || deleteUsers.isPending
+  const { onChange, status } = useFilterUser()
+
+  const isLoading =
+    customersQuery.isLoading ||
+    deleteUsers.isPending ||
+    analyticsQuery.isLoading
 
   // TODO: Create skeleton
   if (isLoading) {
     return <>Skeleton</>
   }
 
+  if (!analytics) return null
+
   return (
     <div className="w-full flex flex-col gap-4">
       <Title>Clientes</Title>
-      <Analytics {...analytics.data!} />
+      <Analytics {...analytics} />
       <DataTable
         filterKey="name"
         placeholder="cliente"
