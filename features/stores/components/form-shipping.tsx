@@ -10,6 +10,12 @@ import { rioDasOstras } from '@/constants/neighborhoods'
 import type { InsertStoreFormValues } from '@/features/stores/schema'
 
 import {
+  convertAmountFromMiliunits,
+  convertAmountToMiliunits,
+  formatCurrency,
+} from '@/lib/utils'
+
+import {
   Card,
   CardContent,
   CardDescription,
@@ -34,7 +40,6 @@ import {
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { FormControl, FormItem, FormLabel } from '@/components/ui/form'
-import { formatCurrency } from '@/lib/utils'
 
 export const FormShipping = ({ isPending }: { isPending?: boolean }) => {
   const [availableNeighborhoods, setAvailableNeighborhoods] =
@@ -67,9 +72,9 @@ export const FormShipping = ({ isPending }: { isPending?: boolean }) => {
       state,
       city,
       neighborhood,
-      fee: fee || null,
+      fee: convertAmountToMiliunits(fee) || null,
       deadlineAt: deadlineAt || null,
-      minimumAmount: minimumAmount || null,
+      minimumAmount: convertAmountToMiliunits(minimumAmount) || null,
     })
 
     setAvailableNeighborhoods(
@@ -231,9 +236,17 @@ export const FormShipping = ({ isPending }: { isPending?: boolean }) => {
                       <TableCell>
                         {location.city}/{location.state}
                       </TableCell>
-                      <TableCell>{formatCurrency(location.fee || 0)}</TableCell>
                       <TableCell>
-                        {formatCurrency(location.minimumAmount || 0)}
+                        {formatCurrency(
+                          convertAmountFromMiliunits(location.fee || 0)
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        {formatCurrency(
+                          convertAmountFromMiliunits(
+                            location.minimumAmount || 0
+                          )
+                        )}
                       </TableCell>
                       <TableCell>{location.deadlineAt || '-'}</TableCell>
                       <TableCell>

@@ -32,10 +32,7 @@ export default function ProductsPage() {
 
   return (
     <div className="w-full flex flex-col gap-4">
-      <div className="flex items-center justify-between">
-        <Title>Produtos</Title>
-        <Actions />
-      </div>
+      <Title>Produtos</Title>
       <Analytics {...analytics} />
       <DataTable
         filterKey="name"
@@ -48,6 +45,7 @@ export default function ProductsPage() {
         }}
         status={status}
         onChangeStatus={onChangeStatus}
+        filters={<Actions />}
       />
     </div>
   )

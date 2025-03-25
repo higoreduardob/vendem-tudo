@@ -8,7 +8,7 @@ import { FormOwnerNewStore as FormNewStore } from '@/features/stores/components/
 import { FormNewFood } from '@/features/foods/components/form-new-food'
 import { FormEditFood } from '@/features/foods/components/form-edit-food'
 
-import { FormEditUser } from '@/features/users/components/form-edit-user'
+import { FormOwnerEditUser as FormEditUser } from '@/features/users/components/form-edit-user'
 
 import { FormNewCategory as FormNewFoodCategory } from '@/features/foods/categories/components/form-new-category'
 import { FormEditCategory as FormEditFoodCategory } from '@/features/foods/categories/components/form-edit-category'

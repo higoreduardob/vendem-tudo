@@ -34,11 +34,7 @@ export default function CategoriesPage() {
 
   return (
     <div className="w-full flex flex-col gap-4">
-      <div className="flex items-center justify-between">
-        <Title>Categorias</Title>
-        <Actions />
-      </div>
-      {/* TODO: Get analytics */}
+      <Title>Categorias</Title>
       <Analytics {...analytics} />
       <DataTable
         filterKey="name"
@@ -52,6 +48,7 @@ export default function CategoriesPage() {
         }}
         status={status}
         onChangeStatus={onChangeStatus}
+        filters={<Actions />}
       />
     </div>
   )

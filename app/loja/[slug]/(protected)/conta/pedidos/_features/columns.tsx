@@ -5,11 +5,9 @@ import { InferResponseType } from 'hono'
 import { ArrowUpDown, Clock, Star } from 'lucide-react'
 import { ColumnDef } from '@tanstack/react-table'
 
-import { OrderHistoryProgress } from '@prisma/client'
-
 import { client } from '@/lib/hono'
-import { translateOrderHistoryProgress } from '@/lib/i18n'
-import { createEnumOptions, formatCurrency } from '@/lib/utils'
+import { formatCurrency } from '@/lib/utils'
+import { translateShippingRole, translateStorePayment } from '@/lib/i18n'
 
 import { useOpenStore } from '@/hooks/use-store'
 import { useNewReview } from '@/features/foods/orders/hooks/use-new-review'
@@ -25,7 +23,6 @@ import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { ColumnDetail } from '@/components/column-detail'
 import { OrderProgress } from '@/components/order-progress'
-import { StarFilledIcon } from '@radix-ui/react-icons'
 
 export type ResponseType = InferResponseType<
   (typeof client.api)['food-orders']['stores'][':storeId']['$get'],
@@ -79,7 +76,10 @@ export const columns: ColumnDef<ResponseType>[] = [
         <ColumnDetail title="Código" value={row.original.code} />
 
         <div className="flex flex-col">
-          <ColumnDetail title="Entrega" value={row.original.shippingRole} />
+          <ColumnDetail
+            title="Entrega"
+            value={translateShippingRole(row.original.shippingRole)}
+          />
           <ColumnDetail
             title="Taxa da entrega"
             value={
@@ -90,7 +90,7 @@ export const columns: ColumnDef<ResponseType>[] = [
           />
           <ColumnDetail
             title="Forma de pagamento"
-            value={row.original.payment}
+            value={translateStorePayment(row.original.payment)}
           />
           <ColumnDetail
             title="Total"
@@ -183,7 +183,7 @@ export const columns: ColumnDef<ResponseType>[] = [
       const { onOpen } = useNewReview()
 
       return (
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-2 gap-4">
           {row.original.items.map((item, index) => (
             <div className="grid grid-cols-3 gap-2 items-start" key={index}>
               <div className="flex flex-col gap-2">

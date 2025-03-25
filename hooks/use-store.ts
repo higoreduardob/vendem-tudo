@@ -6,7 +6,7 @@ import { useQuery } from '@tanstack/react-query'
 
 import { client } from '@/lib/hono'
 import { phoneMask } from '@/lib/format'
-import { mapAddress } from '@/lib/utils'
+import { convertAmountFromMiliunits, mapAddress } from '@/lib/utils'
 
 export type ResponseType = InferResponseType<
   (typeof client.api.stores)['slug']['$get'],
@@ -52,6 +52,11 @@ export const useStore = (slug?: string) => {
         ...data,
         whatsApp: phoneMask(data.whatsApp),
         address: mapAddress(data.address!),
+        shippings: data.shippings.map((shipping) => ({
+          ...shipping,
+          fee: convertAmountFromMiliunits(shipping.fee),
+          minimumAmount: convertAmountFromMiliunits(shipping.minimumAmount),
+        })),
       }
     },
   })

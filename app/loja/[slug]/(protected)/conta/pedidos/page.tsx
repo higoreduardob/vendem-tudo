@@ -11,11 +11,9 @@ import { Title } from '@/app/(protected)/_components/title'
 
 export default function OrdersPage() {
   const { store } = useOpenStore()
+  const { onChangeStatus, status } = useFilterOrder()
   const ordersQuery = useGetStoreOrders(store?.id)
   const orders = ordersQuery.data || []
-  const { onChangeStatus, status } = useFilterOrder()
-
-  console.log(orders)
 
   return (
     <div className="w-full flex flex-col gap-2">

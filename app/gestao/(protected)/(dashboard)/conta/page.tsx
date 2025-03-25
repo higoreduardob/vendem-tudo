@@ -28,9 +28,7 @@ export default function AccountPage() {
 
   return (
     <div className="w-full flex flex-col gap-2">
-      <div className="flex items-center justify-between">
-        <Title>Conta</Title>
-      </div>
+      <Title>Conta</Title>
       <p className="text-sm text-muted-foreground">
         Preencha os campos abaixo, e ao finalizar clique em “Salvar”.
       </p>

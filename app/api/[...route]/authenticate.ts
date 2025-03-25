@@ -400,7 +400,6 @@ const app = new Hono()
       if (!existingUser || !existingUser.email || !existingUser.password) {
         return c.json({ error: 'Email não cadastrado' }, 400)
       }
-      console.log(existingUser)
 
       if (!code) {
         const passwordsMatch = await bcrypt.compare(

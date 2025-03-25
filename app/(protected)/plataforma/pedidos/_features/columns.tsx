@@ -205,7 +205,7 @@ export const columns: ColumnDef<ResponseType>[] = [
                 title={item.food.name}
                 value={`${item.quantity} unids`}
               />
-              {item.additionals.length > 0 ? (
+              {item.additionals && !!item.additionals.length ? (
                 <div className="flex flex-col gap-2">
                   <p className="text-sm leading-tight dark:text-white">
                     <span className="font-semibold">Adicionais</span>

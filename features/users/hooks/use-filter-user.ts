@@ -1,16 +1,15 @@
 import { create } from 'zustand'
 
-import { FilterStatus } from '@/constants'
 import { UserRole } from '@prisma/client'
 
 type FilterUserState = {
-  status: string
+  status?: string
   role?: UserRole
   onChange: (status?: string, role?: UserRole) => void
 }
 
 export const useFilterUser = create<FilterUserState>((set) => ({
-  status: FilterStatus[0].value,
+  status: undefined,
   role: undefined,
   onChange: (status, role) => set({ status, role }),
 }))

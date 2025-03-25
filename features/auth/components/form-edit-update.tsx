@@ -14,11 +14,10 @@ export const FormEditUpdate = () => {
   const { user, update } = useCurrentUser()
   const { isOpen, onClose } = useOpenUpdate()
 
-  if (!user) return null
-
-  const { id } = user
-  const mutation = useUpdate(id)
+  const mutation = useUpdate(user?.id)
   const isPending = mutation.isPending
+
+  if (!user) return null
 
   const onSubmit = (values: UpdateFormValues) => {
     mutation.mutate(values, {

@@ -4,9 +4,7 @@ import { FormUpdatePassword } from '@/features/auth/components/form-update-passw
 export default function SecurityPage() {
   return (
     <div className="w-full flex flex-col gap-2">
-      <div className="flex items-center justify-between">
-        <Title>Segurança</Title>
-      </div>
+      <Title>Segurança</Title>
       <p className="text-sm text-muted-foreground">
         Preencha os campos abaixo, e ao finalizar clique em “Salvar”.
       </p>

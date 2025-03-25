@@ -14,8 +14,8 @@ import { translateStoreRole } from '@/lib/i18n'
 import { cn, formatCurrency } from '@/lib/utils'
 
 import { ResponseType, useOpenStore } from '@/hooks/use-store'
-import { useCurrentUser } from '@/features/auth/hooks/use-current-user'
 import { useOpenUpdate } from '@/features/auth/hooks/use-open-update'
+import { useCurrentUser } from '@/features/auth/hooks/use-current-user'
 import { useOpenCheckout } from '@/features/foods/orders/components/form-checkout'
 
 import {
@@ -206,7 +206,12 @@ export const OrderShipping = ({
   const { onOpen } = useOpenUpdate()
 
   return (
-    <div className={cn('', isColumnDirection && 'grid grid-cols-2 gap-2')}>
+    <div
+      className={cn(
+        '',
+        isColumnDirection ? 'grid grid-cols-2 gap-2' : 'space-y-2'
+      )}
+    >
       <div className="flex items-center gap-2 bg-gray-50 p-2 rounded-sm">
         <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
           <MapPin className="text-red-500 w-5 h-5" />
@@ -361,6 +366,10 @@ const FormOrderComponent = ({
   const shippingFee = shippingAddress?.fee || 0
 
   const watchShippingRole = form.watch('shippingRole')
+  const isMinAmount = minAmount
+    ? minAmount > form.watch('subAmount') &&
+      form.watch('shippingRole') === 'DELIVERY'
+    : false
 
   useEffect(() => {
     const subAmount = calculateSubAmount(cart)
@@ -567,7 +576,13 @@ const FormOrderComponent = ({
                         {formatCurrency(form.watch('amount'))}
                       </p>
                     </div>
-                    <Button variant="red">
+                    {isMinAmount && minAmount && (
+                      <span className="text-sm text-red-500">
+                        Subtotal mínimo para entrega:{' '}
+                        {formatCurrency(minAmount)}
+                      </span>
+                    )}
+                    <Button variant="red" disabled={isMinAmount}>
                       <CreditCard /> Escolher forma de pagamento
                     </Button>
                   </div>

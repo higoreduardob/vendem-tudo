@@ -1,13 +1,14 @@
 'use client'
 
 import {
-  Bell,
+  // Bell,
   Box,
   LayoutDashboard,
   ShoppingCart,
   Store,
   Users,
 } from 'lucide-react'
+import Link from 'next/link'
 
 import { useCurrentUser } from '@/features/auth/hooks/use-current-user'
 
@@ -17,12 +18,11 @@ import {
   SidebarTrigger,
 } from '@/components/ui/sidebar'
 import { Button } from '@/components/ui/button'
-import { Switch } from '@/components/ui/switch'
+// import { Switch } from '@/components/ui/switch'
 import { Separator } from '@/components/ui/separator'
-import { ButthonTheme } from '@/components/button-custom'
+// import { ButthonTheme } from '@/components/button-custom'
 import { AppSidebar } from '@/app/(protected)/_components/app-sidebar'
 import { SmartBreadcrumb } from '@/app/(protected)/_components/smart-breadcrumb'
-import Link from 'next/link'
 
 const DASHBOARD_NAV_MAIN = [
   {
@@ -30,16 +30,16 @@ const DASHBOARD_NAV_MAIN = [
     url: '/plataforma',
     icon: LayoutDashboard,
     isActive: true,
-    items: [
-      {
-        title: 'Desempenho',
-        url: '/plataforma/desempenho',
-      },
-      // {
-      //   title: 'Automação',
-      //   url: '/plataforma/automacao',
-      // },
-    ],
+    // items: [
+    //   {
+    //     title: 'Desempenho',
+    //     url: '/plataforma/desempenho',
+    //   },
+    //   {
+    //     title: 'Automação',
+    //     url: '/plataforma/automacao',
+    //   },
+    // ],
   },
   {
     title: 'Alimentos',
@@ -140,25 +140,23 @@ export default function DashboardLayout({
               <SmartBreadcrumb navMain={navMainForBreadcrumb} />
             </div>
             <div className="flex items-center gap-2">
-              <ButthonTheme />
-              <Separator orientation="vertical" className="mr-2 h-4" />
-              <Button variant="ghost" className="relative">
+              {/* <ButthonTheme /> */}
+              {/* <Separator orientation="vertical" className="mr-2 h-4" /> */}
+              {/* TODO: Implement notifications */}
+              {/* <Button variant="ghost" className="relative">
                 <span className="absolute top-0 left-6 flex items-center justify-center h-[16px] min-w-[16px] text-[12px] text-white bg-red-600 rounded-full">
                   3
                 </span>
                 <Bell className="h-[1.2rem] w-[1.2rem]" />
-              </Button>
-              <Separator orientation="vertical" className="mr-2 h-4" />
+              </Button> */}
+              {/* <Separator orientation="vertical" className="mr-2 h-4" /> */}
               <Link href={`/loja/${user?.selectedStore?.slug}`}>
                 <Button variant="ghost">
                   <Store className="h-[1.2rem] w-[1.2rem]" />
                 </Button>
               </Link>
-              <Separator orientation="vertical" className="mr-2 h-4" />
-              <Switch
-              // checked={field.value}
-              // onCheckedChange={field.onChange}
-              />
+              {/* <Separator orientation="vertical" className="mr-2 h-4" /> */}
+              {/* <Switch checked={field.value} onCheckedChange={field.onChange} /> */}
             </div>
           </div>
         </header>

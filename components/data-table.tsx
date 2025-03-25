@@ -14,11 +14,11 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import { Ban, ChevronDown, Download, Trash2 } from 'lucide-react'
-
-import { FilterOptionsPageSize, FilterStatus } from '@/constants'
+import { Ban, ChevronDown, Trash2 } from 'lucide-react'
 
 import { useConfirm } from '@/hooks/use-confirm'
+
+import { FilterOptionsPageSize, FilterStatus } from '@/constants'
 
 import {
   DropdownMenu,
@@ -47,8 +47,9 @@ interface DataTableProps<TData, TValue> {
   placeholder: string
   isNonReversibled?: boolean
   isNonExportable?: boolean
+  statusFilter?: FilterOptionsProps
   disabled?: boolean
-  status: string
+  status?: string
   onDelete: (rows: Row<TData>[]) => void
   onChangeStatus: (status: string) => void
   filters?: React.JSX.Element
@@ -61,6 +62,7 @@ export function DataTable<TData, TValue>({
   placeholder,
   isNonReversibled,
   isNonExportable,
+  statusFilter,
   disabled,
   status,
   onDelete,
@@ -137,12 +139,12 @@ export function DataTable<TData, TValue>({
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  {!isNonExportable && (
+                  {/* {!isNonExportable && (
                     <DropdownMenuItem disabled={disabled}>
                       <Download className="mr-2 h-4 w-4" />
                       Exportar selecionados
                     </DropdownMenuItem>
-                  )}
+                  )} */}
                   <DropdownMenuItem
                     onClick={handleBulkDelete}
                     disabled={disabled}
@@ -179,9 +181,9 @@ export function DataTable<TData, TValue>({
             />
             <SelectFilter
               placeholder="Selecione status"
-              defaultValue={'none'}
+              defaultValue={undefined}
               value={status}
-              data={FilterStatus}
+              data={statusFilter || FilterStatus}
               onChange={onChangeStatus}
               className="w-full min-w-32"
               isDisabled={disabled}

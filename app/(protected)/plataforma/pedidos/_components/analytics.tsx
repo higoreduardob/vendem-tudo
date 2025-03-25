@@ -21,7 +21,7 @@ export const Analytics = ({
       <CardContent className="flex items-center gap-4">
         <div className="flex items-center gap-2 border-r border-border/50 pr-4">
           <Calendar className="h-4 w-4 text-muted-foreground" />
-          <span className="text-sm font-medium">Hoje</span>
+          <span className="text-sm font-medium">Todo tempo</span>
         </div>
 
         <div className="flex flex-1 items-center gap-4">

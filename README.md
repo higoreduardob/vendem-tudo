@@ -1,18 +1,10 @@
     1 . Melhorar o estilo do email enviado
     2 . Notificações: 1. Fazer push notifications, e pesquisar como fazer no next para os registros de pedidos
+
     3 . check stages in order food
-    4 . Cart: 4. Botão de trocar consertar o refetch state
-
-Features:
-  Gestão:
-    Lojistas: 1. Exibir todos os lojista e permitir o CRUD
-
-  OWNER/MANAGER/EMPLOYEE
-    Pedidos: 3. Colocar date range
-
-    Suporte: 1. Colocar whatsapp de contato de suporte
-
-    TODO: Fix: features/auth/api/use-update.ts (19:5) @ useUpdate in sign-in customer
+    8 . Check todos
+    9 . Check all codes
+    10 . Upload de images
 
     MELHORIAS:
 
@@ -45,3 +37,5 @@ Features:
       10 . Suporte colocar FAQ com tempo de solucionamento
       11 . Colocar planos para o cliente (lojista)
       12 . Suporte integrar envio de email de perguntas
+      13 . Suporte whatsapp de contato
+      14 . Finalizar desempenho

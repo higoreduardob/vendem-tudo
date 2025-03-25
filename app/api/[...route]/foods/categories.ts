@@ -47,6 +47,7 @@ const app = new Hono()
     const data = await db.foodCategory.findMany({
       where: { storeId: store.id },
       include: { _count: { select: { foods: true } } },
+      orderBy: { name: 'asc' },
     })
 
     return c.json({ data }, 200)
@@ -81,16 +82,8 @@ const app = new Hono()
     }
 
     type AnalyticsResult = {
-      mostSoldCategory: {
-        id: string
-        name: string
-        count: number
-      }
-      leastSoldCategory: {
-        id: string
-        name: string
-        count: number
-      }
+      mostSoldCategory: string
+      leastSoldCategory: string
     }
 
     const result = await db.$queryRaw<AnalyticsResult[]>(
@@ -108,35 +101,21 @@ const app = new Hono()
         GROUP BY fc.id, fc.name
       ),
       most_sold_category AS (
-        SELECT 
-          id,
-          name,
-          count
+        SELECT name
         FROM category_sales
         ORDER BY count DESC
         LIMIT 1
       ),
       least_sold_category AS (
-        SELECT 
-          id,
-          name,
-          count
+        SELECT name
         FROM category_sales
         WHERE count > 0
         ORDER BY count ASC
         LIMIT 1
       )
       SELECT 
-        jsonb_build_object(
-          'id', (SELECT id FROM most_sold_category),
-          'name', (SELECT name FROM most_sold_category),
-          'count', (SELECT count FROM most_sold_category)
-        ) as "mostSoldCategory",
-        jsonb_build_object(
-          'id', (SELECT id FROM least_sold_category),
-          'name', (SELECT name FROM least_sold_category),
-          'count', (SELECT count FROM least_sold_category)
-        ) as "leastSoldCategory"
+        (SELECT name FROM most_sold_category) as "mostSoldCategory",
+        (SELECT name FROM least_sold_category) as "leastSoldCategory"
       `
     )
 

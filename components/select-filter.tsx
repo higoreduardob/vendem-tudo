@@ -28,15 +28,31 @@ export const SelectFilter = ({
   className,
   onChange,
 }: Props) => {
+  const selectValue = value === undefined ? 'undefined' : String(value)
+  const selectDefaultValue =
+    defaultValue === undefined ? 'undefined' : String(defaultValue)
+
   return (
-    <Select value={value} disabled={isDisabled} onValueChange={onChange}>
+    <Select
+      value={selectValue}
+      defaultValue={selectDefaultValue}
+      disabled={isDisabled}
+      onValueChange={(val) => {
+        onChange(val === 'undefined' ? undefined : val)
+      }}
+    >
       <SelectTrigger className={cn('w-[180px]', className)}>
-        <SelectValue placeholder={placeholder} defaultValue={defaultValue} />
+        <SelectValue placeholder={placeholder} />
       </SelectTrigger>
-      <SelectContent defaultValue={defaultValue}>
+      <SelectContent>
         <SelectGroup>
           {data.map((item, i) => (
-            <SelectItem key={i} value={item.value}>
+            <SelectItem
+              key={i}
+              value={
+                item.value === undefined ? 'undefined' : String(item.value)
+              }
+            >
               {item.label}
             </SelectItem>
           ))}

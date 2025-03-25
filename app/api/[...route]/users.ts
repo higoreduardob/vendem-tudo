@@ -52,6 +52,7 @@ const app = new Hono()
           role: { in: roles },
         },
         include: { address: true },
+        orderBy: { name: 'asc' },
       })
 
       const data = users.map(({ password, ...rest }) => rest)

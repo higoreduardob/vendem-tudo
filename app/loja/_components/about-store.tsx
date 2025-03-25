@@ -29,10 +29,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Separator } from '@/components/ui/separator'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
   Table,
   TableBody,
@@ -41,6 +37,10 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Separator } from '@/components/ui/separator'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 type OpenAboutState = {
   isOpen: boolean
@@ -70,7 +70,6 @@ export const AboutStore = () => {
 }
 
 const AboutComponent = ({ isOpen, handleClose, store }: ComponentProps) => {
-  console.log(store.shippings)
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
@@ -230,8 +229,8 @@ const AboutComponent = ({ isOpen, handleClose, store }: ComponentProps) => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {store.shippings.map((shipping) => (
-                      <TableRow key={shipping.id}>
+                    {store.shippings.map((shipping, index) => (
+                      <TableRow key={index}>
                         <TableCell className="font-medium">
                           {shipping.neighborhood}
                         </TableCell>

@@ -50,6 +50,7 @@ const app = new Hono()
       include: {
         category: { select: { name: true } },
       },
+      orderBy: { name: 'asc' },
     })
 
     return c.json({ data }, 200)
@@ -84,16 +85,9 @@ const app = new Hono()
     }
 
     type AnalyticsResult = {
-      mostSoldProduct: {
-        id: string
-        name: string
-        sales: number
-      }
-      leastSoldProduct: {
-        id: string
-        name: string
-        sales: number
-      }
+      mostSoldProduct: string
+      leastSoldProduct: string
+      bestRatedProduct: string
       totalRevenue: number
     }
 
@@ -108,22 +102,25 @@ const app = new Hono()
         WHERE f."storeId" = ${store.id}
       ),
       most_sold AS (
-        SELECT 
-          id,
-          name,
-          sales
+        SELECT name
         FROM food_sales
         ORDER BY sales DESC
         LIMIT 1
       ),
       least_sold AS (
-        SELECT 
-          id,
-          name,
-          sales
+        SELECT name
         FROM food_sales
         WHERE sales > 0
         ORDER BY sales ASC
+        LIMIT 1
+      ),
+      best_rated AS (
+        SELECT name
+        FROM "Food" f
+        WHERE f."storeId" = ${store.id}
+        ORDER BY 
+          COALESCE(f."reviewsAvg", 0) DESC,
+          COALESCE(f."reviewsAmount", 0) DESC
         LIMIT 1
       ),
       total_revenue AS (
@@ -133,24 +130,29 @@ const app = new Hono()
         WHERE fo."storeId" = ${store.id}
       )
       SELECT 
-        jsonb_build_object(
-          'id', (SELECT id FROM most_sold),
-          'name', (SELECT name FROM most_sold),
-          'sales', (SELECT sales FROM most_sold)
-        ) as "mostSoldProduct",
-        jsonb_build_object(
-          'id', (SELECT id FROM least_sold),
-          'name', (SELECT name FROM least_sold),
-          'sales', (SELECT sales FROM least_sold)
-        ) as "leastSoldProduct",
+        (SELECT name FROM most_sold) as "mostSoldProduct",
+        (SELECT name FROM least_sold) as "leastSoldProduct",
+        (SELECT name FROM best_rated) as "bestRatedProduct",
         (SELECT total FROM total_revenue) as "totalRevenue"
       `
     )
 
-    const { mostSoldProduct, leastSoldProduct, totalRevenue } = result[0]
+    const {
+      mostSoldProduct,
+      leastSoldProduct,
+      bestRatedProduct,
+      totalRevenue,
+    } = result[0]
 
     return c.json(
-      { data: { mostSoldProduct, leastSoldProduct, totalRevenue } },
+      {
+        data: {
+          mostSoldProduct,
+          leastSoldProduct,
+          bestRatedProduct,
+          totalRevenue,
+        },
+      },
       200
     )
   })

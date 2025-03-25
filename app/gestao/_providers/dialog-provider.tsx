@@ -6,6 +6,8 @@ import { FormDialogSingUp } from '@/features/auth/components/form-dialog-sign-up
 
 import { FormAdministratorNewStore } from '@/features/stores/components/form-new-store'
 
+import { FormAdministratorEditUser } from '@/features/users/components/form-edit-user'
+
 export const DialogProvider = () => {
   const isMounted = useMountedState()
 
@@ -16,6 +18,8 @@ export const DialogProvider = () => {
       <FormDialogSingUp />
 
       <FormAdministratorNewStore />
+
+      <FormAdministratorEditUser />
     </>
   )
 }

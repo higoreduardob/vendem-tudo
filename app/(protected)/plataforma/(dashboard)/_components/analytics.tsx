@@ -27,7 +27,8 @@ export const Analytics = ({
         <div className="flex flex-1 items-center gap-4">
           <AnalyticItem title="Pedidos realizados" value={totalOrders} />
           <AnalyticItem title="Pedidos pendentes" value={pendingOrders} />
-          <AnalyticItem title="Quantidade de clientes" value={customers} />
+          {/* TODO: Check all customers or remove this */}
+          {/* <AnalyticItem title="Quantidade de clientes" value={customers} /> */}
           <AnalyticItem title="Vendas do dia" value={dailySales} isLastItem />
         </div>
       </CardContent>

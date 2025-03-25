@@ -1,6 +1,11 @@
 'use client'
 
+import { OrderHistoryProgress } from '@prisma/client'
+
 import { columns } from '@/app/(protected)/plataforma/pedidos/_features/columns'
+
+import { createEnumOptions } from '@/lib/utils'
+import { translateOrderHistoryProgress } from '@/lib/i18n'
 
 import { useGetOrders } from '@/features/foods/orders/api/use-get-orders'
 import { useGetSummary } from '@/features/foods/orders/api/use-get-summary'
@@ -14,22 +19,36 @@ import { WrapperVariant } from '@/app/(protected)/plataforma/_components/wrapper
 import { Analytics } from '@/app/(protected)/plataforma/(dashboard)/_components/analytics'
 
 export default function DashboardPage() {
-  const { onChangeStatus, status } = useFilterOrder()
   const ordersQuery = useGetOrders(true)
   const orders = ordersQuery.data || []
-  const summary = useGetSummary()
+  const summaryQuery = useGetSummary()
+  const summary = summaryQuery.data
+  const isLoading = ordersQuery.isLoading || summaryQuery.isLoading
+
+  const { onChangeStatus, status } = useFilterOrder()
+
+  const progressOptions: FilterOptionsProps = [
+    { label: 'Todos', value: undefined },
+    ...createEnumOptions(OrderHistoryProgress, (key) =>
+      translateOrderHistoryProgress(key as OrderHistoryProgress)
+    ),
+  ]
+
+  // TODO: Add skeleton
+  if (isLoading) {
+    return <div className="w-full flex flex-col gap-4">Skeleton</div>
+  }
+
+  if (!summary) return null
 
   return (
     <div className="w-full flex flex-col gap-4">
-      <div className="flex items-center justify-between">
-        <Title>Painel</Title>
-        {/* Actions */}
-      </div>
-      <Analytics {...summary.data?.overview!} />
+      <Title>Painel</Title>
+      <Analytics {...summary.overview} />
       <div className="grid grid-cols-3 gap-4">
         <ChartVariant
           title="Movimentações"
-          data={summary.data?.summary || []}
+          data={summary.summary || []}
           fields={[
             {
               key: 'count',
@@ -50,7 +69,7 @@ export default function DashboardPage() {
         />
         <ChartVariant
           title="Financeiro"
-          data={summary.data?.summary || []}
+          data={summary.summary || []}
           fields={[
             {
               key: 'total',
@@ -66,11 +85,11 @@ export default function DashboardPage() {
         />
         <WrapperVariant title="Mais vendidos">
           <PieVariant
-            data={summary.data?.mostSales || []}
+            data={summary.mostSales || []}
             fields={
-              summary.data?.mostSales && summary.data?.mostSales.length > 0
+              !!summary.mostSales.length
                 ? [
-                    ...summary.data.mostSales.map((_, index) => ({
+                    ...summary.mostSales.map((_, index) => ({
                       key: `name`,
                       color: `hsl(var(--chart-${index}))`,
                       label: 'Quantidade',
@@ -86,18 +105,18 @@ export default function DashboardPage() {
           />
         </WrapperVariant>
       </div>
-      {/* TODO: Change filter status options */}
       <DataTable
         filterKey="código"
-        placeholder="pedido"
-        columns={columns}
+        placeholder="código"
         data={orders}
+        columns={columns}
+        status={status}
+        statusFilter={progressOptions}
+        onChangeStatus={onChangeStatus}
         onDelete={(row) => {
           const ids = row.map((r) => r.original.id)
           console.log({ ids })
         }}
-        status={status}
-        onChangeStatus={onChangeStatus}
       />
     </div>
   )

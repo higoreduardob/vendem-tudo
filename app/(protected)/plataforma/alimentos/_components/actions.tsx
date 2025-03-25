@@ -1,15 +1,13 @@
 'use client'
 
-import { Barcode, ChevronDown, Download, FilePlus, Upload } from 'lucide-react'
-
 import { useNewFood } from '@/features/foods/hooks/use-new-food'
 
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+// import {
+//   DropdownMenu,
+//   DropdownMenuContent,
+//   DropdownMenuItem,
+//   DropdownMenuTrigger,
+// } from '@/components/ui/dropdown-menu'
 import { Button } from '@/components/ui/button'
 
 export const Actions = () => {
@@ -17,15 +15,18 @@ export const Actions = () => {
 
   return (
     <div className="flex items-center gap-2">
-      <Button variant="outline" className="hidden sm:flex">
+      <Button onClick={onOpen}>Adicionar</Button>
+      {/* TODO: Create export feature */}
+      {/* <Button variant="outline" className="hidden sm:flex">
         <Download className="mr-2 h-4 w-4" />
         Exportar
-      </Button>
-      <Button variant="outline" className="hidden sm:flex">
+      </Button> */}
+      {/* TODO: Create import feature */}
+      {/* <Button variant="outline" className="hidden sm:flex">
         <Upload className="mr-2 h-4 w-4" />
         Importar
-      </Button>
-      <DropdownMenu>
+      </Button> */}
+      {/* <DropdownMenu>
         <DropdownMenuTrigger asChild className="sm:hidden">
           <Button variant="outline">
             Opções
@@ -57,7 +58,7 @@ export const Actions = () => {
             Nota fiscal
           </DropdownMenuItem>
         </DropdownMenuContent>
-      </DropdownMenu>
+      </DropdownMenu> */}
     </div>
   )
 }

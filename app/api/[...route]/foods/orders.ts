@@ -5,10 +5,16 @@ import { createId } from '@paralleldrive/cuid2'
 import { zValidator } from '@hono/zod-validator'
 import { differenceInDays, subDays } from 'date-fns'
 
-import { Prisma, UserRole } from '@prisma/client'
+import {
+  OrderHistoryProgress,
+  Prisma,
+  ShippingRole,
+  StorePayment,
+  UserRole,
+} from '@prisma/client'
 
 import { db } from '@/lib/db'
-import { fillMissingDays } from '@/lib/utils'
+import { fillMissingDays, generateCode } from '@/lib/utils'
 
 import {
   insertCheckoutSchema,
@@ -23,18 +29,17 @@ const app = new Hono()
     zValidator(
       'query',
       z.object({
+        status: z.nativeEnum(OrderHistoryProgress).optional(),
         today: z.preprocess((val) => val === 'true', z.boolean().optional()),
+        from: z.string().optional(),
+        to: z.string().optional(),
       })
     ),
     async (c) => {
       const auth = c.get('authUser')
-      const { today } = c.req.valid('query')
+      const { status, today, from, to } = c.req.valid('query')
 
-      if (!auth.token?.sub) {
-        return c.json({ error: 'Usuário não autorizado' }, 401)
-      }
-
-      if (!auth.token?.selectedStore) {
+      if (!auth.token?.sub || !auth.token?.selectedStore) {
         return c.json({ error: 'Usuário não autorizado' }, 401)
       }
 
@@ -55,105 +60,224 @@ const app = new Hono()
       const store = await db.store.findUnique({
         where: { id: auth.token.selectedStore.id, ownerId },
       })
-
       if (!store) {
         return c.json({ error: 'Usuário não autorizado' }, 401)
       }
 
-      let whereCondition: any = { storeId: store.id }
+      const conditions = []
+      conditions.push(Prisma.sql`fo."storeId" = ${store.id}`)
 
       if (today) {
-        const today = new Date()
-        today.setHours(0, 0, 0, 0)
-        const tomorrow = new Date(today)
-        tomorrow.setDate(tomorrow.getDate() + 1)
+        const todayDate = new Date()
+        todayDate.setHours(0, 0, 0, 0)
+        const tomorrowDate = new Date(todayDate)
+        tomorrowDate.setDate(tomorrowDate.getDate() + 1)
 
-        whereCondition.createdAt = {
-          gte: today,
-          lt: tomorrow,
-        }
+        conditions.push(
+          Prisma.sql`fo."createdAt" >= ${todayDate} AND fo."createdAt" < ${tomorrowDate}`
+        )
       }
 
-      const data = await db.foodOrder.findMany({
-        where: whereCondition,
-        select: {
-          id: true,
-          code: true,
-          shippingRole: true,
-          amount: true,
-          moneyChange: true,
-          payment: true,
-          address: {
-            select: {
-              city: true,
-              complement: true,
-              neighborhood: true,
-              number: true,
-              state: true,
-              street: true,
-              zipCode: true,
-            },
-          },
-          customer: {
-            select: {
-              name: true,
-              whatsApp: true,
-              email: true,
-            },
-          },
-          items: {
-            select: {
-              id: true,
-              reviewed: true,
-              quantity: true,
-              amount: true,
-              obs: true,
+      if (from) {
+        const fromDate = new Date(from)
+        conditions.push(Prisma.sql`fo."createdAt" >= ${fromDate}`)
+      }
 
-              food: {
-                select: {
-                  name: true,
-                  image: true,
-                  ingredients: true,
-                },
-              },
+      if (to) {
+        const toDate = new Date(to)
+        toDate.setHours(23, 59, 59, 999)
+        conditions.push(Prisma.sql`fo."createdAt" <= ${toDate}`)
+      }
 
-              additionals: {
-                select: {
-                  additional: {
-                    select: {
-                      name: true,
-                    },
-                  },
-                  options: {
-                    select: {
-                      amount: true,
-                      quantity: true,
-                      option: {
-                        select: {
-                          name: true,
-                        },
-                      },
-                    },
-                  },
-                },
-              },
-            },
-          },
-          shipping: {
-            select: {
-              fee: true,
-              deadlineAt: true,
-            },
-          },
-          histories: {
-            select: {
-              orderHistory: true,
-            },
-            orderBy: { orderHistory: { createdAt: 'desc' } },
-            take: 1,
-          },
-        },
-      })
+      if (status) {
+        conditions.push(Prisma.sql`
+          fo.id IN (
+            SELECT ohfo."foodOrderId"
+            FROM "OrderHistoryFoodOrder" ohfo
+            JOIN "OrderHistory" oh ON ohfo."orderHistoryId" = oh.id
+            WHERE oh.id = (
+              SELECT oh2.id
+              FROM "OrderHistoryFoodOrder" ohfo2
+              JOIN "OrderHistory" oh2 ON ohfo2."orderHistoryId" = oh2.id
+              WHERE ohfo2."foodOrderId" = ohfo."foodOrderId"
+              ORDER BY oh2."createdAt" DESC
+              LIMIT 1
+            )
+            AND oh."progress" = ${status}::\"OrderHistoryProgress\"
+          )
+        `)
+      }
+
+      const whereClause =
+        conditions.length > 0
+          ? Prisma.sql`WHERE ${Prisma.join(conditions, ' AND ')}`
+          : Prisma.sql`WHERE 1=1`
+
+      type FoodOrderResult = Array<{
+        id: string
+        code: string
+        shippingRole: ShippingRole
+        amount: number
+        moneyChange: number | null
+        payment: StorePayment
+        address: {
+          city: string
+          complement: string | null
+          neighborhood: string
+          number: string | null
+          state: string
+          street: string
+          zipCode: string
+        } | null
+        customer: {
+          name: string
+          whatsApp: string
+          email: string
+        }
+        items: Array<{
+          id: string
+          reviewed: boolean
+          quantity: number
+          amount: number
+          obs: string | null
+          food: {
+            name: string
+            image: string
+            ingredients: string[]
+          }
+          additionals: Array<{
+            additional: {
+              name: string
+            }
+            options: Array<{
+              amount: number
+              quantity: number
+              option: {
+                name: string
+              }
+            }> | null
+          }> | null
+        }>
+        shipping: {
+          fee: number | null
+          deadlineAt: number | null
+        } | null
+        histories: Array<{
+          orderHistory: {
+            id: string
+            progress: OrderHistoryProgress
+            createdAt: Date
+          }
+        }>
+      }>
+
+      const data = await db.$queryRaw<FoodOrderResult>`
+        SELECT 
+          fo.id,
+          fo.code,
+          fo."shippingRole",
+          fo.amount,
+          fo."moneyChange",
+          fo.payment,
+          
+          -- Address
+          jsonb_build_object(
+            'city', a.city,
+            'complement', a.complement,
+            'neighborhood', a.neighborhood,
+            'number', a.number,
+            'state', a.state,
+            'street', a.street,
+            'zipCode', a."zipCode"
+          ) as address,
+          
+          -- Customer
+          jsonb_build_object(
+            'name', u.name,
+            'whatsApp', u."whatsApp",
+            'email', u.email
+          ) as customer,
+          
+          -- Items (this is complex and would need a subquery)
+          (
+            SELECT jsonb_agg(
+              jsonb_build_object(
+                'id', fi.id,
+                'reviewed', fi.reviewed,
+                'quantity', fi.quantity,
+                'amount', fi.amount,
+                'obs', fi.obs,
+                'food', jsonb_build_object(
+                  'name', f.name,
+                  'image', f.image,
+                  'ingredients', f.ingredients
+                ),
+                'additionals', (
+                  SELECT jsonb_agg(
+                    jsonb_build_object(
+                      'additional', jsonb_build_object(
+                        'name', fa.name
+                      ),
+                      'options', (
+                        SELECT jsonb_agg(
+                          jsonb_build_object(
+                            'amount', fio.amount,
+                            'quantity', fio.quantity,
+                            'option', jsonb_build_object(
+                              'name', fo_opt.name
+                            )
+                          )
+                        )
+                        FROM "FoodItemOption" fio
+                        JOIN "FoodOption" fo_opt ON fio."optionId" = fo_opt.id
+                        WHERE fio."foodItemAdditionalId" = fia.id
+                      )
+                    )
+                  )
+                  FROM "FoodItemAdditional" fia
+                  JOIN "FoodAdditional" fa ON fia."additionalId" = fa.id
+                  WHERE fia."foodItemId" = fi.id
+                )
+              )
+            )
+            FROM "FoodItem" fi
+            JOIN "Food" f ON fi."foodId" = f.id
+            WHERE fi."orderId" = fo.id
+          ) as items,
+          
+          -- Shipping
+          (
+            SELECT jsonb_build_object(
+              'fee', s.fee,
+              'deadlineAt', s."deadlineAt"
+            )
+            FROM "Shipping" s
+            WHERE s.id = fo."shippingId"
+          ) as shipping,
+          
+          -- Histories (latest only)
+          (
+            SELECT jsonb_agg(
+              jsonb_build_object(
+                'orderHistory', oh
+              )
+            )
+            FROM (
+              SELECT oh.*
+              FROM "OrderHistoryFoodOrder" ohfo
+              JOIN "OrderHistory" oh ON ohfo."orderHistoryId" = oh.id
+              WHERE ohfo."foodOrderId" = fo.id
+              ORDER BY oh."createdAt" DESC
+              LIMIT 1
+            ) oh
+          ) as histories
+          
+        FROM "FoodOrder" fo
+        LEFT JOIN "Address" a ON a."foodOrderId" = fo.id
+        LEFT JOIN "User" u ON fo."customerId" = u.id
+        ${whereClause}
+        ORDER BY fo."createdAt" DESC
+      `
 
       return c.json({ data }, 200)
     }
@@ -818,6 +942,7 @@ const app = new Hono()
             take: 1,
           },
         },
+        orderBy: { createdAt: 'desc' },
       })
 
       return c.json({ data }, 200)
@@ -839,7 +964,14 @@ const app = new Hono()
         return c.json({ error: 'Usuário não autorizado' }, 401)
       }
 
-      const user = await db.user.findUnique({ where: { id: auth.token.sub } })
+      const user = await db.user.findUnique({
+        where: { id: auth.token.sub },
+        select: {
+          id: true,
+          role: true,
+          address: true,
+        },
+      })
       if (!user) return c.json({ error: 'Usuário não autorizado' }, 401)
 
       if (![UserRole.CUSTOMER as string].includes(user.role)) {
@@ -848,7 +980,12 @@ const app = new Hono()
 
       const store = await db.store.findUnique({
         where: { id: storeId },
-        include: { shippings: true },
+        select: {
+          id: true,
+          payment: true,
+          shippings: true,
+          shippingRole: true,
+        },
       })
       if (!store) {
         return c.json({ error: 'Loja não cadastrada' }, 404)
@@ -863,9 +1000,28 @@ const app = new Hono()
       }
 
       const shipping = store.shippings.find((item) => item.id === shippingId)
-
       if (shippingId && !shipping) {
         return c.json({ error: 'Método de entrega inválida' }, 400)
+      }
+
+      let addressData = undefined
+      if (shippingRole === 'DELIVERY' && shipping) {
+        if (
+          user.address &&
+          user.address.neighborhood === shipping.neighborhood
+        ) {
+          addressData = {
+            create: {
+              zipCode: user.address.zipCode,
+              street: user.address.street,
+              neighborhood: user.address.neighborhood,
+              city: user.address.city,
+              state: user.address.state,
+              number: user.address.number,
+              complement: user.address.complement,
+            },
+          }
+        }
       }
 
       const foodItems = await Promise.all(
@@ -943,7 +1099,7 @@ const app = new Hono()
 
       await db.foodOrder.create({
         data: {
-          code: 'code',
+          code: generateCode(),
           amount,
           moneyChange,
           payment: store.payment.find((p) => p === payment)!,
@@ -977,6 +1133,8 @@ const app = new Hono()
           histories: {
             create: { orderHistory: { create: { progress: 'PENDING' } } },
           },
+
+          ...(addressData ? { address: addressData } : {}),
         },
       })
 

@@ -1,4 +1,4 @@
-import { Eye, Ban, Download, PencilRuler } from 'lucide-react'
+import { Ban, PencilRuler } from 'lucide-react'
 
 import { useConfirm } from '@/hooks/use-confirm'
 import { useOpenFood } from '@/features/foods/hooks/use-open-food'
@@ -46,10 +46,10 @@ export const Actions = ({ id, status }: Props) => {
           <Button variant="ghost">Ações</Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuItem className="cursor-pointer">
+          {/* <DropdownMenuItem className="cursor-pointer">
             <Eye className="size-4 mr-2" />
             Detalhes
-          </DropdownMenuItem>
+          </DropdownMenuItem> */}
           <DropdownMenuItem
             className="cursor-pointer"
             onClick={() => onOpen(id)}
@@ -61,10 +61,10 @@ export const Actions = ({ id, status }: Props) => {
             <Ban className="size-4 mr-2" />
             {status ? 'Bloquear' : 'Desbloquear'}
           </DropdownMenuItem>
-          <DropdownMenuItem className="cursor-pointer">
+          {/* <DropdownMenuItem className="cursor-pointer">
             <Download className="size-4 mr-2" />
             Exportar
-          </DropdownMenuItem>
+          </DropdownMenuItem> */}
         </DropdownMenuContent>
       </DropdownMenu>
     </>
