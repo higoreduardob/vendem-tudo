@@ -1,7 +1,7 @@
 'use client'
 
 import Image from 'next/image'
-import { Clock } from 'lucide-react'
+import { Clock, Printer } from 'lucide-react'
 import { InferResponseType } from 'hono'
 import { ColumnDef } from '@tanstack/react-table'
 
@@ -15,6 +15,7 @@ import {
 import { client } from '@/lib/hono'
 import { createEnumOptions, formatCurrency } from '@/lib/utils'
 
+import { useOpenOrder } from '@/features/foods/orders/hooks/use-open-order'
 import { useUpdateHistory } from '@/features/foods/orders/api/use-update-history'
 
 import { Actions } from './actions'
@@ -249,6 +250,7 @@ export const columns: ColumnDef<ResponseType>[] = [
       return <Button variant="ghost">Situação</Button>
     },
     cell: ({ row }) => {
+      const { onOpen } = useOpenOrder()
       const mutation = useUpdateHistory(row.original.id)
       const isPending = mutation.isPending
 
@@ -268,7 +270,10 @@ export const columns: ColumnDef<ResponseType>[] = [
 
       return (
         <div className="flex flex-col gap-2">
-          <Actions id={row.original.id} />
+          <Button variant="outline" onClick={() => onOpen(row.original)}>
+            <Printer className="size-4 mr-2" />
+            Imprimir
+          </Button>
           <SelectFilter
             placeholder="Selecione o método"
             defaultValue={progress}

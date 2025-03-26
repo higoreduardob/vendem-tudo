@@ -21,6 +21,8 @@ import { FormNewFoodOption } from '@/features/foods/additionals/options/componen
 import { FormEditFoodOption } from '@/features/foods/additionals/options/components/form-edit-food-option'
 import { TableOption as TableFoodOption } from '@/features/foods/additionals/options/components/table-option'
 
+import { OrderReciept } from '@/components/order-reciept'
+
 export const DialogProvider = () => {
   const isMounted = useMountedState()
 
@@ -46,6 +48,8 @@ export const DialogProvider = () => {
       <FormNewFoodOption />
       <FormEditFoodOption />
       <TableFoodOption />
+
+      <OrderReciept />
     </>
   )
 }

@@ -120,6 +120,7 @@ const app = new Hono()
         amount: number
         moneyChange: number | null
         payment: StorePayment
+        createdAt: Date
         address: {
           city: string
           complement: string | null
@@ -179,6 +180,7 @@ const app = new Hono()
           fo.amount,
           fo."moneyChange",
           fo.payment,
+          fo."createdAt",
           
           -- Address
           jsonb_build_object(
