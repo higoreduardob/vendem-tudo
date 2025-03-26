@@ -10,6 +10,7 @@ import {
   InsertFoodFormValues,
 } from '@/features/foods/schema'
 
+import { useNewCategory } from '@/features/foods/categories/hooks/use-new-category'
 import { useGetCategories } from '@/features/foods/categories/api/use-get-categories'
 import { useCreateCategory } from '@/features/foods/categories/api/use-create-category'
 import { useGetFoodAdditionals } from '@/features/foods/additionals/api/use-get-food-additionals'
@@ -28,6 +29,7 @@ import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { FormDialog } from '@/components/form-dialog'
+import { InputImage } from '@/components/input-custom'
 import { AmountInput } from '@/components/amount-input'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { SelectCreate } from '@/components/select-create'
@@ -55,6 +57,7 @@ export const FormFood = ({
   handleClose,
   onSubmit,
 }: Props) => {
+  const { onOpen: onOpenFoodCategory } = useNewCategory()
   const { onOpen: onOpenFoodAdditional } = useNewFoodAdditional()
   const { onOpen: onOpenFoodAdditionalData } = useOpenFoodAdditionalData()
   const form = useForm<InsertFoodFormValues>({
@@ -73,16 +76,14 @@ export const FormFood = ({
       value: category.id,
     })
   )
-  // TODO: Change rule create
-  const onCreateCategory = (name: string) =>
-    categoryMutation.mutate({ name, image: 'https://placehold.co/400' })
+  const onCreateCategory = () => onOpenFoodCategory()
   const isLoadingCreateCategory = categoryMutation.isPending
 
   const additionalsQuery = useGetFoodAdditionals()
   const additionalOptions: FilterOptionsProps = (
     additionalsQuery.data ?? []
   ).map((additional) => ({
-    label: additional.name || '',
+    label: additional.name,
     value: additional.id,
   }))
   const onCreateAdditional = () => {
@@ -116,85 +117,105 @@ export const FormFood = ({
           className="flex flex-col gap-2"
           onSubmit={form.handleSubmit(handleSubmit)}
         >
-          <div className="flex flex-col gap-2 md:flex-row">
+          <div className="grid grid-cols-2 gap-2">
             <FormField
               control={form.control}
-              name="name"
+              name="image"
               render={({ field }) => (
                 <FormItem className="w-full">
-                  <FormLabel>Nome</FormLabel>
+                  <FormLabel>Imagem</FormLabel>
                   <FormControl>
-                    <Input
-                      {...field}
-                      disabled={isPending}
-                      placeholder="Nome do produto"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="categoryId"
-              render={({ field }) => (
-                <FormItem className="w-full">
-                  <FormLabel htmlFor="category">Categoria</FormLabel>
-                  <FormControl>
-                    <SelectCreate
-                      id="category"
-                      placeholder="Categoria"
-                      options={categoryOptions}
-                      onCreate={onCreateCategory}
+                    <InputImage
                       value={field.value}
                       onChange={field.onChange}
+                      accept="image/*"
                       disabled={isPending}
-                      isLoading={isLoadingCreateCategory}
                     />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-          </div>
-          <div className="flex flex-col gap-2 md:flex-row">
-            <FormField
-              control={form.control}
-              name="price"
-              render={({ field }) => (
-                <FormItem className="w-full">
-                  <FormLabel>Preço</FormLabel>
-                  <FormControl>
-                    <AmountInput
-                      {...field}
-                      placeholder="Valor do produto"
-                      isPending={isPending}
-                      disabled
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="promotion"
-              render={({ field }) => (
-                <FormItem className="w-full">
-                  <FormLabel>Promoção</FormLabel>
-                  <FormControl>
-                    <AmountInput
-                      {...field}
-                      value={field.value || ''}
-                      placeholder="Valor promocional"
-                      isPending={isPending}
-                      disabled
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="flex flex-col gap-2">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormLabel>Nome</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        disabled={isPending}
+                        placeholder="Nome do produto"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="categoryId"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormLabel htmlFor="category">Categoria</FormLabel>
+                    <FormControl>
+                      <SelectCreate
+                        id="category"
+                        placeholder="Categoria"
+                        options={categoryOptions}
+                        onCreate={onCreateCategory}
+                        value={field.value}
+                        onChange={field.onChange}
+                        disabled={isPending}
+                        isLoading={isLoadingCreateCategory}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className="grid grid-cols-2 gap-2">
+                <FormField
+                  control={form.control}
+                  name="price"
+                  render={({ field }) => (
+                    <FormItem className="w-full">
+                      <FormLabel>Preço</FormLabel>
+                      <FormControl>
+                        <AmountInput
+                          {...field}
+                          placeholder="Valor do produto"
+                          isPending={isPending}
+                          disabled
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="promotion"
+                  render={({ field }) => (
+                    <FormItem className="w-full">
+                      <FormLabel>Promoção</FormLabel>
+                      <FormControl>
+                        <AmountInput
+                          {...field}
+                          value={field.value || ''}
+                          placeholder="Valor promocional"
+                          isPending={isPending}
+                          disabled
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
           </div>
           <FormField
             control={form.control}

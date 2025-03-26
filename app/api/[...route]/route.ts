@@ -7,6 +7,7 @@ import authConfig from '@/auth.config'
 import users from './users'
 import foods from './foods'
 import stores from './stores'
+import uploads from './uploads'
 import customers from './customers'
 import management from './management'
 import foodOrders from './foods/orders'
@@ -23,6 +24,7 @@ const routes = app
   .route('/users', users)
   .route('/foods', foods)
   .route('/stores', stores)
+  .route('/uploads', uploads)
   .route('/customers', customers)
   .route('/management', management)
   .route('/food-orders', foodOrders)

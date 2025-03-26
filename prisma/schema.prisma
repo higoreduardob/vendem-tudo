@@ -226,7 +226,7 @@ model Food {
 
 model FoodCategory {
   id     String  @id @default(cuid())
-  name   String  @unique
+  name   String
   image  String
   status Boolean @default(true)
 
@@ -237,6 +237,8 @@ model FoodCategory {
   store   Store  @relation(fields: [storeId], references: [id])
 
   foods Food[]
+
+  @@unique([name, storeId], name: "unique_name_storeId")
 }
 
 enum FoodAdditionalRole {

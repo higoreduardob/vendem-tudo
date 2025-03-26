@@ -1,5 +1,7 @@
 import { z } from 'zod'
 
+import { allowedMimeTypes, maxImageSize } from '@/constants'
+
 export const insertFoodSchema = z.object({
   name: z
     .string({ message: 'Nome é obrigatório' })
@@ -30,13 +32,29 @@ export const insertFoodFormSchema = insertFoodSchema.extend({
     .string({ message: 'Preço é obrigatório' })
     .min(1, { message: 'Preço é obrigatório' }),
   promotion: z.string().nullish(),
+  image: z
+    .union([
+      z
+        .instanceof(File)
+        .refine(
+          (file) => file.size <= maxImageSize,
+          'Imagem muito pesada (máx 512kB)'
+        )
+        .refine(
+          (file) => allowedMimeTypes.includes(file.type),
+          'Tipo de arquivo não suportado'
+        ),
+      z.string().min(1, { message: 'Imagem é obrigatório' }),
+      z.null(),
+    ])
+    .refine((val) => val !== null, 'Imagem é obrigatório'),
 })
 
 export type InsertFoodFormValues = z.infer<typeof insertFoodFormSchema>
 
 export const insertFoodDefaultValues: InsertFoodFormValues = {
   name: '',
-  image: 'https://placehold.co/400',
+  image: '',
   description: '',
   ingredients: [],
   price: '',

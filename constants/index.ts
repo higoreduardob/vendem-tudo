@@ -19,3 +19,7 @@ export const weekDays = [
 ]
 
 export const numericFieldsFilter = ['quantity', 'total', 'count', 'amount']
+
+export const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/webp']
+
+export const maxImageSize = 512 * 1024 // 512KB

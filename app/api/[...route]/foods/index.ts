@@ -7,6 +7,7 @@ import { zValidator } from '@hono/zod-validator'
 import { Prisma, UserRole } from '@prisma/client'
 
 import { db } from '@/lib/db'
+import { destroyImage } from '@/lib/cloudinary'
 import { getAddedAndRemoved } from '@/lib/utils'
 
 import { insertFoodSchema } from '@/features/foods/schema'
@@ -448,17 +449,13 @@ const app = new Hono()
       const validatedFields = c.req.valid('json')
 
       if (!validatedFields) return c.json({ error: 'Campos inválidos' }, 400)
-      const { additionals, ...values } = validatedFields
+      const { additionals, image, ...values } = validatedFields
 
       if (!id) {
         return c.json({ error: 'Identificador não encontrado' }, 400)
       }
 
-      if (!auth.token?.sub) {
-        return c.json({ error: 'Usuário não autorizado' }, 401)
-      }
-
-      if (!auth.token?.selectedStore) {
+      if (!auth.token?.sub || !auth.token?.selectedStore) {
         return c.json({ error: 'Usuário não autorizado' }, 401)
       }
 
@@ -484,6 +481,31 @@ const app = new Hono()
         return c.json({ error: 'Usuário não autorizado' }, 401)
       }
 
+      const currentFood = await db.food.findUnique({
+        where: { id, storeId: store.id },
+      })
+      if (!currentFood) {
+        return c.json({ error: 'Produto não cadastrado' }, 404)
+      }
+
+      if (image && image !== currentFood.image) {
+        if (currentFood.image) {
+          try {
+            const urlParts = currentFood.image.split('/')
+            const publicIdWithExtension = urlParts[urlParts.length - 1]
+            const fileName = publicIdWithExtension.split('.')[0]
+            const oldPublicId = `foods/${fileName}`
+
+            const destroyResult = await destroyImage(oldPublicId)
+            if (destroyResult.result !== 'ok') {
+              return c.json({ error: 'Falha ao remover imagem antiga' }, 400)
+            }
+          } catch (error) {
+            return c.json({ error: 'Falha ao remover imagem antiga' }, 400)
+          }
+        }
+      }
+
       const currAdditionals = await db.food.findUnique({
         where: { id, storeId: store.id },
         select: { additionals: { select: { foodAdditionalId: true } } },
@@ -497,9 +519,10 @@ const app = new Hono()
         additionals
       )
 
-      const data = await db.food.update({
+      await db.food.update({
         where: { id, storeId: store.id },
         data: {
+          image,
           ...values,
           additionals: {
             deleteMany: { foodAdditionalId: { in: toRemove || [] } },
@@ -512,10 +535,6 @@ const app = new Hono()
           },
         },
       })
-
-      if (!data) {
-        return c.json({ error: 'Produto não cadastrado' }, 404)
-      }
 
       return c.json({ success: 'Produto atualizado' }, 200)
     }

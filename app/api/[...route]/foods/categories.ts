@@ -7,6 +7,7 @@ import { zValidator } from '@hono/zod-validator'
 import { Prisma, UserRole } from '@prisma/client'
 
 import { db } from '@/lib/db'
+import { destroyImage } from '@/lib/cloudinary'
 
 import { insertCategorySchema } from '@/features/foods/categories/schema'
 
@@ -208,12 +209,9 @@ const app = new Hono()
       const validatedFields = c.req.valid('json')
 
       if (!validatedFields) return c.json({ error: 'Campos inválidos' }, 400)
+      const { name, ...values } = validatedFields
 
-      if (!auth.token?.selectedStore) {
-        return c.json({ error: 'Usuário não autorizado' }, 401)
-      }
-
-      if (!auth.token?.sub) {
+      if (!auth.token?.sub || !auth.token?.selectedStore) {
         return c.json({ error: 'Usuário não autorizado' }, 401)
       }
 
@@ -238,11 +236,19 @@ const app = new Hono()
         return c.json({ error: 'Usuário não autorizado' }, 401)
       }
 
+      const existingCategory = await db.foodCategory.findUnique({
+        where: { unique_name_storeId: { name, storeId: store.id } },
+      })
+      if (existingCategory) {
+        return c.json({ error: 'Já existe categoria com este nome' }, 400)
+      }
+
       await db.foodCategory.create({
         data: {
           id: createId(),
+          name,
           storeId: store.id,
-          ...validatedFields,
+          ...values,
         },
       })
 
@@ -361,16 +367,13 @@ const app = new Hono()
       const validatedFields = c.req.valid('json')
 
       if (!validatedFields) return c.json({ error: 'Campos inválidos' }, 400)
+      const { name, image } = validatedFields
 
       if (!id) {
         return c.json({ error: 'Identificador não encontrado' }, 400)
       }
 
-      if (!auth.token?.sub) {
-        return c.json({ error: 'Usuário não autorizado' }, 401)
-      }
-
-      if (!auth.token?.selectedStore) {
+      if (!auth.token?.sub || !auth.token?.selectedStore) {
         return c.json({ error: 'Usuário não autorizado' }, 401)
       }
 
@@ -395,14 +398,42 @@ const app = new Hono()
         return c.json({ error: 'Usuário não autorizado' }, 401)
       }
 
-      const data = await db.foodCategory.update({
-        where: { id, storeId: store.id },
-        data: { ...validatedFields },
+      const existingCategory = await db.foodCategory.findFirst({
+        where: { name, storeId: store.id, NOT: { id } },
       })
+      if (existingCategory) {
+        return c.json({ error: 'Já existe categoria com este nome' }, 400)
+      }
 
-      if (!data) {
+      const currentCategory = await db.foodCategory.findUnique({
+        where: { id, storeId: store.id },
+      })
+      if (!currentCategory) {
         return c.json({ error: 'Categoria não cadastrada' }, 404)
       }
+
+      if (image && image !== currentCategory.image) {
+        if (currentCategory.image) {
+          try {
+            const urlParts = currentCategory.image.split('/')
+            const publicIdWithExtension = urlParts[urlParts.length - 1]
+            const fileName = publicIdWithExtension.split('.')[0]
+            const oldPublicId = `food-categories/${fileName}`
+
+            const destroyResult = await destroyImage(oldPublicId)
+            if (destroyResult.result !== 'ok') {
+              return c.json({ error: 'Falha ao remover imagem antiga' }, 400)
+            }
+          } catch (error) {
+            return c.json({ error: 'Falha ao remover imagem antiga' }, 400)
+          }
+        }
+      }
+
+      await db.foodCategory.update({
+        where: { id, storeId: store.id },
+        data: { name, image },
+      })
 
       return c.json({ success: 'Categoria atualizada' }, 200)
     }
