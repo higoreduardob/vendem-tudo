@@ -8,6 +8,8 @@ import { useCurrentUser } from '@/features/auth/hooks/use-current-user'
 import { useGetStoreCategories } from '@/features/foods/categories/api/use-get-categories'
 
 import { useCartStore } from '@/features/foods/orders/schema'
+import { useSearchFood } from '@/features/foods/hooks/use-filter-food'
+import { useOpenOrder } from '@/features/foods/orders/components/form-order'
 
 import {
   NavigationMenu,
@@ -17,17 +19,16 @@ import {
   NavigationMenuTrigger,
 } from '@/components/ui/navigation-menu'
 import { Button } from '@/components/ui/button'
-import { useOpenOrder } from '@/features/foods/orders/components/form-order'
-import { useSearchFood } from '@/features/foods/hooks/use-filter-food'
+import { Container } from '@/components/container'
 
 export const Header = () => {
   const router = useRouter()
   const { cart } = useCartStore()
   const { store } = useOpenStore()
+  const { onChange } = useSearchFood()
   const { user, status } = useCurrentUser()
   const { onOpen: onOpenAbout } = useOpenAbout()
   const { onOpen: onOpenOrder } = useOpenOrder()
-  const { onChange } = useSearchFood()
 
   if (!store) {
     return null
@@ -66,13 +67,14 @@ export const Header = () => {
 
   return (
     <header className="fixed top-0 left-0 right-0 bg-white/70 border-b backdrop-blur-md z-50 w-full bg-none transition-transform duration-300 py-2">
-      <div className="flex items-center justify-between px-4 text-black">
-        <NavigationMenu className="hidden md:flex mx-6">
+      <Container className="flex md:flex-row flex-col items-center justify-between text-black">
+        {/* Desktop Menu */}
+        <NavigationMenu className="flex items-center">
           <NavigationMenuList>
             {HEADER_NAV_MAIN?.length > 0 &&
               HEADER_NAV_MAIN.map((item, index) => (
                 <NavigationMenuItem key={index}>
-                  {item.items ? (
+                  {item.items && !!item.items.length ? (
                     <>
                       <NavigationMenuTrigger className="bg-transparent hover:bg-accent hover:text-accent-foreground">
                         {item.title}
@@ -105,7 +107,7 @@ export const Header = () => {
           </NavigationMenuList>
         </NavigationMenu>
 
-        <div className="flex items-center gap-2 text-black">
+        <div className="flex items-center gap-2">
           <Button
             variant="ghost"
             className="relative flex items-center justify-center w-10 h-10 rounded-full cursor-pointer hover:bg-black/[0.05]"
@@ -134,7 +136,7 @@ export const Header = () => {
             <User className="h-[1.2rem] w-[1.2rem]" />
           </Link>
         </div>
-      </div>
+      </Container>
     </header>
   )
 }

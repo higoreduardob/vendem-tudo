@@ -26,6 +26,7 @@ export const CheckoutDialog = () => {
       description="Pedido realizado com sucesso"
       isOpen={isOpen}
       handleClose={onClose}
+      className="max-w-[90%] md:max-w-[700px]"
     >
       <div className="flex flex-col gap-2 items-center justify-center w-full">
         <div className="flex flex-col items-center gap-5">

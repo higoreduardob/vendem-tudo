@@ -42,8 +42,9 @@ import {
   OrderShipping,
 } from '@/features/foods/orders/components/form-order'
 import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import { ButtonLoading } from '@/components/button-custom'
+import { useIsMobile } from '@/hooks/use-mobile'
 
 type PaymentOptionType = {
   currValue: StorePayment
@@ -57,6 +58,7 @@ type FormCheckoutComponentProps = {
   store: ResponseType
   user: ExtendedUser
   order: InsertOrderFormValues
+  isPending?: boolean
   onSubmit: (values: InsertCheckoutFormValues) => void
 }
 
@@ -181,6 +183,7 @@ export const FormCheckout = () => {
       store={store}
       user={user}
       order={order}
+      isPending={isPending}
       onSubmit={onSubmit}
     />
   )
@@ -192,8 +195,11 @@ const FormCheckoutComponent = ({
   store,
   user,
   order,
+  isPending,
   onSubmit,
 }: FormCheckoutComponentProps) => {
+  const isMobile = useIsMobile()
+
   const form = useForm<InsertCheckoutFormValues>({
     resolver: zodResolver(insertCheckoutSchema),
     defaultValues: { ...order },
@@ -223,7 +229,7 @@ const FormCheckoutComponent = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="border-none w-full sm:max-w-[700px] max-h-[90%] overflow-y-auto p-4">
+      <DialogContent className="border-none w-full max-w-[90%] md:max-w-[700px] max-h-[90%] overflow-y-auto p-4">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-black">
             Finalize seu pedido
@@ -232,16 +238,16 @@ const FormCheckoutComponent = ({
             Selecione a forma de pagamento para concluir seu pedido
           </DialogDescription>
         </DialogHeader>
-        <div className="space-y-2">
+        <div className="flex flex-col gap-2">
           <OrderShipping
             address={address!}
             role={shippingRole}
             fee={fee || undefined}
             deadlineAt={deadlineAt || undefined}
             isNonAddressChange
-            isColumnDirection
+            isColumnDirection={!isMobile}
           />
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
             <Form {...form}>
               <form
                 id="form-cart"
@@ -278,6 +284,7 @@ const FormCheckoutComponent = ({
                           <Input
                             type="number"
                             {...field}
+                            disabled={isPending}
                             placeholder="Troco para quanto?"
                             onChange={(e) =>
                               field.onChange(Number(e.target.value))
@@ -291,9 +298,12 @@ const FormCheckoutComponent = ({
                   />
                 )}
 
-                <Button className="bg-teal-500 text-white font-medium hover:bg-teal-600 transition-colors">
+                <ButtonLoading
+                  disabled={isPending}
+                  className="bg-teal-500 text-white font-medium hover:bg-teal-600 transition-colors"
+                >
                   Confirmar pagamento
-                </Button>
+                </ButtonLoading>
               </form>
             </Form>
             <div className="flex flex-col gap-2">

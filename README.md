@@ -38,3 +38,4 @@
       12 . Suporte integrar envio de email de perguntas
       13 . Suporte whatsapp de contato
       14 . Finalizar desempenho
+      15 . Change message authenticate (2 Feat)

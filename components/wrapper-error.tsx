@@ -4,6 +4,7 @@ import { AlertCircle, Home, RotateCcw } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Header } from '@/app/(public)/_components/header'
 import { Footer } from '@/app/(public)/_components/footer'
+import { Container } from '@/components/container'
 
 export const WrapperError = ({
   title,
@@ -15,8 +16,8 @@ export const WrapperError = ({
   return (
     <>
       <Header />
-      <div className="min-h-[calc(100vh-117px)] flex flex-col items-center justify-center px-4">
-        <div className="w-full max-w-md text-center space-y-8">
+      <Container className="min-h-[calc(100vh-117px)] flex flex-col items-center justify-center">
+        <div className="w-full text-center space-y-4">
           <div className="w-24 h-24 bg-red-500 rounded-full flex items-center justify-center mx-auto">
             <AlertCircle className="h-12 w-12 text-white" />
           </div>
@@ -31,7 +32,7 @@ export const WrapperError = ({
               variant="default"
               size="lg"
               onClick={() => window.location.reload()}
-              className="min-w-[200px]"
+              className="min-w-[200px] w-full"
             >
               <RotateCcw className="mr-2 h-4 w-4" />
               Atualizar
@@ -40,7 +41,7 @@ export const WrapperError = ({
               asChild
               variant="outline"
               size="lg"
-              className="min-w-[200px]"
+              className="min-w-[200px] w-full"
             >
               <Link href="/">
                 <Home className="mr-2 h-4 w-4" />
@@ -49,7 +50,7 @@ export const WrapperError = ({
             </Button>
           </div>
         </div>
-      </div>
+      </Container>
       <Footer />
     </>
   )

@@ -3,6 +3,7 @@ import { Clock, LucideProps, Settings, ShoppingBag, Star } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { Title } from '@/app/(public)/_components/title'
+import { Container } from '@/components/container'
 
 type DetailProps = {
   title: string
@@ -72,35 +73,31 @@ export const Features = () => {
 
   return (
     <div className="bg-purple-50">
-      <section className="container mx-auto py-10 text-center relative space-y-20">
-        <div className="space-y-10">
-          <Title
-            title={details.feature.title.head}
-            description={details.feature.title.description}
-          />
+      <Container className="space-y-10 py-10 text-center">
+        <Title
+          title={details.feature.title.head}
+          description={details.feature.title.description}
+        />
 
-          <div className="max-w-4xl mx-auto space-y-6">
-            {details.feature.details.map((detail, index) => (
-              <Detail key={index} {...detail} />
-            ))}
-          </div>
+        <div className="max-w-4xl mx-auto space-y-6">
+          {details.feature.details.map((detail, index) => (
+            <Detail key={index} {...detail} />
+          ))}
         </div>
 
-        <div className="space-y-10">
-          <Title
-            title={details.cta.title.head}
-            description={details.cta.title.description}
-          />
+        <Title
+          title={details.cta.title.head}
+          description={details.cta.title.description}
+        />
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/planos">
-              <Button size="lg" variant="purple">
-                Cadastrar
-              </Button>
-            </Link>
-          </div>
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <Link href="/planos">
+            <Button size="lg" variant="purple">
+              Cadastrar
+            </Button>
+          </Link>
         </div>
-      </section>
+      </Container>
     </div>
   )
 }

@@ -35,22 +35,6 @@ export const CardProduct = ({ ...product }: ResponseType) => {
   const { onOpen } = useOpenCart()
   const { name } = product
 
-  // TODO: Add variant badge
-  // const getBadgeVariant = (tag?: string) => {
-  //   switch (tag) {
-  //     case 'Mais Vendido':
-  //       return 'default'
-  //     case 'Promoção':
-  //       return 'destructive'
-  //     case 'Novo':
-  //       return 'secondary'
-  //     case 'Vegano':
-  //       return 'outline'
-  //     default:
-  //       return 'default'
-  //   }
-  // }
-
   return (
     <Card className="overflow-hidden p-0">
       <ProductImage {...product} />
@@ -59,11 +43,9 @@ export const CardProduct = ({ ...product }: ResponseType) => {
       </CardHeader>
       <CardContent className="px-2">
         <ProductPrice {...product} />
-        <div className="flex items-center gap-1">
-          <p className="text-sm text-gray-500">
-            Ainda não há avaliações para este produto
-          </p>
-        </div>
+        <p className="text-sm text-gray-500 line-clamp-2">
+          Ainda não há avaliações para este produto
+        </p>
       </CardContent>
       <CardFooter className="p-2">
         <Button
@@ -96,7 +78,7 @@ export const ProductImage = ({
 
       {promotion! > 0 && (
         <Badge className="absolute right-2 top-2 text-white uppercase bg-yellow-500">
-          {calculatePercentage(promotion!, price)}%Off
+          {calculatePercentage(promotion!, price)}% desconto
         </Badge>
       )}
     </div>
@@ -150,47 +132,6 @@ export const ProductDetails = ({
         )}
       </div>
     </ScrollArea>
-  )
-}
-
-export const ProductReview = () => {
-  return (
-    <div>
-      <h3 className="font-semibold">Avaliações dos Clientes</h3>
-      <p className="text-sm text-gray-500">
-        Ainda não há avaliações para este produto.
-      </p>
-      {/* TODO: Add review */}
-      {/* {reviews && reviews.length > 0 ? (
-            <ScrollArea className="h-[200px] rounded-md border p-4">
-              {reviews.map((review) => (
-                <div key={review.id} className="mb-4">
-                  <div className="flex items-center justify-between">
-                    <span className="font-medium">{review.author}</span>
-                    <div className="flex items-center">
-                      {Array.from({ length: 5 }).map((_, index) => (
-                        <Star
-                          key={index}
-                          className={`h-4 w-4 ${
-                            index < review.rating
-                              ? 'fill-yellow-400 text-yellow-400'
-                              : 'fill-gray-200 text-gray-200'
-                          }`}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                  <p className="text-sm text-gray-600">{review.comment}</p>
-                  <p className="text-xs text-gray-400">{review.date}</p>
-                </div>
-              ))}
-            </ScrollArea>
-          ) : (
-            <p className="text-sm text-gray-500">
-              Ainda não há avaliações para este produto.
-            </p>
-          )} */}
-    </div>
   )
 }
 
@@ -357,7 +298,7 @@ export function ProductAdditionals({ ...product }: ResponseType) {
       case 'MULTIPLE':
         const limitReached = isLimitReached(id, limit)
         return (
-          <div className="space-y-3">
+          <div className="space-y-2">
             {options.map(({ foodOption }) => {
               const isSelected = isOptionSelected(id, foodOption.id)
               return (
@@ -428,7 +369,7 @@ export function ProductAdditionals({ ...product }: ResponseType) {
                 }
               }}
             >
-              <div className="space-y-3">
+              <div className="space-y-2">
                 {options.map(({ foodOption }) => (
                   <div
                     key={foodOption.id}
@@ -473,7 +414,7 @@ export function ProductAdditionals({ ...product }: ResponseType) {
       case 'QUANTITY':
         const totalCount = getTotalSelectedCount(id)
         return (
-          <div className="space-y-3">
+          <div className="space-y-2">
             {options.map(({ foodOption }) => {
               const quantity = getOptionQuantity(id, foodOption.id)
               const isMaxReached = limit !== null && totalCount >= limit
@@ -545,7 +486,7 @@ export function ProductAdditionals({ ...product }: ResponseType) {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-2">
       {additionals.map(({ foodAdditional }) => {
         const { id, name, description, required, minRequired, limit, role } =
           foodAdditional
@@ -561,8 +502,8 @@ export function ProductAdditionals({ ...product }: ResponseType) {
 
         return (
           <Card key={id} className="border-gray-200">
-            <CardHeader className="pb-2">
-              <div className="flex items-center justify-between">
+            <CardHeader>
+              <div className="flex items-center flex-col xs:flex-row justify-between">
                 <CardTitle className="text-lg font-bold">
                   {name}
                   {required && <span className="text-red-500 ml-1">*</span>}

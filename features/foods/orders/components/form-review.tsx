@@ -26,6 +26,7 @@ type Props = {
   onSubmit: (values: InsertReviewFormValues) => void
 }
 
+// TODO: Edit responsive
 export const FormNewReview = () => {
   const { id, itemId, isOpen, onClose } = useNewReview()
 

@@ -15,6 +15,7 @@ export default function OrdersPage() {
   const ordersQuery = useGetStoreOrders(store?.id)
   const orders = ordersQuery.data || []
 
+  // TODO: Fix responsive
   return (
     <div className="w-full flex flex-col gap-2">
       <div className="flex items-center justify-between">

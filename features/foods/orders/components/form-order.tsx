@@ -114,7 +114,7 @@ export const OrderItem = ({
         </div>
         <div className="w-full">
           <p className="font-medium">{name}</p>
-          <div className="flex justify-between items-center">
+          <div className="flex xs:flex-row flex-col justify-between xs:items-center">
             <div className="flex flex-col gap-1">
               {additionals?.length > 0 && (
                 <div className="flex items-center gap-1">
@@ -152,19 +152,19 @@ export const OrderItem = ({
                 </div>
               )}
               {!isNonAddedProduct && (
-                <div className="flex gap-2 mt-2">
+                <div className="flex xs:flex-row flex-col gap-2 mt-2">
                   <Button
-                    variant="ghost"
+                    variant="outline"
                     size="sm"
-                    className="text-red-500 hover:bg-red-600 hover:text-red-50"
+                    className="text-red-500 border-red-100 hover:bg-red-600 hover:text-red-50"
                     onClick={add}
                   >
                     Adicionar +1
                   </Button>
                   <Button
-                    variant="ghost"
+                    variant="outline"
                     size="sm"
-                    className="text-muted-foreground hover:bg-black hover:text-white"
+                    className="text-muted-foreground border-muted-foreground hover:bg-black hover:text-white"
                     onClick={remove}
                   >
                     Remover -1
@@ -172,7 +172,7 @@ export const OrderItem = ({
                 </div>
               )}
             </div>
-            <div className="flex flex-col items-end">
+            <div className="flex flex-col xs:items-end">
               <p className="text-sm text-muted-foreground">
                 Qtd: {quantity} unids
               </p>

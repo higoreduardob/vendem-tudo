@@ -9,6 +9,7 @@ import {
 } from 'lucide-react'
 
 import { Title } from '@/app/(public)/_components/title'
+import { Container } from '@/components/container'
 
 type DetailProps = {
   title: string
@@ -82,7 +83,7 @@ export const Hero = () => {
   }
 
   return (
-    <section className="container mx-auto py-10 text-center relative space-y-10">
+    <Container className="space-y-10 py-10 text-center relative">
       <div className="absolute inset-0 pointer-events-none opacity-30">
         <div className="absolute h-2 w-2 bg-purple-500 rounded-full top-10 left-1/4 animate-pulse"></div>
         <div className="absolute h-2 w-2 bg-purple-500 rounded-full top-20 right-1/3 animate-pulse delay-300"></div>
@@ -100,6 +101,6 @@ export const Hero = () => {
           <Detail key={index} {...detail} />
         ))}
       </div>
-    </section>
+    </Container>
   )
 }

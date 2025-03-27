@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/accordion'
 import { Button } from '@/components/ui/button'
 import { Title } from '@/app/(public)/_components/title'
+import { Container } from '@/components/container'
 
 export const Faq = () => {
   const details = {
@@ -52,28 +53,26 @@ export const Faq = () => {
     <div>
       {/* FAQ Section */}
       <section className="bg-purple-50">
-        <div className="container mx-auto space-y-10 p-4 py-10">
+        <Container className="space-y-10 py-10">
           <Title
             title={details.faq.title.head}
             description={details.faq.title.description}
           />
 
-          <div className="max-w-3xl mx-auto">
-            <Accordion type="single" collapsible className="w-full">
-              {details.faq.details.map((faq, index) => (
-                <AccordionItem value={`item-${index}`} key={index}>
-                  <AccordionTrigger>{faq.title}</AccordionTrigger>
-                  <AccordionContent>{faq.description}</AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
-          </div>
-        </div>
+          <Accordion type="single" collapsible className="w-full">
+            {details.faq.details.map((faq, index) => (
+              <AccordionItem value={`item-${index}`} key={index}>
+                <AccordionTrigger>{faq.title}</AccordionTrigger>
+                <AccordionContent>{faq.description}</AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </Container>
       </section>
 
       {/* CTA Final Section */}
       <section className="bg-purple-50">
-        <div className="container mx-auto px-4 text-center py-10">
+        <Container className="space-y-10 py-10 text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
             Pronto para vender mais? Cadastre sua loja agora e comece hoje
             mesmo!
@@ -82,13 +81,13 @@ export const Faq = () => {
             Junte-se a milhares de lojistas que já estão aumentando suas vendas
             com nossa plataforma.
           </p>
-          <Link href="/planos">
+          <Link href="#cadastrar" className="inline-block">
             <Button size="lg" variant="purple">
               <FileText className="mr-2 h-5 w-5" />
               Cadastrar
             </Button>
           </Link>
-        </div>
+        </Container>
       </section>
     </div>
   )

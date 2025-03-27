@@ -98,7 +98,7 @@ export const FormDialogUpdate = ({
       isOpen={isOpen}
       isPending={isPending}
       handleClose={handleClose}
-      className="max-w-3xl"
+      className="max-w-[90%] md:max-w-[700px]"
     >
       <FormUser
         formId="form-user"

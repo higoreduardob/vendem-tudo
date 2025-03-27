@@ -7,7 +7,21 @@ import { useRouter } from 'next/navigation'
 import { useOpenStore } from '@/hooks/use-store'
 import { useCurrentUser } from '@/features/auth/hooks/use-current-user'
 
+import { Container } from '@/components/container'
 import { Skeleton } from '@/components/ui/skeleton'
+
+const Message = () => {
+  return (
+    <div className="lg:flex hidden flex-col gap-4">
+      <h1 className="text-2xl font-semibold">Bem vindo</h1>
+      <p className="text-sm text-muted-foreground">
+        Faça login para pedir seus pratos favoritos com apenas alguns cliques.
+        Entrega ágil, comida incrível e a melhor experiência para você!
+      </p>
+      <p className="text-sm font-medium">Bateu a fome? Vamos começar!</p>
+    </div>
+  )
+}
 
 function AuthLayoutComponent({ children }: { children: React.ReactNode }) {
   const router = useRouter()
@@ -24,22 +38,10 @@ function AuthLayoutComponent({ children }: { children: React.ReactNode }) {
 
   if (status === 'loading') {
     return (
-      <section className="flex min-h-[calc(100vh-56px)] justify-center items-center max-w-6xl mx-auto">
-        <div className="flex-1 flex flex-col gap-4 p-4 md:p-10">
-          <Skeleton className="h-full w-full" />
-        </div>
-        <div className="flex-1 md:flex hidden items-center justify-center p-6 lg:justify-end">
-          <div className="max-w-md space-y-3">
-            <h1 className="text-2xl font-semibold">Bem vindo</h1>
-            <p className="text-sm text-muted-foreground">
-              Faça login para pedir seus pratos favoritos com apenas alguns
-              cliques. Entrega ágil, comida incrível e a melhor experiência para
-              você!
-            </p>
-            <p className="text-sm font-medium">Bateu a fome? Vamos começar!</p>
-          </div>
-        </div>
-      </section>
+      <Container className="min-h-[calc(100vh-117px)] grid lg:grid-cols-2 grid-cols-1 gap-4 justify-center items-center">
+        <Skeleton className="h-[250px] w-full flex-1" />
+        <Message />
+      </Container>
     )
   }
 
@@ -48,20 +50,10 @@ function AuthLayoutComponent({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <section className="flex min-h-[calc(100vh-56px)] justify-center items-center max-w-6xl mx-auto">
-      <div className="flex-1 flex flex-col gap-4 p-4 md:p-10">{children}</div>
-      <div className="flex-1 md:flex hidden items-center justify-center p-6 lg:justify-end">
-        <div className="max-w-md space-y-3">
-          <h1 className="text-2xl font-semibold">Bem vindo</h1>
-          <p className="text-sm text-muted-foreground">
-            Faça login para pedir seus pratos favoritos com apenas alguns
-            cliques. Entrega ágil, comida incrível e a melhor experiência para
-            você!
-          </p>
-          <p className="text-sm font-medium">Bateu a fome? Vamos começar!</p>
-        </div>
-      </div>
-    </section>
+    <Container className="min-h-[calc(100vh-117px)] grid lg:grid-cols-2 grid-cols-1 gap-4 justify-center items-center">
+      <div className="flex flex-col gap-4">{children}</div>
+      <Message />
+    </Container>
   )
 }
 

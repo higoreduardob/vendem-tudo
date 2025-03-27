@@ -1,11 +1,13 @@
 import Link from 'next/link'
 import { Shield, Lock, FileText, Users, Database, Server } from 'lucide-react'
 
+import { Container } from '@/components/container'
+
 export default function PrivacyPoliciesPage() {
   const lastUpdated = '20 de março de 2025'
 
   return (
-    <div className="container mx-auto px-4 py-12 max-w-4xl">
+    <Container className="pt-10">
       <div className="mb-10 text-center">
         <h1 className="text-3xl md:text-4xl font-bold mb-4">
           Política de Privacidade
@@ -540,7 +542,7 @@ export default function PrivacyPoliciesPage() {
             pessoais, entre em contato com nosso Encarregado de Proteção de
             Dados (DPO):
           </p>
-
+          {/* TODO: Add contact */}
           <div className="bg-muted/30 p-4 rounded-lg mt-4">
             <p>
               <strong>E-mail:</strong> contato@vendemtudo.com.br
@@ -560,6 +562,6 @@ export default function PrivacyPoliciesPage() {
           </p>
         </div>
       </section>
-    </div>
+    </Container>
   )
 }

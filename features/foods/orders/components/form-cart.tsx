@@ -35,7 +35,6 @@ import {
   ProductDetails,
   ProductImage,
   ProductPrice,
-  ProductReview,
   ResponseType,
 } from '@/features/foods/components/card-product'
 import { Button } from '@/components/ui/button'
@@ -204,8 +203,8 @@ const FormCartComponent = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="border-none w-full sm:max-w-[700px] max-h-[90%] overflow-y-auto p-4">
-        <DialogHeader className="flex flex-row gap-2 items-center justify-between">
+      <DialogContent className="border-none w-full max-w-[90%] md:max-w-[700px] max-h-[90%] overflow-y-auto p-4">
+        <DialogHeader className="flex sm:flex-row flex-col gap-2 items-center justify-between">
           <div>
             <DialogTitle className="text-2xl font-bold text-black">
               {name}
@@ -282,7 +281,6 @@ const FormCartComponent = ({
                 )}
               />
               <Separator />
-              <ProductReview />
             </form>
           </Form>
         </ScrollArea>

@@ -34,9 +34,6 @@ export default function AccountPage() {
       {
         onSuccess: async () => {
           update()
-          // signIn(isOauth ? 'google' : 'credentials', {
-          //   redirect: false,
-          // })
         },
       }
     )

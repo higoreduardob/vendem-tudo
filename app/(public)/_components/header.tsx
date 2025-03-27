@@ -19,12 +19,13 @@ import {
   DropdownMenuSubTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Button } from '@/components/ui/button'
+import { Container } from '@/components/container'
 
 export const Header = () => {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container mx-auto flex h-16 items-center px-4">
-        <Link href="/" className="flex items-center space-x-2">
+      <Container className="flex items-center py-4">
+        <Link href="/">
           <Image
             src="/logo-light.svg"
             alt="Vendem Tudo"
@@ -33,6 +34,7 @@ export const Header = () => {
           />
         </Link>
 
+        {/* Desktop Menu */}
         <NavigationMenu className="hidden md:flex mx-6">
           <NavigationMenuList>
             <NavigationMenuItem>
@@ -56,31 +58,43 @@ export const Header = () => {
               <NavigationMenuContent>
                 <div className="p-2">
                   <Link href="/sobre-nos">
-                    <Button variant="ghost" size="sm" className="w-full">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="flex justify-start w-full"
+                    >
                       Sobre nós
                     </Button>
                   </Link>
-                  <Link href="/demonstracoes">
-                    <Button variant="ghost" size="sm" className="w-full">
-                      Demonstrações
-                    </Button>
-                  </Link>
                   <Link href="/termos-de-uso">
-                    <Button variant="ghost" size="sm" className="w-full">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="flex justify-start w-full"
+                    >
                       Termos de uso
                     </Button>
                   </Link>
                   <Link href="/politicas-de-privacidade">
-                    <Button variant="ghost" size="sm" className="w-full">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="flex justify-start w-full"
+                    >
                       Políticas de privacidade
                     </Button>
                   </Link>
+                  {/* <Link href="/demonstracoes">
+                    <Button variant="ghost" size="sm" className="flex justify-start w-full">
+                      Demonstrações
+                    </Button>
+                  </Link> */}
                 </div>
               </NavigationMenuContent>
             </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
-
+        {/* Mobile Menu */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild className="md:hidden mx-6">
             <Button variant="ghost" size="icon">
@@ -90,13 +104,24 @@ export const Header = () => {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="grid grid-cols-1 mx-6">
             <DropdownMenuItem asChild>
-              <Link href="/planos" legacyBehavior passHref>
+              <Link href="/" legacyBehavior passHref>
                 <Button
                   variant="ghost"
                   size="sm"
                   className="flex justify-start"
                 >
-                  Planos
+                  Início
+                </Button>
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href="/suporte" legacyBehavior passHref>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="flex justify-start"
+                >
+                  Suporte
                 </Button>
               </Link>
             </DropdownMenuItem>
@@ -110,48 +135,54 @@ export const Header = () => {
                 <DropdownMenuSubTrigger>Recursos</DropdownMenuSubTrigger>
               </Button>
               <DropdownMenuSubContent className="grid grid-cols-1">
-                <Link href="/sobre">
-                  <Button variant="ghost" size="sm" className="w-full">
+                <Link href="/sobre-nos">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="flex justify-start w-full"
+                  >
                     Sobre
                   </Button>
                 </Link>
-                <Link href="/demonstracoes">
-                  <Button variant="ghost" size="sm" className="w-full">
-                    Demonstrações
+                <Link href="/termos-de-uso">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="flex justify-start w-full"
+                  >
+                    Termos de uso
                   </Button>
                 </Link>
-                <Link href="/politicas-privacidade">
-                  <Button variant="ghost" size="sm" className="w-full">
+                <Link href="/politicas-de-privacidade">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="flex justify-start w-full"
+                  >
                     Políticas de privacidade
                   </Button>
                 </Link>
+                {/* <Link href="/demonstracoes">
+                  <Button variant="ghost" size="sm" className="flex justify-start w-full">
+                    Demonstrações
+                  </Button>
+                </Link> */}
               </DropdownMenuSubContent>
             </DropdownMenuSub>
-            <DropdownMenuItem asChild>
-              <Link href="/suporte" legacyBehavior passHref>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="flex justify-start"
-                >
-                  Suporte
-                </Button>
-              </Link>
-            </DropdownMenuItem>
           </DropdownMenuContent>
-        </DropdownMenu>
 
-        <div className="flex items-center ml-auto space-x-4">
-          <Link href="/entrar">
-            <Button size="sm">Entrar</Button>
-          </Link>
-          <Link href="/planos">
-            <Button size="sm" variant="purple">
-              Cadastrar
-            </Button>
-          </Link>
-        </div>
-      </div>
+          <div className="flex items-center ml-auto space-x-4">
+            <Link href="/entrar">
+              <Button size="sm">Entrar</Button>
+            </Link>
+            <Link href="/planos">
+              <Button size="sm" variant="purple">
+                Cadastrar
+              </Button>
+            </Link>
+          </div>
+        </DropdownMenu>
+      </Container>
     </header>
   )
 }

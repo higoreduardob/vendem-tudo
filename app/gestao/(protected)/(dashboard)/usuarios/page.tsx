@@ -25,7 +25,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="w-full flex flex-col gap-4">
+    <div className="w-full flex flex-col gap-2">
       <Title>Usuários</Title>
       <DataTable
         filterKey="name"

@@ -21,6 +21,7 @@ import {
 } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Title } from '@/app/(public)/_components/title'
+import { Container } from '@/components/container'
 
 type DetailProps = {
   title: string
@@ -186,37 +187,35 @@ export const Hero = () => {
           priority
         /> */}
 
-        <div className="relative z-20 container mx-auto px-4 h-full flex flex-col justify-center">
-          <div className="max-w-3xl space-y-4">
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white">
-              Seu Delivery, Nossa Plataforma
-              <span className="text-transparent bg-white inline-block bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">
-                Venda mais sem complicações!
-              </span>
-            </h1>
-            <p className="text-gray-300 text-xl">
-              Cadastre sua loja, receba pedidos e gerencie tudo em um só lugar.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Link href="/planos">
-                <Button size="lg" variant="purple">
-                  <FileText className="mr-2 h-5 w-5" />
-                  Cadastrar
-                </Button>
-              </Link>
-              <Link href="/entrar">
-                <Button size="lg" variant="outline">
-                  <ArrowRight className="mr-2 h-5 w-5" />
-                  Entrar
-                </Button>
-              </Link>
-            </div>
+        <Container className="relative z-20 h-full flex flex-col justify-center gap-4">
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white sm:text-left text-center">
+            Seu Delivery, Nossa Plataforma
+            <span className="text-transparent bg-white inline-block bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">
+              Venda mais sem complicações!
+            </span>
+          </h1>
+          <p className="text-gray-300 sm:text-xl text-base">
+            Cadastre sua loja, receba pedidos e gerencie tudo em um só lugar.
+          </p>
+          <div className="flex sm:flex-row flex-col gap-4">
+            <Link href="#cadastrar">
+              <Button size="lg" variant="purple" className="w-full">
+                <FileText className="mr-2 h-5 w-5" />
+                Cadastrar
+              </Button>
+            </Link>
+            <Link href="/entrar">
+              <Button size="lg" variant="outline" className="w-full">
+                <ArrowRight className="mr-2 h-5 w-5" />
+                Entrar
+              </Button>
+            </Link>
           </div>
-        </div>
+        </Container>
       </section>
 
       {/* Como Funciona Section */}
-      <section className="container mx-auto space-y-10 p-4 py-10">
+      <Container className="space-y-10 py-10">
         <Title
           title={details.about.title.head}
           description={details.about.title.description}
@@ -227,25 +226,25 @@ export const Hero = () => {
             <AboutDetail key={index} {...detail} />
           ))}
         </div>
-      </section>
+      </Container>
 
       {/* Quem Pode Usar Section */}
-      <section className="container mx-auto space-y-10 p-4 py-10">
+      <Container className="space-y-10 py-10">
         <Title
           title={details.works.title.head}
           description={details.about.title.description}
         />
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
           {details.works.details.map((detail, index) => (
             <WorkDetail key={index} {...detail} />
           ))}
         </div>
-      </section>
+      </Container>
 
       {/* Benefícios Section */}
       <section className="bg-purple-50">
-        <div className="container mx-auto space-y-10 p-4 py-10">
+        <Container className="space-y-10 py-10">
           <Title
             title={details.benefits.title.head}
             description={details.benefits.title.description}
@@ -256,7 +255,7 @@ export const Hero = () => {
               <BenefitDetail key={index} {...detail} />
             ))}
           </div>
-        </div>
+        </Container>
       </section>
     </div>
   )

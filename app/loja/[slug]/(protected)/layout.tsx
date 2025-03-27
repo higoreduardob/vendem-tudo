@@ -29,7 +29,11 @@ function ProtectedLayoutComponent({ children }: { children: React.ReactNode }) {
   }
 
   if (!user) {
-    return null
+    return (
+      <section className="grid min-h-svh">
+        <Skeleton className="h-full w-full" />
+      </section>
+    )
   }
 
   return <>{children}</>

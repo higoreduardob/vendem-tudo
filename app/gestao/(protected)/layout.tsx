@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation'
 import { useCurrentUser } from '@/features/auth/hooks/use-current-user'
 
 import { Skeleton } from '@/components/ui/skeleton'
-import { DialogProvider } from '../_providers/dialog-provider'
+import { DialogProvider } from '@/app/gestao/_providers/dialog-provider'
 
 function ProtectedLayoutComponent({ children }: { children: React.ReactNode }) {
   const router = useRouter()
@@ -28,7 +28,11 @@ function ProtectedLayoutComponent({ children }: { children: React.ReactNode }) {
   }
 
   if (!user) {
-    return null
+    return (
+      <section className="grid min-h-svh">
+        <Skeleton className="h-full w-full" />
+      </section>
+    )
   }
 
   return (

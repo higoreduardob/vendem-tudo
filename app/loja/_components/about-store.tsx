@@ -72,7 +72,7 @@ export const AboutStore = () => {
 const AboutComponent = ({ isOpen, handleClose, store }: ComponentProps) => {
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-[90%] md:max-w-[700px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold flex items-center gap-2">
             <Store className="h-6 w-6" />
@@ -91,7 +91,7 @@ const AboutComponent = ({ isOpen, handleClose, store }: ComponentProps) => {
 
           <TabsContent value="info" className="space-y-4 py-2">
             <div className="space-y-2">
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                 <div className="flex items-start gap-2">
                   <Mail className="h-5 w-5 text-muted-foreground mt-0.5" />
                   <div>
@@ -130,7 +130,7 @@ const AboutComponent = ({ isOpen, handleClose, store }: ComponentProps) => {
               <Clock className="h-5 w-5 text-muted-foreground mt-0.5" />
               <div>
                 <h3 className="font-medium">Horários de Funcionamento</h3>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                   {store.schedules.map((schedule, index) => (
                     <div
                       key={index}
@@ -221,7 +221,7 @@ const AboutComponent = ({ isOpen, handleClose, store }: ComponentProps) => {
                   <TableHeader>
                     <TableRow>
                       <TableHead>Bairro</TableHead>
-                      <TableHead>Taxa de Entrega</TableHead>
+                      <TableHead>Entrega</TableHead>
                       <TableHead>Tempo</TableHead>
                       <TableHead className="hidden md:table-cell">
                         Pedido Mínimo

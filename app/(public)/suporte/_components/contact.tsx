@@ -41,6 +41,7 @@ export const Contact = () => {
     },
   }
 
+  // TODO: Add smtp
   const onSubmit = (values: InsertMessageFormValues) => {
     console.log(values)
   }

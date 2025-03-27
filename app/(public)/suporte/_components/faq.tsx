@@ -22,23 +22,23 @@ export const Faq = () => {
         {
           title: 'Como cadastrar minha loja?',
           description:
-            'Para cadastrar sua loja, clique no botão "Cadastrar" no topo da página. Após isso selecione o plano desejado e realize o pagamento, preencha o formulário com os seus dados pessoais e da sua empresa, incluindo CPF/CNPJ, endereço e informações de contato. Após a verificação dos dados, sua loja estará pronta para ser configurada em nossa plataforma.',
+            'Para cadastrar sua loja, clique no botão "Cadastrar" no topo da página. Após isso selecione o plano desejado e realize o pagamento, nos encaminhe os seus dados pessoais e da sua empresa, incluindo CPF/CNPJ, endereço, informações de contato horários de funcionamento, uma descrição da sua loja e formas de pagamentos. Após a verificação dos dados, sua loja estará pronta para ser acessada em nossa plataforma.',
         },
         {
           title: 'Como gerenciar pedidos?',
           description:
-            'Após fazer login, acesse o painel de controle e clique na seção "Pedidos". Lá você poderá visualizar todos os pedidos recebidos, filtrar por status (novos, em preparo, em entrega, concluídos), aceitar ou recusar pedidos e atualizar o status conforme o andamento.',
+            'Após fazer login, acesse o painel de controle e clique na seção "Pedidos". Lá você poderá visualizar todos os pedidos recebidos, filtrar por status (Pendente, Aceito, Em entrega, Entregues e Cancelados), aceitar ou recusar pedidos e atualizar o status conforme o andamento.',
         },
         {
           title: 'Como configurar meios de pagamento?',
           description:
             'No painel administrativo, acesse "Loja" e depois "Meios de Pagamento". Você poderá escolher diversos métodos de pagamento como PIX, cartão de crédito/débito, dinherio e vale-alimentação.',
         },
-        {
-          title: 'Como acompanhar relatórios de vendas?',
-          description:
-            'Na seção "Desempenho" do painel, você encontrará gráficos e dados detalhados sobre suas vendas. É possível filtrar por período, visualizar produtos mais vendidos, horários de pico, valor médio de pedidos e muito mais. Todos os relatórios podem ser exportados em formato PDF ou Excel.',
-        },
+        // {
+        //   title: 'Como acompanhar relatórios de vendas?',
+        //   description:
+        //     'Na seção "Desempenho" do painel, você encontrará gráficos e dados detalhados sobre suas vendas. É possível filtrar por período, visualizar produtos mais vendidos, horários de pico, valor médio de pedidos e muito mais. Todos os relatórios podem ser exportados em formato PDF ou Excel.',
+        // },
       ],
     },
     support: {
@@ -91,7 +91,7 @@ export const Faq = () => {
         {details.support.details.map((detail, index) => (
           <Detail key={index} {...detail} />
         ))}
-
+        {/* TODO: Add zap */}
         <Button size="lg" variant="purple" className="w-full">
           Falar com um especialista
         </Button>

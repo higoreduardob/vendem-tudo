@@ -105,7 +105,7 @@ export const FormSignIn = ({
       footerLink={
         role !== 'ADMINISTRATOR'
           ? !isCustomer
-            ? '/cadastrar'
+            ? '/planos'
             : `/loja/${slug}/cadastrar`
           : undefined
       }

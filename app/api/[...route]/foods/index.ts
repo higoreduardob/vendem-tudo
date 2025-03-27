@@ -205,6 +205,7 @@ const app = new Hono()
       const data = await db.food.findMany({
         where: {
           storeId: store.id,
+          status: true,
           OR: filters.length > 0 ? filters : undefined,
         },
         include: {

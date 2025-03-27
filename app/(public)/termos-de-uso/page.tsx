@@ -10,11 +10,13 @@ import {
   User,
 } from 'lucide-react'
 
+import { Container } from '@/components/container'
+
 export default function TermsOfServicePage() {
   const lastUpdated = '20 de março de 2025'
 
   return (
-    <div className="container mx-auto px-4 py-12 max-w-4xl">
+    <Container className="pt-10">
       <div className="mb-10 text-center">
         <h1 className="text-3xl md:text-4xl font-bold mb-4">Termos de Uso</h1>
         <p className="text-muted-foreground">
@@ -784,7 +786,7 @@ export default function TermsOfServicePage() {
             Se você tiver dúvidas, preocupações ou sugestões relacionadas a
             estes Termos de Uso ou à nossa plataforma, entre em contato conosco:
           </p>
-
+          {/* TODO: Add contact */}
           <div className="bg-muted/30 p-4 rounded-lg mt-4">
             <p>
               <strong>E-mail:</strong> contato@vendemtudo.com.br
@@ -808,6 +810,6 @@ export default function TermsOfServicePage() {
           </p>
         </div>
       </section>
-    </div>
+    </Container>
   )
 }
