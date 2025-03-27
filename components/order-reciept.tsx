@@ -33,7 +33,7 @@ export const OrderReciept = () => {
     <OrderRecieptComponent
       isOpen={isOpen}
       handleClose={onClose}
-      storeName={user.selectedStore?.name!}
+      storeName={user.selectedStore!.name}
       order={order}
     />
   )

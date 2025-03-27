@@ -121,7 +121,7 @@ export const InputImage = React.forwardRef<HTMLDivElement, InputImageProps>(
           onChange?.(file)
         }
       },
-      [onChange, maxSize]
+      [onChange]
     )
 
     const { getRootProps, isDragActive } = useDropzone({
