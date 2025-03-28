@@ -1,5 +1,3 @@
-    1 . Melhorar o estilo do email enviado
-
     4 . Check todos
     5 . Check all codes
     6 . TODO: Check status in categories and foods in search customers
@@ -39,3 +37,4 @@
       14 . Finalizar desempenho
       15 . Change message authenticate (2 Feat)
       16 . Notificações: 1. Fazer push notifications, e pesquisar como fazer no next para os registros de pedidos | 2 . check stages in order food
+      17 . Melhorar o estilo do email enviado
