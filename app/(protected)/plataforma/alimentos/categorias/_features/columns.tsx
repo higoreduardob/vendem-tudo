@@ -10,7 +10,6 @@ import { Actions } from '@/app/(protected)/plataforma/alimentos/categorias/_feat
 
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
-import { ImageSlider } from '@/components/image-slider'
 
 export type ResponseType = InferResponseType<
   (typeof client.api)['food-categories']['$get'],
@@ -39,15 +38,6 @@ export const columns: ColumnDef<ResponseType>[] = [
     ),
     enableSorting: false,
     enableHiding: false,
-  },
-  {
-    accessorKey: 'imagens',
-    header: () => {
-      return <Button variant="ghost">Imagens</Button>
-    },
-    cell: ({ row }) => (
-      <ImageSlider images={[row.original.image]} product={row.original.name} />
-    ),
   },
   {
     accessorKey: 'name',

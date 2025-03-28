@@ -56,6 +56,9 @@ export const useGetOrders = (today?: boolean) => {
           : null,
       }))
     },
+    refetchInterval: 5 * 1000, // TODO: Create webhook
+    refetchIntervalInBackground: true,
+    refetchOnWindowFocus: true,
   })
 
   return query
@@ -104,6 +107,9 @@ export const useGetStoreOrders = (storeId?: string) => {
           : null,
       }))
     },
+    refetchInterval: 5 * 1000, // TODO: Create webhook
+    refetchIntervalInBackground: true,
+    refetchOnWindowFocus: true,
   })
 
   return query

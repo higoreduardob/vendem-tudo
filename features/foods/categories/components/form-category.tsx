@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 
 import {
-  insertCategoryFormSchema,
+  insertCategorySchema,
   InsertCategoryFormValues,
 } from '@/features/foods/categories/schema'
 
@@ -17,7 +17,6 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { FormDialog } from '@/components/form-dialog'
-import { InputImage } from '@/components/input-custom'
 
 type Props = {
   id?: string
@@ -41,7 +40,7 @@ export const FormCategory = ({
   onSubmit,
 }: Props) => {
   const form = useForm<InsertCategoryFormValues>({
-    resolver: zodResolver(insertCategoryFormSchema),
+    resolver: zodResolver(insertCategorySchema),
     defaultValues,
     shouldFocusError: true,
     reValidateMode: 'onChange',
@@ -86,24 +85,6 @@ export const FormCategory = ({
                     {...field}
                     disabled={isPending}
                     placeholder="Nome da categoria"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="image"
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <FormLabel>Imagem</FormLabel>
-                <FormControl>
-                  <InputImage
-                    value={field.value}
-                    onChange={field.onChange}
-                    accept="image/*"
-                    disabled={isPending}
                   />
                 </FormControl>
                 <FormMessage />

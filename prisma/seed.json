@@ -29,9 +29,7 @@
       "cpfCnpj": "13620787786",
       "whatsApp": "27998311970",
       "about": "Bem-vindo à [Nome da Loja]! Aqui, preparamos cada pedido com carinho e qualidade para que sua experiência seja sempre incrível. Explore nosso cardápio e aproveite o melhor do delivery, com rapidez e sabor garantidos!",
-      "role": [
-        "FOOD"
-      ],
+      "role": ["FOOD"],
       "status": true,
       "createdAt": "2025-03-07T16:39:07.968Z",
       "updatedAt": "2025-03-07T16:39:07.968Z",
@@ -153,7 +151,6 @@
     {
       "id": "sr243wq5u81phs5f099k78lc",
       "name": "Categoria",
-      "image": "https://placehold.co/400",
       "status": true,
       "createdAt": "2025-03-07T16:39:33.808Z",
       "updatedAt": "2025-03-07T16:39:33.808Z",
@@ -162,7 +159,6 @@
     {
       "id": "n8umj3djze7gon443pm9o0l7",
       "name": "Lanches",
-      "image": "https://placehold.co/400",
       "status": true,
       "createdAt": "2025-03-07T16:46:32.104Z",
       "updatedAt": "2025-03-07T16:46:32.104Z",
@@ -171,7 +167,6 @@
     {
       "id": "faj83p2avu3unezmq0l4b20r",
       "name": "Bebidas",
-      "image": "https://placehold.co/400",
       "status": true,
       "createdAt": "2025-03-07T16:49:06.814Z",
       "updatedAt": "2025-03-07T16:49:06.814Z",
@@ -180,7 +175,6 @@
     {
       "id": "e9t5e36hgaax1zhmzh4ygnha",
       "name": "Pizzas",
-      "image": "https://placehold.co/400",
       "status": true,
       "createdAt": "2025-03-07T16:55:58.265Z",
       "updatedAt": "2025-03-07T16:55:58.265Z",
@@ -189,7 +183,6 @@
     {
       "id": "ohzt6ybwwdvuavdb2hvl6a7o",
       "name": "Sobremesas",
-      "image": "https://placehold.co/400",
       "status": true,
       "createdAt": "2025-03-07T16:56:06.284Z",
       "updatedAt": "2025-03-07T16:56:06.284Z",
@@ -198,7 +191,6 @@
     {
       "id": "o6tviwslru3mhcuet0lzyvof",
       "name": "Combos",
-      "image": "https://placehold.co/400",
       "status": true,
       "createdAt": "2025-03-07T16:56:15.604Z",
       "updatedAt": "2025-03-07T16:56:15.604Z",
@@ -207,7 +199,6 @@
     {
       "id": "g7yusgf4xyit48zjxkgg7id0",
       "name": "Vegano",
-      "image": "https://placehold.co/400",
       "status": true,
       "createdAt": "2025-03-07T16:56:24.594Z",
       "updatedAt": "2025-03-07T16:56:24.594Z",

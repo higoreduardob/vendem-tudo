@@ -10,7 +10,6 @@ import {
   InsertFoodFormValues,
 } from '@/features/foods/schema'
 
-import { useNewCategory } from '@/features/foods/categories/hooks/use-new-category'
 import { useGetCategories } from '@/features/foods/categories/api/use-get-categories'
 import { useCreateCategory } from '@/features/foods/categories/api/use-create-category'
 import { useGetFoodAdditionals } from '@/features/foods/additionals/api/use-get-food-additionals'
@@ -57,7 +56,6 @@ export const FormFood = ({
   handleClose,
   onSubmit,
 }: Props) => {
-  const { onOpen: onOpenFoodCategory } = useNewCategory()
   const { onOpen: onOpenFoodAdditional } = useNewFoodAdditional()
   const { onOpen: onOpenFoodAdditionalData } = useOpenFoodAdditionalData()
   const form = useForm<InsertFoodFormValues>({
@@ -76,7 +74,7 @@ export const FormFood = ({
       value: category.id,
     })
   )
-  const onCreateCategory = () => onOpenFoodCategory()
+  const onCreateCategory = (name: string) => categoryMutation.mutate({ name })
   const isLoadingCreateCategory = categoryMutation.isPending
 
   const additionalsQuery = useGetFoodAdditionals()

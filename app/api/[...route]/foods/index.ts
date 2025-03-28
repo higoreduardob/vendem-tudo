@@ -206,6 +206,7 @@ const app = new Hono()
         where: {
           storeId: store.id,
           status: true,
+          category: { status: true },
           OR: filters.length > 0 ? filters : undefined,
         },
         include: {

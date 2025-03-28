@@ -7,7 +7,6 @@ import { zValidator } from '@hono/zod-validator'
 import { Prisma, UserRole } from '@prisma/client'
 
 import { db } from '@/lib/db'
-import { destroyImage } from '@/lib/cloudinary'
 
 import { insertCategorySchema } from '@/features/foods/categories/schema'
 
@@ -209,7 +208,7 @@ const app = new Hono()
       const validatedFields = c.req.valid('json')
 
       if (!validatedFields) return c.json({ error: 'Campos inválidos' }, 400)
-      const { name, ...values } = validatedFields
+      const { name } = validatedFields
 
       if (!auth.token?.sub || !auth.token?.selectedStore) {
         return c.json({ error: 'Usuário não autorizado' }, 401)
@@ -248,7 +247,6 @@ const app = new Hono()
           id: createId(),
           name,
           storeId: store.id,
-          ...values,
         },
       })
 
@@ -367,7 +365,7 @@ const app = new Hono()
       const validatedFields = c.req.valid('json')
 
       if (!validatedFields) return c.json({ error: 'Campos inválidos' }, 400)
-      const { name, image } = validatedFields
+      const { name } = validatedFields
 
       if (!id) {
         return c.json({ error: 'Identificador não encontrado' }, 400)
@@ -412,27 +410,9 @@ const app = new Hono()
         return c.json({ error: 'Categoria não cadastrada' }, 404)
       }
 
-      if (image && image !== currentCategory.image) {
-        if (currentCategory.image) {
-          try {
-            const urlParts = currentCategory.image.split('/')
-            const publicIdWithExtension = urlParts[urlParts.length - 1]
-            const fileName = publicIdWithExtension.split('.')[0]
-            const oldPublicId = `food-categories/${fileName}`
-
-            const destroyResult = await destroyImage(oldPublicId)
-            if (destroyResult.result !== 'ok') {
-              return c.json({ error: 'Falha ao remover imagem antiga' }, 400)
-            }
-          } catch (error) {
-            return c.json({ error: 'Falha ao remover imagem antiga' }, 400)
-          }
-        }
-      }
-
       await db.foodCategory.update({
         where: { id, storeId: store.id },
-        data: { name, image },
+        data: { name },
       })
 
       return c.json({ success: 'Categoria atualizada' }, 200)
