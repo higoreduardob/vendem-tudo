@@ -8,8 +8,10 @@ export const Actions = () => {
   const { onOpen } = useNewCategory()
 
   return (
-    <div className="flex items-center gap-2">
-      <Button onClick={onOpen}>Adicionar</Button>
+    <div className="flex items-center gap-2 w-full">
+      <Button onClick={onOpen} className="w-full">
+        Adicionar
+      </Button>
     </div>
   )
 }

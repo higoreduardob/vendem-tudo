@@ -22,6 +22,7 @@ import {
   FormControl,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
@@ -121,6 +122,7 @@ export const FormSignIn = ({
               name="code"
               render={({ field }) => (
                 <FormItem className="w-full">
+                  <FormLabel>Código</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
@@ -140,6 +142,7 @@ export const FormSignIn = ({
                 name="email"
                 render={({ field }) => (
                   <FormItem className="w-full">
+                    <FormLabel>Email</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
@@ -157,6 +160,7 @@ export const FormSignIn = ({
                 name="password"
                 render={({ field }) => (
                   <FormItem className="w-full">
+                    <FormLabel>Senha</FormLabel>
                     <FormControl>
                       <InputPassword
                         {...field}

@@ -1,12 +1,12 @@
 import { columns } from '@/features/foods/additionals/components/_features/columns'
 
+import { useFilterAdditional } from '@/features/foods/additionals/hooks/use-filter-additional'
 import { useGetFoodAdditionals } from '@/features/foods/additionals/api/use-get-food-additionals'
 import { useOpenFoodAdditionalData } from '@/features/foods/additionals/hooks/use-open-food-additional'
 import { useBulkDeleteFoodAdditionals } from '@/features/foods/additionals/api/use-bulk-delete-food-additionals'
 
-import { DataTable } from '@/components/data-table'
 import { ContentDialog } from '@/components/content-dialog'
-import { useFilterAdditional } from '../hooks/use-filter-additional'
+import { DataTable, DataTableLoading } from '@/components/data-table'
 
 export const TableAdditional = () => {
   const { isOpen, onClose } = useOpenFoodAdditionalData()
@@ -18,9 +18,18 @@ export const TableAdditional = () => {
   const isLoading =
     additionalsQuery.isLoading || deleteFoodAdditionals.isPending
 
-  // TODO: Create skeleton
   if (isLoading) {
-    return <>Skeleton</>
+    return (
+      <ContentDialog
+        title="Adicionais"
+        description="Todos adicionais cadastrados no sistema"
+        isOpen={isOpen}
+        handleClose={onClose}
+        className="max-w-[90%] xl:max-w-screen-lg"
+      >
+        <DataTableLoading />
+      </ContentDialog>
+    )
   }
 
   return (
@@ -29,6 +38,7 @@ export const TableAdditional = () => {
       description="Todos adicionais cadastrados no sistema"
       isOpen={isOpen}
       handleClose={onClose}
+      className="max-w-[90%] xl:max-w-screen-lg"
     >
       <DataTable
         filterKey="name"

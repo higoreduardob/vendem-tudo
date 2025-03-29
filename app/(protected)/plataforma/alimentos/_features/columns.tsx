@@ -6,7 +6,7 @@ import { ColumnDef } from '@tanstack/react-table'
 
 import { client } from '@/lib/hono'
 
-import { formatCurrency } from '@/lib/utils'
+import { cn, formatCurrency } from '@/lib/utils'
 
 import { Actions } from '@/app/(protected)/plataforma/alimentos/_features/actions'
 
@@ -121,10 +121,13 @@ export const columns: ColumnDef<ResponseType>[] = [
       const avg = row.original.reviewsAvg
 
       return (
-        <span className="text-muted-foreground text-sm">
-          {reviews && avg
-            ? `${reviews} (${avg} ★)`
-            : 'Nenhum registro cadastro'}
+        <span
+          className={cn(
+            'text-muted-foreground text-sm',
+            reviews && avg && 'text-yellow-600'
+          )}
+        >
+          {reviews && avg ? `${reviews} (${avg} ★)` : 'Sem avaliação'}
         </span>
       )
     },

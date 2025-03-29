@@ -258,13 +258,16 @@ export const columns: ColumnDef<ResponseType>[] = [
       const deadlineAt = row.original.shipping?.deadlineAt
       const { createdAt, progress } = history
 
+      const isUpdatedHistory =
+        progress === 'CANCELLED' || progress === 'DELIVERED'
+
       const progressOptions: FilterOptionsProps = createEnumOptions(
         OrderHistoryProgress,
         (key) => translateOrderHistoryProgress(key as OrderHistoryProgress)
       )
 
-      // TODO: if history 'CANCELLED' or 'DELIVERED' not change
       const onChange = (progress: OrderHistoryProgress) => {
+        if (isUpdatedHistory) return
         mutation.mutate({ progress })
       }
 
@@ -279,7 +282,7 @@ export const columns: ColumnDef<ResponseType>[] = [
             defaultValue={progress}
             value={progress}
             data={progressOptions}
-            isDisabled={isPending}
+            isDisabled={isPending || isUpdatedHistory}
             onChange={onChange}
             className="w-full"
           />

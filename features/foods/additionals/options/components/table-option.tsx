@@ -1,12 +1,12 @@
 import { columns } from '@/features/foods/additionals/options/components/_features/columns'
 
+import { useFilterOption } from '@/features/foods/additionals/options/hooks/use-filter-option'
 import { useGetFoodOptions } from '@/features/foods/additionals/options/api/use-get-food-options'
 import { useOpenFoodOptionData } from '@/features/foods/additionals/options/hooks/use-open-food-option'
 import { useBulkDeleteFoodOptions } from '@/features/foods/additionals/options/api/use-bulk-delete-food-options'
 
-import { DataTable } from '@/components/data-table'
 import { ContentDialog } from '@/components/content-dialog'
-import { useFilterOption } from '../hooks/use-filter-option'
+import { DataTable, DataTableLoading } from '@/components/data-table'
 
 export const TableOption = () => {
   const { isOpen, onClose } = useOpenFoodOptionData()
@@ -17,9 +17,18 @@ export const TableOption = () => {
 
   const isLoading = optionsQuery.isLoading || deleteFoodOptions.isPending
 
-  // TODO: Create skeleton
   if (isLoading) {
-    return <>Skeleton</>
+    return (
+      <ContentDialog
+        title="Opções"
+        description="Todas opções cadastrados no sistema"
+        isOpen={isOpen}
+        handleClose={onClose}
+        className="max-w-[90%] xl:max-w-screen-lg"
+      >
+        <DataTableLoading />
+      </ContentDialog>
+    )
   }
 
   return (
@@ -28,6 +37,7 @@ export const TableOption = () => {
       description="Todas opções cadastrados no sistema"
       isOpen={isOpen}
       handleClose={onClose}
+      className="max-w-[90%] xl:max-w-screen-lg"
     >
       <DataTable
         filterKey="name"

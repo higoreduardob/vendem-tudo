@@ -6,8 +6,9 @@ import { useOpenStore } from '@/hooks/use-store'
 import { useGetStoreOrders } from '@/features/foods/orders/api/use-get-orders'
 import { useFilterOrder } from '@/features/foods/orders/hooks/use-filter-order'
 
-import { DataTable } from '@/components/data-table'
+import { Skeleton } from '@/components/ui/skeleton'
 import { Title } from '@/app/(protected)/_components/title'
+import { DataTable, DataTableLoading } from '@/components/data-table'
 
 export default function OrdersPage() {
   const { store } = useOpenStore()
@@ -15,12 +16,20 @@ export default function OrdersPage() {
   const ordersQuery = useGetStoreOrders(store?.id)
   const orders = ordersQuery.data || []
 
-  // TODO: Fix responsive
-  return (
-    <div className="w-full flex flex-col gap-2">
-      <div className="flex items-center justify-between">
-        <Title>Pedidos</Title>
+  const isLoading = ordersQuery.isLoading
+
+  if (isLoading) {
+    return (
+      <div className="w-full flex flex-col gap-4">
+        <Skeleton className="h-[30px] w-[300px]" />
+        <DataTableLoading />
       </div>
+    )
+  }
+
+  return (
+    <div className="w-full flex flex-col gap-4">
+      <Title>Pedidos</Title>
       <DataTable
         filterKey="código"
         placeholder="código"

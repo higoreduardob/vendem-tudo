@@ -19,13 +19,13 @@ export const Analytics = ({
   return (
     <Card>
       <CardContent className="flex items-center gap-4">
-        <div className="flex items-center gap-2 border-r border-border/50 pr-4">
+        <div className="flex items-center gap-2">
           <Calendar className="h-4 w-4 text-muted-foreground" />
           <span className="text-sm font-medium">Todo tempo</span>
         </div>
 
-        <div className="flex flex-1 items-center gap-4">
-          <AnalyticItem title="Total de clientes" value={totalCustomers} />
+        <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 flex-1 items-center gap-4">
+          <AnalyticItem title="Clientes" value={totalCustomers} />
           <AnalyticItem title="Ticket médio" value={avgTicket} />
           <AnalyticItem
             title="Bairro mais entregue"
@@ -34,7 +34,6 @@ export const Analytics = ({
           <AnalyticItem
             title="Bairro menos entregue"
             value={leastDeliveredNeighborhood}
-            isLastItem
           />
         </div>
       </CardContent>

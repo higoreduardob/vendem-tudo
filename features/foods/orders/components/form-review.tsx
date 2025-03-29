@@ -1,12 +1,17 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { Star } from 'lucide-react'
 import { useForm } from 'react-hook-form'
+import { useEffect, useState } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 
-import { useCreateReview } from '../api/use-create-review'
+import { useNewReview } from '@/features/foods/orders/hooks/use-new-review'
+import { useCreateReview } from '@/features/foods/orders/api/use-create-review'
 
-import { InsertReviewFormValues, insertReviewSchema } from '../schema'
+import {
+  InsertReviewFormValues,
+  insertReviewSchema,
+} from '@/features/foods/orders/schema'
 
 import {
   Form,
@@ -16,8 +21,6 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { FormDialog } from '@/components/form-dialog'
-import { Star } from 'lucide-react'
-import { useNewReview } from '../hooks/use-new-review'
 
 type Props = {
   isOpen: boolean
@@ -26,7 +29,6 @@ type Props = {
   onSubmit: (values: InsertReviewFormValues) => void
 }
 
-// TODO: Edit responsive
 export const FormNewReview = () => {
   const { id, itemId, isOpen, onClose } = useNewReview()
 
@@ -81,7 +83,7 @@ export const FormReview = ({
       isOpen={isOpen}
       isPending={isPending}
       handleClose={handleClose}
-      className="max-w-xl"
+      className="max-w-[90%] md:max-w-xl"
     >
       <Form {...form}>
         <form

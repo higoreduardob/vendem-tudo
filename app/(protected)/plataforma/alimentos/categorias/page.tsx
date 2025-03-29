@@ -2,15 +2,16 @@
 
 import { columns } from '@/app/(protected)/plataforma/alimentos/categorias/_features/columns'
 
+import { useGetAnalytics } from '@/features/foods/categories/api/use-get-analytics'
 import { useGetCategories } from '@/features/foods/categories/api/use-get-categories'
 import { useFilterCategory } from '@/features/foods/categories/hooks/use-filter-category'
 import { useBulkDeleteCategories } from '@/features/foods/categories/api/use-bulk-delete-categories'
 
-import { DataTable } from '@/components/data-table'
+import { Skeleton } from '@/components/ui/skeleton'
 import { Title } from '@/app/(protected)/_components/title'
+import { DataTable, DataTableLoading } from '@/components/data-table'
 import { Actions } from '@/app/(protected)/plataforma/alimentos/categorias/_components/actions'
 import { Analytics } from '@/app/(protected)/plataforma/alimentos/categorias/_components/analytics'
-import { useGetAnalytics } from '@/features/foods/categories/api/use-get-analytics'
 
 export default function CategoriesPage() {
   const categoriesQuery = useGetCategories()
@@ -26,9 +27,14 @@ export default function CategoriesPage() {
     deleteCategories.isPending ||
     analyticsQuery.isLoading
 
-  // TODO: Create skeleton
   if (isLoading) {
-    return <>Skeleton</>
+    return (
+      <div className="w-full flex flex-col gap-4">
+        <Skeleton className="h-[30px] w-[300px]" />
+        <Skeleton className="h-[80px] w-full" />
+        <DataTableLoading />
+      </div>
+    )
   }
 
   if (!analytics) return null

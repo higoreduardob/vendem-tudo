@@ -1,4 +1,4 @@
-import { Eye, Ban, PencilRuler } from 'lucide-react'
+import { Ban, PencilRuler } from 'lucide-react'
 
 import { useConfirm } from '@/hooks/use-confirm'
 import { useOpenFoodOption } from '@/features/foods/additionals/options/hooks/use-open-food-option'
@@ -46,10 +46,6 @@ export const Actions = ({ id, status }: Props) => {
           <Button variant="ghost">Ações</Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuItem className="cursor-pointer">
-            <Eye className="size-4 mr-2" />
-            Detalhes
-          </DropdownMenuItem>
           <DropdownMenuItem
             className="cursor-pointer"
             onClick={() => onOpen(id)}

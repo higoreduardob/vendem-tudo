@@ -7,8 +7,9 @@ import { useFilterFood } from '@/features/foods/hooks/use-filter-food'
 import { useGetAnalytics } from '@/features/foods/api/use-get-analytics'
 import { useBulkDeleteFoods } from '@/features/foods/api/use-bulk-delete-foods'
 
-import { DataTable } from '@/components/data-table'
+import { Skeleton } from '@/components/ui/skeleton'
 import { Title } from '@/app/(protected)/_components/title'
+import { DataTable, DataTableLoading } from '@/components/data-table'
 import { Actions } from '@/app/(protected)/plataforma/alimentos/_components/actions'
 import { Analytics } from '@/app/(protected)/plataforma/alimentos/_components/analytics'
 
@@ -24,9 +25,14 @@ export default function ProductsPage() {
   const isLoading =
     foodsQuery.isLoading || deleteFoods.isPending || analyticsQuery.isLoading
 
-  // TODO: Create skeleton
   if (isLoading) {
-    return <>Skeleton</>
+    return (
+      <div className="w-full flex flex-col gap-4">
+        <Skeleton className="h-[30px] w-[300px]" />
+        <Skeleton className="h-[80px] w-full" />
+        <DataTableLoading />
+      </div>
+    )
   }
 
   if (!analytics) return null

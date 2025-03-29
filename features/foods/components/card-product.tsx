@@ -33,7 +33,7 @@ export type ResponseType = InferResponseType<
 
 export const CardProduct = ({ ...product }: ResponseType) => {
   const { onOpen } = useOpenCart()
-  const { name } = product
+  const { name, reviewsAmount, reviewsAvg } = product
 
   return (
     <Card className="overflow-hidden p-0">
@@ -43,8 +43,15 @@ export const CardProduct = ({ ...product }: ResponseType) => {
       </CardHeader>
       <CardContent className="px-2">
         <ProductPrice {...product} />
-        <p className="text-sm text-gray-500 line-clamp-2">
-          Ainda não há avaliações para este produto
+        <p
+          className={cn(
+            'text-sm text-muted-foreground line-clamp-1',
+            reviewsAmount && reviewsAvg && 'text-yellow-600'
+          )}
+        >
+          {reviewsAmount && reviewsAvg
+            ? `${reviewsAmount} (${reviewsAvg} ★)`
+            : 'Sem avaliação'}
         </p>
       </CardContent>
       <CardFooter className="p-2">

@@ -280,7 +280,6 @@ const FormCartComponent = ({
                   </FormItem>
                 )}
               />
-              <Separator />
             </form>
           </Form>
         </ScrollArea>

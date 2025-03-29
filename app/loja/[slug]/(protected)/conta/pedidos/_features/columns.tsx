@@ -1,9 +1,10 @@
 'use client'
 
 import Image from 'next/image'
+import { format } from 'date-fns'
 import { InferResponseType } from 'hono'
-import { ArrowUpDown, Clock, Star } from 'lucide-react'
 import { ColumnDef } from '@tanstack/react-table'
+import { ArrowUpDown, Clock, Star } from 'lucide-react'
 
 import { client } from '@/lib/hono'
 import { formatCurrency } from '@/lib/utils'
@@ -183,6 +184,7 @@ export const columns: ColumnDef<ResponseType>[] = [
     },
     cell: ({ row }) => {
       const { onOpen } = useNewReview()
+      const history = row.original.histories[0].orderHistory
 
       return (
         <div className="grid grid-cols-2 gap-4">
@@ -219,10 +221,13 @@ export const columns: ColumnDef<ResponseType>[] = [
                 )}
               </div>
               <div className="col-span-2 space-y-4">
-                {/* TODO: Review after history 'DELIVERED' */}
                 <Button
-                  variant={item.reviewed ? 'outline' : 'red'}
-                  disabled={item.reviewed}
+                  variant={
+                    item.reviewed || history.progress !== 'DELIVERED'
+                      ? 'outline'
+                      : 'red'
+                  }
+                  disabled={item.reviewed || history.progress !== 'DELIVERED'}
                   onClick={() => onOpen(row.original.id, item.id)}
                   className="disabled:opacity-100"
                 >
@@ -311,7 +316,7 @@ export const columns: ColumnDef<ResponseType>[] = [
           <div>
             <ColumnDetail
               title="Hora do pedido"
-              value={new Date(createdAt).toLocaleTimeString()}
+              value={format(new Date(createdAt), 'HH:mm')}
             />
             <ColumnDetail
               title="Data"

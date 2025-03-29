@@ -8,6 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { Skeleton } from '@/components/ui/skeleton'
 import { BarVariant } from '@/components/bar-variant'
 import { AreaVariant } from '@/components/area-variant'
 import { WrapperVariant } from '@/app/(protected)/plataforma/_components/wrapper-variant'
@@ -53,5 +54,21 @@ export const ChartVariant = ({ data, fields, title }: Props) => {
         {chartType === 'bar' && <BarVariant data={data} fields={fields} />}
       </>
     </WrapperVariant>
+  )
+}
+
+export const CharVariantLoading = () => {
+  return (
+    <div className="flex flex-col gap-2">
+      <div className="flex items-center justify-between">
+        <Skeleton className="h-[36px] w-[100px]" />
+        <Skeleton className="h-[36px] w-[100px]" />
+      </div>
+      <Skeleton className="h-[350px] w-full" />
+      <div className="flex gap-2">
+        <Skeleton className="h-5 w-[80px]" />
+        <Skeleton className="h-5 w-[80px]" />
+      </div>
+    </div>
   )
 }

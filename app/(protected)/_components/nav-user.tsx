@@ -88,15 +88,15 @@ export function NavUser({ user }: UserProps) {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuGroup>
+            {/* <DropdownMenuGroup>
               <Link href="/plataforma/suporte">
                 <DropdownMenuItem className="cursor-pointer">
                   <Sparkles />
                   Suporte
                 </DropdownMenuItem>
               </Link>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
+            </DropdownMenuGroup> */}
+            {/* <DropdownMenuSeparator /> */}
             <DropdownMenuGroup>
               <Link href="/plataforma/conta">
                 <DropdownMenuItem className="cursor-pointer">
@@ -110,7 +110,7 @@ export function NavUser({ user }: UserProps) {
                   Segurança
                 </DropdownMenuItem>
               </Link>
-              <Link href="/plataforma/planos">
+              {/* <Link href="/plataforma/planos">
                 <DropdownMenuItem className="cursor-pointer">
                   <CreditCard />
                   Planos
@@ -121,7 +121,7 @@ export function NavUser({ user }: UserProps) {
                   <Bell />
                   Notificações
                 </DropdownMenuItem>
-              </Link>
+              </Link> */}
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem

@@ -37,7 +37,7 @@ export const useCreateOrder = () => {
       if ('success' in res) {
         toast.success(res.success)
       }
-      queryClient.invalidateQueries({ queryKey: ['food-orders'] })
+      queryClient.invalidateQueries({ queryKey: ['store-food-orders'] })
     },
     onError: (err) => {
       toast.error(err.message)

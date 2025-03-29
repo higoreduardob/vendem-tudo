@@ -5,7 +5,6 @@ import { db } from '@/lib/db'
 
 import authConfig from '@/auth.config'
 
-// TODO: add mask
 export const { handlers, signIn, signOut, auth } = NextAuth({
   pages: {
     signIn: '/entrar',

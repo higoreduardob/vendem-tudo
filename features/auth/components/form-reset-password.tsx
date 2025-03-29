@@ -20,6 +20,7 @@ import {
   FormControl,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from '@/components/ui/form'
 import { InputPassword } from '@/components/input-custom'
@@ -89,6 +90,7 @@ export const FormResetPassword = ({
                 name="password"
                 render={({ field }) => (
                   <FormItem className="w-full">
+                    <FormLabel>Nova senha</FormLabel>
                     <FormControl>
                       <InputPassword
                         {...field}
@@ -109,6 +111,7 @@ export const FormResetPassword = ({
               name="repeatPassword"
               render={({ field }) => (
                 <FormItem className="w-full">
+                  <FormLabel>Repetir nova senha</FormLabel>
                   <FormControl>
                     <InputPassword
                       {...field}

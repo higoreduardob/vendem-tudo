@@ -14,8 +14,10 @@ export const Actions = () => {
   const { onOpen } = useNewFood()
 
   return (
-    <div className="flex items-center gap-2">
-      <Button onClick={onOpen}>Adicionar</Button>
+    <div className="flex items-center gap-2 w-full">
+      <Button onClick={onOpen} className="w-full">
+        Adicionar
+      </Button>
       {/* TODO: Create export feature */}
       {/* <Button variant="outline" className="hidden sm:flex">
         <Download className="mr-2 h-4 w-4" />

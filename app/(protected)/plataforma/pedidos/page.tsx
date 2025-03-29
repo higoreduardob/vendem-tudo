@@ -11,8 +11,9 @@ import { useGetOrders } from '@/features/foods/orders/api/use-get-orders'
 import { useFilterOrder } from '@/features/foods/orders/hooks/use-filter-order'
 import { useGetAnalytics } from '@/features/foods/orders/api/use-get-analytics'
 
-import { DataTable } from '@/components/data-table'
+import { Skeleton } from '@/components/ui/skeleton'
 import { Title } from '@/app/(protected)/_components/title'
+import { DataTable, DataTableLoading } from '@/components/data-table'
 import { Actions } from '@/app/(protected)/plataforma/pedidos/_components/actions'
 import { Analytics } from '@/app/(protected)/plataforma/pedidos/_components/analytics'
 
@@ -33,9 +34,14 @@ export default function OrdersPage() {
     ),
   ]
 
-  // TODO: Add skeleton
   if (isLoading) {
-    return <div className="w-full flex flex-col gap-4">Skeleton</div>
+    return (
+      <div className="w-full flex flex-col gap-4">
+        <Skeleton className="h-[30px] w-[300px]" />
+        <Skeleton className="h-[80px] w-full" />
+        <DataTableLoading />
+      </div>
+    )
   }
 
   if (!analytics) return null

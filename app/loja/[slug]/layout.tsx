@@ -33,7 +33,6 @@ export default function StoreLayout({
       router.push(`/loja/${store.slug}/manutencao`)
     }
   }, [router, store, isMaintenancePage, pathname])
-  // TODO: Check if store is available to sales (categories/products/payment/delivery e etc..)
 
   if (!store) {
     return null

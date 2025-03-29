@@ -9,7 +9,7 @@ export const Actions = () => {
   const { from, to, onChangeFilterDate, onClearFilterDate } = useFilterOrder()
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-2 w-full">
       {/* TODO: Fix error currenty day empty order */}
       <DateRangePicker
         from={from}

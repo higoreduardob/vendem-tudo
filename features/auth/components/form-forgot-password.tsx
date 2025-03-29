@@ -18,6 +18,7 @@ import {
   FormControl,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
@@ -78,6 +79,7 @@ export const FormForgotPassword = ({
             name="email"
             render={({ field }) => (
               <FormItem className="w-full">
+                <FormLabel>Email</FormLabel>
                 <FormControl>
                   <Input
                     {...field}

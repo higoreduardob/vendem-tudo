@@ -11,10 +11,14 @@ import { useGetOrders } from '@/features/foods/orders/api/use-get-orders'
 import { useGetSummary } from '@/features/foods/orders/api/use-get-summary'
 import { useFilterOrder } from '@/features/foods/orders/hooks/use-filter-order'
 
-import { DataTable } from '@/components/data-table'
+import { DataTable, DataTableLoading } from '@/components/data-table'
 import { PieVariant } from '@/components/pie-variant'
 import { Title } from '@/app/(protected)/_components/title'
-import { ChartVariant } from '@/app/(protected)/plataforma/_components/chart-variant'
+import {
+  ChartVariant,
+  CharVariantLoading,
+} from '@/app/(protected)/plataforma/_components/chart-variant'
+import { Skeleton } from '@/components/ui/skeleton'
 import { WrapperVariant } from '@/app/(protected)/plataforma/_components/wrapper-variant'
 import { Analytics } from '@/app/(protected)/plataforma/(dashboard)/_components/analytics'
 
@@ -35,9 +39,19 @@ export default function DashboardPage() {
     ),
   ]
 
-  // TODO: Add skeleton
   if (isLoading) {
-    return <div className="w-full flex flex-col gap-4">Skeleton</div>
+    return (
+      <div className="w-full flex flex-col gap-4">
+        <Skeleton className="h-[30px] w-[300px]" />
+        <Skeleton className="h-[80px] w-full" />
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
+          <CharVariantLoading />
+          <CharVariantLoading />
+          <CharVariantLoading />
+        </div>
+        <DataTableLoading />
+      </div>
+    )
   }
 
   if (!summary) return null
@@ -46,7 +60,7 @@ export default function DashboardPage() {
     <div className="w-full flex flex-col gap-4">
       <Title>Painel</Title>
       <Analytics {...summary.overview} />
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
         <ChartVariant
           title="Movimentações"
           data={summary.summary || []}

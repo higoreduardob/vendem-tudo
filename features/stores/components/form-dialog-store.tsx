@@ -35,7 +35,7 @@ export const FormDialogStore = ({
       status={status}
       onDelete={onDelete}
       handleClose={handleClose}
-      className="max-w-3xl"
+      className="max-w-[90%] md:max-w-3xl"
     >
       <FormStore
         isOpen={isOpen}

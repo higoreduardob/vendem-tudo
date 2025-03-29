@@ -67,7 +67,7 @@ export const FormFoodOption = ({
       status={status}
       onDelete={onDelete}
       handleClose={handleClose}
-      className="max-w-lg"
+      className="max-w-[90%] md:max-w-lg"
     >
       <Form {...form}>
         <form

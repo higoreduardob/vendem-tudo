@@ -37,6 +37,7 @@ import {
 } from '@/components/ui/table'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import { Skeleton } from '@/components/ui/skeleton'
 import { SelectFilter } from '@/components/select-filter'
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 
@@ -117,7 +118,7 @@ export function DataTable<TData, TValue>({
     <>
       <ConfirmationDialog />
       <div className="w-full space-y-2">
-        <div className="flex items-center">
+        <div className="flex items-center flex-wrap gap-2 justify-between">
           <Input
             placeholder={`Filtrar por ${placeholder}`}
             value={
@@ -126,10 +127,11 @@ export function DataTable<TData, TValue>({
             onChange={(event) =>
               table.getColumn(filterKey)?.setFilterValue(event.target.value)
             }
-            className="max-w-sm"
+            className="lg:max-w-sm w-full h-9"
             disabled={disabled}
           />
-          <div className="ml-auto flex items-center gap-2">
+
+          <div className="flex items-center gap-2 flex-wrap lg:flex-nowrap w-full lg:w-fit">
             {table.getFilteredSelectedRowModel().rows.length > 0 && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -189,8 +191,12 @@ export function DataTable<TData, TValue>({
               isDisabled={disabled}
             />
             <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" disabled={disabled}>
+              <DropdownMenuTrigger asChild className="w-full">
+                <Button
+                  variant="outline"
+                  disabled={disabled}
+                  className="flex items-center justify-between"
+                >
                   Colunas <ChevronDown />
                 </Button>
               </DropdownMenuTrigger>
@@ -216,7 +222,7 @@ export function DataTable<TData, TValue>({
             </DropdownMenu>
           </div>
         </div>
-
+        {/* TODO: Add responsive table */}
         <ScrollArea className="w-full overflow-x-auto rounded-md border">
           <Table className="w-full min-w-[800px]">
             <TableHeader>
@@ -296,5 +302,28 @@ export function DataTable<TData, TValue>({
         </div>
       </div>
     </>
+  )
+}
+
+export const DataTableLoading = () => {
+  return (
+    <div className="w-full space-y-2">
+      <div className="flex items-center flex-wrap gap-2 justify-between">
+        <Skeleton className="h-9 w-[400px] lg:max-w-sm" />
+        <div className="flex items-center gap-2 flex-wrap lg:flex-nowrap w-full lg:w-fit">
+          <Skeleton className="h-9 w-[130px]" />
+          <Skeleton className="h-9 w-[130px]" />
+          <Skeleton className="h-9 w-[130px]" />
+        </div>
+      </div>
+      <Skeleton className="h-[300px] w-full" />
+      <div className="flex items-center justify-between gap-2">
+        <Skeleton className="h-[20px] w-[200px]" />
+        <div className="flex items-center gap-2">
+          <Skeleton className="h-[30px] w-[150px]" />
+          <Skeleton className="h-[30px] w-[150px]" />
+        </div>
+      </div>
+    </div>
   )
 }

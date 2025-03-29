@@ -152,7 +152,7 @@ export const FormDetail = ({ isPending }: { isPending?: boolean }) => {
                       field.onChange(cpfCnpjMask(value))
                     }
                     disabled={isPending}
-                    placeholder="CPF/CNPJ do(a) dono/loja"
+                    placeholder="CPF do dono ou CNPJ da loja"
                   />
                 </FormControl>
                 <FormMessage />

@@ -35,6 +35,9 @@ export const useGetOverview = () => {
         })),
       }
     },
+    refetchInterval: 5 * 1000, // TODO: Create webhook
+    refetchIntervalInBackground: true,
+    refetchOnWindowFocus: true,
   })
 
   return query

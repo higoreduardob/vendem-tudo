@@ -58,7 +58,7 @@ const OrderRecieptComponent = ({
 
   return (
     <Dialog onOpenChange={handleClose} open={isOpen}>
-      <DialogContent className="max-w-lg mx-auto p-4 print:p-0">
+      <DialogContent className="border-none w-full max-w-[90%] md:max-w-[700px] max-h-[90%] overflow-y-auto p-4">
         <DialogHeader className="flex justify-between items-center mb-4 print:hidden">
           <DialogTitle className="text-2xl font-bold">
             Pedido #{order.code}
@@ -151,7 +151,7 @@ const OrderRecieptComponent = ({
                         <p className="text-sm italic mt-1">Obs: {item.obs}</p>
                       )}
                     </div>
-
+{/* TODO: Check additionals */}
                     {item.additionals && !!item.additionals.length && (
                       <div className="mt-2">
                         <p className="text-sm">
@@ -174,7 +174,7 @@ const OrderRecieptComponent = ({
                         </p>
                       </div>
                     )}
-
+{/* TODO: Check ingredients */}
                     {!!item.food.ingredients.length && (
                       <div className="mt-2 text-xs text-muted-foreground">
                         <p>Ingredientes: {item.food.ingredients.join(', ')}</p>

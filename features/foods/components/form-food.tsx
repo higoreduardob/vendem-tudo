@@ -107,7 +107,7 @@ export const FormFood = ({
       status={status}
       onDelete={onDelete}
       handleClose={handleClose}
-      className="max-w-3xl"
+      className="max-w-[90%] md:max-w-3xl"
     >
       <Form {...form}>
         <form
@@ -115,7 +115,7 @@ export const FormFood = ({
           className="flex flex-col gap-2"
           onSubmit={form.handleSubmit(handleSubmit)}
         >
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
             <FormField
               control={form.control}
               name="image"
@@ -174,7 +174,7 @@ export const FormFood = ({
                   </FormItem>
                 )}
               />
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 <FormField
                   control={form.control}
                   name="price"
@@ -222,11 +222,12 @@ export const FormFood = ({
               <FormItem>
                 <FormLabel>Descrição</FormLabel>
                 <FormControl>
+                  {/* TODO: Add responsive */}
                   <TooltipProvider delayDuration={0}>
                     <MinimalTiptapEditor
                       {...field}
                       throttleDelay={0}
-                      className={cn('h-full min-h-56 w-full rounded-md', {
+                      className={cn('h-full min-h-56 sm:w-full rounded-md', {
                         'border-destructive focus-within:border-destructive':
                           form.formState.errors.description,
                       })}

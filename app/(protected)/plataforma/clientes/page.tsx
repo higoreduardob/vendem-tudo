@@ -7,8 +7,9 @@ import { useFilterUser } from '@/features/users/hooks/use-filter-user'
 import { useGetAnalytics } from '@/features/customers/api/use-get-analytics'
 import { useBulkDeleteUsers } from '@/features/users/api/use-bulk-delete-users'
 
-import { DataTable } from '@/components/data-table'
+import { Skeleton } from '@/components/ui/skeleton'
 import { Title } from '@/app/(protected)/_components/title'
+import { DataTable, DataTableLoading } from '@/components/data-table'
 import { Analytics } from '@/app/(protected)/plataforma/clientes/_components/analytics'
 
 export default function CustomersPage() {
@@ -25,9 +26,14 @@ export default function CustomersPage() {
     deleteUsers.isPending ||
     analyticsQuery.isLoading
 
-  // TODO: Create skeleton
   if (isLoading) {
-    return <>Skeleton</>
+    return (
+      <div className="w-full flex flex-col gap-4">
+        <Skeleton className="h-[30px] w-[300px]" />
+        <Skeleton className="h-[80px] w-full" />
+        <DataTableLoading />
+      </div>
+    )
   }
 
   if (!analytics) return null

@@ -59,10 +59,11 @@ export const FormSignUp = ({
             name="name"
             render={({ field }) => (
               <FormItem className="w-full">
+                <FormLabel>Nome</FormLabel>
                 <FormControl>
                   <Input
                     {...field}
-                    placeholder="Informe seu nome"
+                    placeholder="Informe seu nome completo"
                     disabled={isPending}
                   />
                 </FormControl>
@@ -75,6 +76,7 @@ export const FormSignUp = ({
             name="email"
             render={({ field }) => (
               <FormItem className="w-full">
+                <FormLabel>Email</FormLabel>
                 <FormControl>
                   <Input
                     {...field}
@@ -94,6 +96,7 @@ export const FormSignUp = ({
             name="whatsApp"
             render={({ field }) => (
               <FormItem className="w-full">
+                <FormLabel>WhatsApp</FormLabel>
                 <FormControl>
                   <Input
                     {...field}
@@ -114,6 +117,7 @@ export const FormSignUp = ({
             name="cpfCnpj"
             render={({ field }) => (
               <FormItem className="w-full">
+                <FormLabel>CPF</FormLabel>
                 <FormControl>
                   <Input
                     {...field}
@@ -122,7 +126,7 @@ export const FormSignUp = ({
                       field.onChange(cpfCnpjMask(value))
                     }
                     value={field.value || ''}
-                    placeholder="CPF/CNPJ do usuário"
+                    placeholder="Informe seu CPF"
                   />
                 </FormControl>
                 <FormMessage />
@@ -136,6 +140,7 @@ export const FormSignUp = ({
             name="address.zipCode"
             render={({ field }) => (
               <FormItem className="w-full">
+                <FormLabel>CEP</FormLabel>
                 <FormControl>
                   <Input
                     {...field}
@@ -166,6 +171,7 @@ export const FormSignUp = ({
             name="address.neighborhood"
             render={({ field }) => (
               <FormItem className="w-full">
+                <FormLabel>Bairro</FormLabel>
                 <FormControl>
                   <Input
                     {...field}
@@ -185,6 +191,7 @@ export const FormSignUp = ({
             name="address.number"
             render={({ field }) => (
               <FormItem className="w-full">
+                <FormLabel>Número</FormLabel>
                 <FormControl>
                   <Input
                     {...field}
@@ -202,6 +209,7 @@ export const FormSignUp = ({
             name="address.city"
             render={({ field }) => (
               <FormItem className="w-full">
+                <FormLabel>Cidade</FormLabel>
                 <FormControl>
                   <Input
                     {...field}
@@ -219,6 +227,7 @@ export const FormSignUp = ({
             name="address.state"
             render={({ field }) => (
               <FormItem className="w-full">
+                <FormLabel>Estado</FormLabel>
                 <FormControl>
                   <Input
                     {...field}
@@ -238,6 +247,7 @@ export const FormSignUp = ({
             name="address.street"
             render={({ field }) => (
               <FormItem className="w-full">
+                <FormLabel>Rua</FormLabel>
                 <FormControl>
                   <Input
                     {...field}
@@ -255,6 +265,7 @@ export const FormSignUp = ({
             name="address.complement"
             render={({ field }) => (
               <FormItem className="w-full">
+                <FormLabel>Complemento</FormLabel>
                 <FormControl>
                   <Input
                     {...field}
@@ -275,6 +286,7 @@ export const FormSignUp = ({
               name="password"
               render={({ field }) => (
                 <FormItem className="w-full">
+                  <FormLabel>Senha</FormLabel>
                   <FormControl>
                     <InputPassword
                       {...field}
@@ -295,6 +307,7 @@ export const FormSignUp = ({
             name="repeatPassword"
             render={({ field }) => (
               <FormItem className="w-full">
+                <FormLabel>Repetir senha</FormLabel>
                 <FormControl>
                   <InputPassword
                     {...field}

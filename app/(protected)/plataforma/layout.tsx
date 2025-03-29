@@ -1,16 +1,10 @@
 'use client'
 
-import {
-  // Bell,
-  Box,
-  LayoutDashboard,
-  ShoppingCart,
-  Store,
-  Users,
-} from 'lucide-react'
 import Link from 'next/link'
+import { Box, LayoutDashboard, ShoppingCart, Store, Users } from 'lucide-react'
 
 import { useCurrentUser } from '@/features/auth/hooks/use-current-user'
+import { useGetOrders } from '@/features/foods/orders/api/use-get-orders'
 
 import {
   SidebarInset,
@@ -18,11 +12,13 @@ import {
   SidebarTrigger,
 } from '@/components/ui/sidebar'
 import { Button } from '@/components/ui/button'
-// import { Switch } from '@/components/ui/switch'
 import { Separator } from '@/components/ui/separator'
-// import { ButthonTheme } from '@/components/button-custom'
 import { AppSidebar } from '@/app/(protected)/_components/app-sidebar'
+import { NotificationManager } from '@/components/notification-manager'
 import { SmartBreadcrumb } from '@/app/(protected)/_components/smart-breadcrumb'
+
+// import { Switch } from '@/components/ui/switch'
+// import { ButthonTheme } from '@/components/button-custom'
 
 const DASHBOARD_NAV_MAIN = [
   {
@@ -76,12 +72,12 @@ const DASHBOARD_NAV_MAIN = [
 ]
 
 const USER_NAV_MAIN = [
-  {
-    title: 'Suporte',
-    url: '/plataforma/suporte',
-    isActive: false,
-    items: undefined,
-  },
+  // {
+  //   title: 'Suporte',
+  //   url: '/plataforma/suporte',
+  //   isActive: false,
+  //   items: undefined,
+  // },
   {
     title: 'Conta',
     url: '/plataforma/conta',
@@ -94,18 +90,18 @@ const USER_NAV_MAIN = [
     isActive: false,
     items: undefined,
   },
-  {
-    title: 'Planos',
-    url: '/plataforma/planos',
-    isActive: false,
-    items: undefined,
-  },
-  {
-    title: 'Notificações',
-    url: '/plataforma/notificacoes',
-    isActive: false,
-    items: undefined,
-  },
+  // {
+  //   title: 'Planos',
+  //   url: '/plataforma/planos',
+  //   isActive: false,
+  //   items: undefined,
+  // },
+  // {
+  //   title: 'Notificações',
+  //   url: '/plataforma/notificacoes',
+  //   isActive: false,
+  //   items: undefined,
+  // },
 ]
 
 export default function DashboardLayout({
@@ -114,6 +110,11 @@ export default function DashboardLayout({
   children: React.ReactNode
 }) {
   const { user } = useCurrentUser()
+  const ordersQuery = useGetOrders(true)
+  const orders = ordersQuery.data || []
+  const ordersPending = orders.filter(
+    (order) => order.histories[0].orderHistory.progress === 'PENDING'
+  )
 
   const navMainForBreadcrumb = DASHBOARD_NAV_MAIN.map(({ icon, ...rest }) => ({
     ...rest,
@@ -142,19 +143,17 @@ export default function DashboardLayout({
             <div className="flex items-center gap-2">
               {/* <ButthonTheme /> */}
               {/* <Separator orientation="vertical" className="mr-2 h-4" /> */}
-              {/* TODO: Implement notifications */}
-              {/* <Button variant="ghost" className="relative">
-                <span className="absolute top-0 left-6 flex items-center justify-center h-[16px] min-w-[16px] text-[12px] text-white bg-red-600 rounded-full">
-                  3
-                </span>
-                <Bell className="h-[1.2rem] w-[1.2rem]" />
-              </Button> */}
+              <NotificationManager
+                ordersPending={ordersPending}
+                dataUpdatedAt={ordersQuery.dataUpdatedAt}
+              />
               {/* <Separator orientation="vertical" className="mr-2 h-4" /> */}
               <Link href={`/loja/${user?.selectedStore?.slug}`}>
                 <Button variant="ghost">
                   <Store className="h-[1.2rem] w-[1.2rem]" />
                 </Button>
               </Link>
+              {/* TODO: Check handleOpenStore */}
               {/* <Separator orientation="vertical" className="mr-2 h-4" /> */}
               {/* <Switch checked={field.value} onCheckedChange={field.onChange} /> */}
             </div>

@@ -77,7 +77,7 @@ export const BarVariant = ({ data, fields }: VariantProps) => {
       </ResponsiveContainer>
 
       {!!data.length && (
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           {fields.map((field, index) => (
             <Badge
               key={index}
