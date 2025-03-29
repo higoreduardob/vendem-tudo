@@ -1,8 +1,8 @@
 'use client'
 
 import Image from 'next/image'
-import { Clock, Printer } from 'lucide-react'
 import { InferResponseType } from 'hono'
+import { Clock, Printer } from 'lucide-react'
 import { ColumnDef } from '@tanstack/react-table'
 
 import { OrderHistoryProgress } from '@prisma/client'
@@ -18,8 +18,6 @@ import { createEnumOptions, formatCurrency } from '@/lib/utils'
 import { useOpenOrder } from '@/features/foods/orders/hooks/use-open-order'
 import { useUpdateHistory } from '@/features/foods/orders/api/use-update-history'
 
-import { Actions } from './actions'
-
 import {
   Tooltip,
   TooltipContent,
@@ -28,7 +26,6 @@ import {
 } from '@/components/ui/tooltip'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
 import { SelectFilter } from '@/components/select-filter'
 import { ColumnDetail } from '@/components/column-detail'
 
@@ -39,33 +36,18 @@ export type ResponseType = InferResponseType<
 
 export const columns: ColumnDef<ResponseType>[] = [
   {
-    // TODO: hidden checkbox
     id: 'select',
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && 'indeterminate')
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
+    header: () => null,
+    cell: () => null,
     enableSorting: false,
     enableHiding: false,
   },
   {
-    accessorKey: 'código',
+    accessorKey: 'code',
     enableHiding: false,
-    header: () => null,
-    cell: () => null,
+    enableSorting: false,
+    header: () => <Button variant="ghost">Código</Button>,
+    cell: ({ row }) => row.original.code,
   },
   {
     accessorKey: 'pagamento',
@@ -74,9 +56,6 @@ export const columns: ColumnDef<ResponseType>[] = [
     },
     cell: ({ row }) => (
       <div className="flex flex-col gap-2">
-        {/* TODO: filter code in input */}
-        <ColumnDetail title="Código" value={row.original.code} />
-
         <div className="flex flex-col">
           <ColumnDetail title="Cliente" value={row.original.customer.name} />
           <ColumnDetail

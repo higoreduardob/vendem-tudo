@@ -25,11 +25,26 @@ export const Analytics = ({
         </div>
 
         <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 flex-1 items-center gap-4">
-          <AnalyticItem title="Pedidos" value={totalOrders} />
-          <AnalyticItem title="Pendentes" value={pendingOrders} />
-          {/* TODO: Check all customers or remove this */}
-          <AnalyticItem title="Clientes" value={customers} />
-          <AnalyticItem title="Vendas" value={dailySales} />
+          <AnalyticItem
+            title="Pedidos"
+            value={totalOrders}
+            description="Total de pedidos realizados hoje"
+          />
+          <AnalyticItem
+            title="Pendentes"
+            value={pendingOrders}
+            description="Total de pedidos pendentes de hoje"
+          />
+          <AnalyticItem
+            title="Clientes"
+            value={customers}
+            description="Total de clientes da loja"
+          />
+          <AnalyticItem
+            title="Vendas"
+            value={dailySales}
+            description="Total de vendas realziadas hoje canceladas ou faturadas"
+          />
         </div>
       </CardContent>
     </Card>

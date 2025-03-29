@@ -21,8 +21,16 @@ export const Analytics = ({ mostSoldCategory, leastSoldCategory }: Props) => {
         </div>
 
         <div className="grid grid-cols-1 xs:grid-cols-2 flex-1 items-center gap-4">
-          <AnalyticItem title="Mais vendida" value={mostSoldCategory} />
-          <AnalyticItem title="Menos vendida" value={leastSoldCategory} />
+          <AnalyticItem
+            title="Mais vendida"
+            value={mostSoldCategory}
+            description="Categoria mais vendida"
+          />
+          <AnalyticItem
+            title="Menos vendida"
+            value={leastSoldCategory}
+            description="Categoria menos vendida"
+          />
         </div>
       </CardContent>
     </Card>

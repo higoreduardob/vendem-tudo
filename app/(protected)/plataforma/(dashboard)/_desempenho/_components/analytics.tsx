@@ -13,10 +13,22 @@ export const Analytics = () => {
         </div>
 
         <div className="flex flex-1 items-center gap-4">
-          <AnalyticItem title="Produtos em estoque" value="120" />
-          <AnalyticItem title="Pedidos pendentes" value="5" />
-          <AnalyticItem title="Pagamento mais utilizado" value="PIX" />
-          <AnalyticItem title="Vendas do dia" value="R$ 450,00" />
+          <AnalyticItem
+            title="Produtos em estoque"
+            value="120"
+            description=""
+          />
+          <AnalyticItem title="Pedidos pendentes" value="5" description="" />
+          <AnalyticItem
+            title="Pagamento mais utilizado"
+            value="PIX"
+            description=""
+          />
+          <AnalyticItem
+            title="Vendas do dia"
+            value="R$ 450,00"
+            description=""
+          />
         </div>
       </CardContent>
     </Card>

@@ -31,10 +31,26 @@ export const Analytics = ({
         </div>
 
         <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 flex-1 items-center gap-4">
-          <AnalyticItem title="Faturamento" value={totalRevenue} />
-          <AnalyticItem title="Mais vendido" value={mostSoldProduct} />
-          <AnalyticItem title="Menos vendido" value={leastSoldProduct} />
-          <AnalyticItem title="Mais avaliado" value={bestRatedProduct} />
+          <AnalyticItem
+            title="Faturamento"
+            value={totalRevenue}
+            description="Total de valor realmente vendido e faturado (pedidos entregues)"
+          />
+          <AnalyticItem
+            title="Mais vendido"
+            value={mostSoldProduct}
+            description="Produto mais vendido"
+          />
+          <AnalyticItem
+            title="Menos vendido"
+            value={leastSoldProduct}
+            description="Produto menos vendido"
+          />
+          <AnalyticItem
+            title="Mais avaliado"
+            value={bestRatedProduct}
+            description="Produto com maior avaliação"
+          />
         </div>
       </CardContent>
     </Card>

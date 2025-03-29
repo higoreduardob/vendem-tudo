@@ -21,7 +21,6 @@ import {
 } from '@/components/ui/tooltip'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
 import { ColumnDetail } from '@/components/column-detail'
 import { OrderProgress } from '@/components/order-progress'
 
@@ -32,34 +31,18 @@ export type ResponseType = InferResponseType<
 
 export const columns: ColumnDef<ResponseType>[] = [
   {
-    // TODO: hidden checkbox
     id: 'select',
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && 'indeterminate')
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
+    header: () => null,
+    cell: () => null,
     enableSorting: false,
     enableHiding: false,
   },
   {
-    // TODO: filter code in input
-    accessorKey: 'código',
+    accessorKey: 'code',
     enableHiding: false,
-    header: () => null,
-    cell: () => null,
+    enableSorting: false,
+    header: () => <Button variant="ghost">Código</Button>,
+    cell: ({ row }) => row.original.code,
   },
   {
     accessorKey: 'pagamento',
@@ -76,8 +59,6 @@ export const columns: ColumnDef<ResponseType>[] = [
     },
     cell: ({ row }) => (
       <div className="flex flex-col gap-2">
-        <ColumnDetail title="Código" value={row.original.code} />
-
         <div className="flex flex-col">
           <ColumnDetail
             title="Entrega"

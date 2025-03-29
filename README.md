@@ -1,5 +1,4 @@
     1 . Check todos
-    2 . Check all codes
 
     4 . SignOut de acordo com o role do user logado
     5 . Add zap no plano de cadastro
@@ -7,7 +6,7 @@
 
     Responsivo:
       Plataforma:
-        Sidebar com Title
+        Sidebar com Title mobile
         Painel/Alimentos/Categorias/Pedidos/Clientes/Adicionais/Opcções: Tabela
         Adicionar Alimento: Text rich
         Loja: Cabeçalho/Horários/Tabela de entrega
@@ -52,3 +51,4 @@
       16 . Notificações: 1. Fazer push notifications, e pesquisar como fazer no next para os registros de pedidos | 2 . check stages in order food
       17 . Melhorar o estilo do email enviado
       18 . Responsivo da gestão
+      19 . Check all codes - refactor

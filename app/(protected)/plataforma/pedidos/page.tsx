@@ -51,7 +51,7 @@ export default function OrdersPage() {
       <Title>Pedidos</Title>
       <Analytics {...analytics} />
       <DataTable
-        filterKey="código"
+        filterKey="code"
         placeholder="código"
         data={orders}
         columns={columns}

@@ -25,10 +25,26 @@ export const Analytics = ({
         </div>
 
         <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 flex-1 items-center gap-4">
-          <AnalyticItem title="Pedidos" value={totalOrders} />
-          <AnalyticItem title="Cancelados" value={totalCancelled} />
-          <AnalyticItem title="Faturamento" value={totalRevenue} />
-          <AnalyticItem title="Ticket médio" value={averageTicket} />
+          <AnalyticItem
+            title="Pedidos"
+            value={totalOrders}
+            description="Total de pedidos realizados"
+          />
+          <AnalyticItem
+            title="Cancelados"
+            value={totalCancelled}
+            description="Total de pedidos cancelados"
+          />
+          <AnalyticItem
+            title="Faturamento"
+            value={totalRevenue}
+            description="Total de pedidos vendidos (entregues)"
+          />
+          <AnalyticItem
+            title="Ticket médio"
+            value={averageTicket}
+            description="Valor médio por pedido entregues pela loja"
+          />
         </div>
       </CardContent>
     </Card>

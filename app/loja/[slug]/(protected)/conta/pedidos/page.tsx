@@ -31,7 +31,7 @@ export default function OrdersPage() {
     <div className="w-full flex flex-col gap-4">
       <Title>Pedidos</Title>
       <DataTable
-        filterKey="código"
+        filterKey="code"
         placeholder="código"
         columns={columns}
         data={orders}

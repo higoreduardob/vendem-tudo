@@ -25,15 +25,25 @@ export const Analytics = ({
         </div>
 
         <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 flex-1 items-center gap-4">
-          <AnalyticItem title="Clientes" value={totalCustomers} />
-          <AnalyticItem title="Ticket médio" value={avgTicket} />
           <AnalyticItem
-            title="Bairro mais entregue"
-            value={mostDeliveredNeighborhood}
+            title="Clientes"
+            value={totalCustomers}
+            description="Total de clientes da loja"
           />
           <AnalyticItem
-            title="Bairro menos entregue"
+            title="Ticket médio"
+            value={avgTicket}
+            description="Valor médio gasto pelos clientes da loja (pedidos entregues)"
+          />
+          <AnalyticItem
+            title="Mais entregue"
+            value={mostDeliveredNeighborhood}
+            description="Bairro mais entregue pela loja"
+          />
+          <AnalyticItem
+            title="Menos entregue"
             value={leastDeliveredNeighborhood}
+            description="Bairro menos entregue pela loja"
           />
         </div>
       </CardContent>

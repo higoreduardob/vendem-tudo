@@ -726,7 +726,7 @@ const app = new Hono()
     }
 
     const result = await db.$queryRaw<SummaryResult[]>(
-      Prisma.sql`
+    Prisma.sql`
       WITH order_data AS (
         SELECT 
           fo.id as order_id,
@@ -776,11 +776,16 @@ const app = new Hono()
         ORDER BY quantity DESC
         LIMIT 5
       ),
+      store_customers AS (
+        SELECT COUNT(*)::float as total_customers
+        FROM "User"
+        WHERE "storeId" = ${store.id} AND role = 'CUSTOMER'
+      ),
       today_orders AS (
         SELECT 
           COUNT(o.order_id)::float as total_orders,
           COUNT(CASE WHEN o.is_pending = 1 AND o.is_delivered = 0 AND o.is_cancelled = 0 THEN 1 END)::float as pending_orders,
-          COUNT(DISTINCT o.customer_id)::float as customers,
+          (SELECT total_customers FROM store_customers) as customers,
           SUM(o.amount)::float as daily_sales
         FROM order_data o
         WHERE 
