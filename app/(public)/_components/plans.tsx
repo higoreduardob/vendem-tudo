@@ -10,6 +10,8 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 
+import { signUpWhatsAppNumber } from '@/constants'
+
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
@@ -123,8 +125,11 @@ export const Plans = () => {
       </CardContent>
 
       <CardFooter className="flex flex-col space-y-2 p-2 pt-0">
-        {/* TODO: Conversar no zap */}
-        <Link href="/" className="w-full">
+        <Link
+          href={`https://wa.me/${signUpWhatsAppNumber}?text=Ol%C3%A1%21%20Tenho%20interesse%20em%20assinar%20a%20plataforma%20de%20delivery%20e%20gostaria%20de%20mais%20informa%C3%A7%C3%B5es.%20Poderia%20me%20ajudar%3F
+`}
+          className="w-full"
+        >
           <Button variant="purple" className="w-full py-6">
             Assinar Agora
           </Button>

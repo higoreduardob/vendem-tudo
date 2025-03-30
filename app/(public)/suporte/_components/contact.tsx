@@ -5,6 +5,8 @@ import {
   InsertMessageFormValues,
 } from '@/features/auth/schema'
 
+import { signUpWhatsAppNumber } from '@/constants'
+
 import { SubTitle } from '@/app/(public)/_components/sub-title'
 import { Detail } from '@/app/(public)/suporte/_components/detail'
 import { FormContact } from '@/features/auth/components/form-contact'
@@ -41,9 +43,21 @@ export const Contact = () => {
     },
   }
 
-  // TODO: Add smtp
   const onSubmit = (values: InsertMessageFormValues) => {
-    console.log(values)
+    const { name, email, subject, message } = values
+
+    const text =
+      `Olá, gostaria de entrar em contato!\n\n` +
+      `Nome: ${name}\n` +
+      `Email: ${email}\n` +
+      `Assunto: ${subject}\n` +
+      `Mensagem: ${message}`
+
+    const whatsappURL = `https://wa.me/${signUpWhatsAppNumber}?text=${encodeURIComponent(
+      text
+    )}`
+
+    window.open(whatsappURL, '_blank')
   }
 
   return (

@@ -1,4 +1,7 @@
-import { CheckCircle2 } from 'lucide-react'
+import Link from 'next/link'
+// import { CheckCircle2 } from 'lucide-react'
+
+import { signUpWhatsAppNumber } from '@/constants'
 
 import {
   Accordion,
@@ -91,10 +94,15 @@ export const Faq = () => {
         {details.support.details.map((detail, index) => (
           <Detail key={index} {...detail} />
         ))}
-        {/* TODO: Add zap */}
-        <Button size="lg" variant="purple" className="w-full">
-          Falar com um especialista
-        </Button>
+        <Link
+          href={`https://wa.me/${signUpWhatsAppNumber}?text=Ol%C3%A1%21%20Tenho%20interesse%20em%20assinar%20a%20plataforma%20de%20delivery%20e%20gostaria%20de%20mais%20informa%C3%A7%C3%B5es.%20Poderia%20me%20ajudar%3F
+`}
+          className="w-full"
+        >
+          <Button size="lg" variant="purple" className="w-full">
+            Falar com um especialista
+          </Button>
+        </Link>
       </div>
     </div>
   )

@@ -2,6 +2,7 @@
 
     4 . SignOut de acordo com o role do user logado
     5 . Add zap no plano de cadastro
+    6 . Add google smtp to send email
     TODO: Add filter ativo/bloqueados todas tables
 
     Responsivo:

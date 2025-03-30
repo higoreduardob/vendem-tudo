@@ -542,17 +542,17 @@ export default function PrivacyPoliciesPage() {
             pessoais, entre em contato com nosso Encarregado de Proteção de
             Dados (DPO):
           </p>
-          {/* TODO: Add contact */}
+
           <div className="bg-muted/30 p-4 rounded-lg mt-4">
             <p>
               <strong>E-mail:</strong> contato@vendemtudo.com.br
             </p>
             <p>
-              <strong>Telefone:</strong> (00) 0 0000-0000
+              <strong>Telefone:</strong> (27) 9 9831-1970
             </p>
             <p>
-              <strong>Endereço:</strong> Av. Principal, 1000 - Centro, Cidade -
-              Estado, CEP 00000-000
+              <strong>Endereço:</strong> Rua F, 2 - Bela Vista, Colatina - ES,
+              CEP 29700-857
             </p>
           </div>
 
