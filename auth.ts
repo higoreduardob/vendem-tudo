@@ -70,6 +70,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
               id: true,
               name: true,
               slug: true,
+              enabled: true,
             },
           },
         },

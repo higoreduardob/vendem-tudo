@@ -5,6 +5,7 @@ import { Box, LayoutDashboard, ShoppingCart, Store, Users } from 'lucide-react'
 
 import { useCurrentUser } from '@/features/auth/hooks/use-current-user'
 import { useGetOrders } from '@/features/foods/orders/api/use-get-orders'
+import { useEnabledStore } from '@/features/stores/api/use-unabled-store'
 
 import {
   SidebarInset,
@@ -12,6 +13,7 @@ import {
   SidebarTrigger,
 } from '@/components/ui/sidebar'
 import { Button } from '@/components/ui/button'
+import { Switch } from '@/components/ui/switch'
 import { Separator } from '@/components/ui/separator'
 import { AppSidebar } from '@/app/(protected)/_components/app-sidebar'
 import { NotificationManager } from '@/components/notification-manager'
@@ -109,7 +111,8 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode
 }) {
-  const { user } = useCurrentUser()
+  const { user, update } = useCurrentUser()
+  const enabledMutation = useEnabledStore(user?.selectedStore?.id)
   const ordersQuery = useGetOrders(true)
   const orders = ordersQuery.data || []
   const ordersPending = orders.filter(
@@ -120,6 +123,14 @@ export default function DashboardLayout({
     ...rest,
     items: rest.items?.map(({ url, title }) => ({ url, title })),
   })).concat(USER_NAV_MAIN)
+
+  const handleEnabled = () => {
+    enabledMutation.mutate(undefined, {
+      onSuccess: () => {
+        update()
+      },
+    })
+  }
 
   return (
     <SidebarProvider>
@@ -147,15 +158,21 @@ export default function DashboardLayout({
                 ordersPending={ordersPending}
                 dataUpdatedAt={ordersQuery.dataUpdatedAt}
               />
-              {/* <Separator orientation="vertical" className="mr-2 h-4" /> */}
+              <Separator orientation="vertical" className="mr-2 h-4" />
               <Link href={`/loja/${user?.selectedStore?.slug}`}>
                 <Button variant="ghost">
                   <Store className="h-[1.2rem] w-[1.2rem]" />
                 </Button>
               </Link>
-              {/* TODO: Check handleOpenStore */}
-              {/* <Separator orientation="vertical" className="mr-2 h-4" /> */}
-              {/* <Switch checked={field.value} onCheckedChange={field.onChange} /> */}
+              {!user?.selectedStore?.enabled && (
+                <>
+                  <Separator orientation="vertical" className="mr-2 h-4" />
+                  <Switch
+                    checked={user?.selectedStore?.enabled}
+                    onCheckedChange={handleEnabled}
+                  />
+                </>
+              )}
             </div>
           </div>
         </header>

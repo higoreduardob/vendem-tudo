@@ -213,6 +213,55 @@ const app = new Hono()
     }
   )
   .patch(
+    '/:id/enabled',
+    verifyAuth(),
+    zValidator('param', z.object({ id: z.string().optional() })),
+    async (c) => {
+      const auth = c.get('authUser')
+      const { id } = c.req.valid('param')
+
+      if (!id) {
+        return c.json({ error: 'Identificador não encontrado' }, 400)
+      }
+
+      if (!auth.token?.sub) {
+        return c.json({ error: 'Usuário não autorizado' }, 401)
+      }
+
+      const user = await db.user.findUnique({ where: { id: auth.token.sub } })
+      if (!user) return c.json({ error: 'Usuário não autorizado' }, 401)
+
+      if (
+        ![
+          UserRole.OWNER as string,
+          UserRole.MANAGER as string,
+          UserRole.EMPLOYEE as string,
+        ].includes(user.role)
+      ) {
+        return c.json({ error: 'Usuário sem autorização' }, 400)
+      }
+      const ownerId = user.role === UserRole.OWNER ? user.id : user.ownerId!
+
+      const data = await db.store.findFirst({
+        where: {
+          id,
+          OR: [{ ownerId }, { users: { some: { id: user.id } } }],
+        },
+      })
+
+      if (!data) {
+        return c.json({ error: 'Loja não encontrada' }, 404)
+      }
+
+      await db.store.update({
+        where: { id, ownerId },
+        data: { enabled: true },
+      })
+
+      return c.json({ success: 'Loja habilitada' }, 200)
+    }
+  )
+  .patch(
     '/:id/selected',
     verifyAuth(),
     zValidator('param', z.object({ id: z.string().optional() })),
@@ -258,7 +307,7 @@ const app = new Hono()
         data: { selectedStore: data.id },
       })
 
-      return c.json({ message: 'Loja selecionada com sucesso' })
+      return c.json({ success: 'Loja selecionada com sucesso' }, 200)
     }
   )
   .patch(

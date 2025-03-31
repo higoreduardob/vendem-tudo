@@ -1,11 +1,10 @@
     TODO:
-      1 . TODO: Check handleOpenStore -> app/(protected)/plataforma/layout.tsx: Método para habilitar o enabled da store
-      2 . Implement Recaptcha -> app/api/[...route]/authenticate.ts
-      3 . Add responsive table -> components/data-table.tsx
-      4 . Check additionals/Check ingredients -> components/order-recipiet.tsx: Verificar se tem necessidade quantidade de informação
-      5 . Change fetch in list -> features/foods/additionals/api/use-get-food-additionals.ts e features/foods/additionals/options/api/use-get-food-options.ts
-      6 . Add responsive -> features/foods/components/form-food.tsx
-      7 . Add google smtp to send email
+      1 . Add responsive table -> components/data-table.tsx
+      2 . Check additionals/Check ingredients -> components/order-recipiet.tsx: Verificar se tem necessidade quantidade de informação
+      3 . Change fetch in list -> features/foods/additionals/api/use-get-food-additionals.ts e features/foods/additionals/options/api/use-get-food-options.ts
+      4 . Add responsive -> features/foods/components/form-food.tsx
+      5 . Implement Recaptcha -> app/api/[...route]/authenticate.ts
+      6 . Add google smtp to send email
 
     Responsivo:
       Plataforma:
@@ -122,3 +121,9 @@
         //     return c.json({ success: 'Cadastro completado' }, 200)
         //   }
         // )
+      21 . Enabled store
+      // TODO: Fix error in update enabled store in new owners
+      // await db.store.update({
+      //   where: { id: store.id, ownerId, enabled: false },
+      //   data: { enabled: true },
+      // })

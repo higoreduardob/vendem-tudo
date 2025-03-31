@@ -10,7 +10,12 @@ export type ExtendedUser = DefaultSession['user'] & {
   cpfCnpj: string | null
   whatsApp: string | null
   address: AddressFormValues
-  selectedStore: { id: string; name: string; slug: string } | null
+  selectedStore: {
+    id: string
+    name: string
+    slug: string
+    enabled: boolean
+  } | null
   status: boolean
 }
 
@@ -29,7 +34,12 @@ declare module '@auth/core/jwt' {
     cpfCnpj: string | null
     whatsApp: string | null
     address: AddressFormValues
-    selectedStore: { id: string; name: string; slug: string } | null
+    selectedStore: {
+      id: string
+      name: string
+      slug: string
+      enabled: boolean
+    } | null
     status: boolean
   }
 }

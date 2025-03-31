@@ -337,12 +337,6 @@ const app = new Hono()
       },
     })
 
-    // TODO: Fix error in update enabled store in new owners
-    // await db.store.update({
-    //   where: { id: store.id, ownerId, enabled: false },
-    //   data: { enabled: true },
-    // })
-
     return c.json({ success: 'Produto criado' }, 201)
   })
   .post(
