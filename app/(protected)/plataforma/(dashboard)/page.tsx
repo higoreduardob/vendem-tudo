@@ -121,7 +121,7 @@ export default function DashboardPage() {
         </WrapperVariant>
       </div>
       <DataTable
-        filterKey="código"
+        filterKey="code"
         placeholder="código"
         data={orders}
         columns={columns}

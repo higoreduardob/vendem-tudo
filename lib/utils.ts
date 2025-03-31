@@ -97,9 +97,13 @@ export function mapSessionToUpdateData(sessionUser: ExtendedUser) {
   return updateData as UpdateFormValues
 }
 
-export function statusFilter(status: string | undefined) {
+export function statusFilter(status?: string) {
+  if (status === undefined) {
+    return undefined
+  }
+
   const regex = /^\s*(true|1|on)\s*$/i
-  return status !== 'none' ? regex.test(status!) : undefined
+  return regex.test(status)
 }
 
 export function formatAddress(address: AddressFormValues) {
@@ -200,4 +204,36 @@ export function fillMissingDays(
 
 export function generateCode() {
   return Math.floor(100000 + Math.random() * 900000).toString()
+}
+
+export function isStoreOpen(
+  schedules: Array<{
+    enabled: boolean
+    day: number
+    open: string | Date
+    close: string | Date
+  }>
+): boolean {
+  const now = new Date()
+  const currentDay = now.getDay()
+
+  const todaySchedule = schedules.find(
+    (schedule) => schedule.day === currentDay
+  )
+
+  if (!todaySchedule || !todaySchedule.enabled) {
+    return false
+  }
+
+  const openTime = new Date(todaySchedule.open)
+  const closeTime = new Date(todaySchedule.close)
+
+  const currentTime = new Date()
+  currentTime.setFullYear(
+    openTime.getFullYear(),
+    openTime.getMonth(),
+    openTime.getDate()
+  )
+
+  return currentTime >= openTime && currentTime <= closeTime
 }

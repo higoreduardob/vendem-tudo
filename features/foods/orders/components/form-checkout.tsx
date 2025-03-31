@@ -14,7 +14,12 @@ import { useCurrentUser } from '@/features/auth/hooks/use-current-user'
 import { useCreateOrder } from '@/features/foods/orders/api/use-create-order'
 
 import { translateStorePayment } from '@/lib/i18n'
-import { cn, convertAmountToMiliunits, formatCurrency } from '@/lib/utils'
+import {
+  cn,
+  convertAmountToMiliunits,
+  formatCurrency,
+  isStoreOpen,
+} from '@/lib/utils'
 
 import {
   type InsertCheckoutFormValues,
@@ -45,6 +50,8 @@ import { Input } from '@/components/ui/input'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { ButtonLoading } from '@/components/button-custom'
 import { useIsMobile } from '@/hooks/use-mobile'
+import { toast } from 'sonner'
+import { BadgeStore } from '@/components/badge-store'
 
 type PaymentOptionType = {
   currValue: StorePayment
@@ -54,6 +61,7 @@ type PaymentOptionType = {
 
 type FormCheckoutComponentProps = {
   isOpen: boolean
+  isOpenStore: boolean
   handleClose: () => void
   store: ResponseType
   user: ExtendedUser
@@ -159,6 +167,8 @@ export const FormCheckout = () => {
 
   if (!store || !user || !order) return null
 
+  const isOpenStore = isStoreOpen(store.schedules)
+
   const onSubmit = (values: InsertCheckoutFormValues) => {
     const { deadlineAt: shippingDeadlineAt, shippingRole } = values
     const deadlineAt =
@@ -179,6 +189,7 @@ export const FormCheckout = () => {
   return (
     <FormCheckoutComponent
       isOpen={isOpen}
+      isOpenStore={isOpenStore}
       handleClose={onClose}
       store={store}
       user={user}
@@ -191,6 +202,7 @@ export const FormCheckout = () => {
 
 const FormCheckoutComponent = ({
   isOpen,
+  isOpenStore,
   handleClose,
   store,
   user,
@@ -222,6 +234,11 @@ const FormCheckoutComponent = ({
   const selectedPayment = form.watch('payment')
 
   const handleSubmit = (values: InsertCheckoutFormValues) => {
+    if (!isOpenStore) {
+      toast.error('Loja fechada')
+      return
+    }
+
     onSubmit(values)
   }
 
@@ -298,19 +315,25 @@ const FormCheckoutComponent = ({
                   />
                 )}
 
-                <ButtonLoading
-                  disabled={isPending}
-                  className="bg-teal-500 text-white font-medium hover:bg-teal-600 transition-colors"
-                >
-                  Confirmar pagamento
-                </ButtonLoading>
+                {isOpenStore ? (
+                  <ButtonLoading
+                    disabled={isPending}
+                    className="bg-teal-500 text-white font-medium hover:bg-teal-600 transition-colors"
+                  >
+                    Confirmar pagamento
+                  </ButtonLoading>
+                ) : (
+                  <BadgeStore isOpen={isOpenStore} size="md" />
+                )}
               </form>
             </Form>
             <div className="flex flex-col gap-2">
               <ScrollArea className="flex-grow max-h-[400px]">
-                {order.items.map((item, index) => (
-                  <OrderItem key={index} {...item} isNonAddedProduct />
-                ))}
+                <div className="flex flex-col gap-4">
+                  {order.items.map((item, index) => (
+                    <OrderItem key={index} {...item} isNonAddedProduct />
+                  ))}
+                </div>
               </ScrollArea>
               <div className="space-y-1">
                 <div className="flex justify-between">

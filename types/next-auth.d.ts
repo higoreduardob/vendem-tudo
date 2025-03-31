@@ -24,7 +24,7 @@ import { JWT } from '@auth/core/jwt'
 
 declare module '@auth/core/jwt' {
   interface JWT {
-    role?: UserRole
+    role: UserRole
     isTwoFactorEnabled?: boolean
     cpfCnpj: string | null
     whatsApp: string | null

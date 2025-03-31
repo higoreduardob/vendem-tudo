@@ -1,15 +1,22 @@
 import { useQuery } from '@tanstack/react-query'
 
 import { client } from '@/lib/hono'
-
 import { convertAmountFromMiliunits } from '@/lib/utils'
-import { useSearchFood } from '../hooks/use-filter-food'
+
+import {
+  useFilterFood,
+  useSearchFood,
+} from '@/features/foods/hooks/use-filter-food'
 
 export const useGetFoods = () => {
+  const { status } = useFilterFood()
+
   const query = useQuery({
-    queryKey: ['foods'],
+    queryKey: ['foods', status],
     queryFn: async () => {
-      const response = await client.api.foods.$get()
+      const response = await client.api.foods.$get({
+        query: { status },
+      })
 
       if (!response.ok) {
         const data = await response.json()

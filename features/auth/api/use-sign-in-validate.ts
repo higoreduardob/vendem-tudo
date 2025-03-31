@@ -38,24 +38,3 @@ export const useSignInValidate = () => {
 
   return mutation
 }
-
-// export const useSignInValidate = () => {
-//   return useQuery<ResponseType>({
-//     queryKey: ['validateUser'],
-//     queryFn: async () => {
-//       const response = await client.api.authenticate['sign-in']['validate']['$post']()
-
-//       if (!response.ok) {
-//         throw new Error('Erro ao validar usuário, contate o administrador')
-//       }
-
-//       return await response.json()
-//     },
-//     staleTime: 1000 * 60 * 5, // 5 minutos de cache (evita chamadas constantes)
-//     refetchInterval: 1000 * 60 * 5, // Atualiza automaticamente a cada 5 minutos
-//     refetchOnWindowFocus: false, // Evita chamadas desnecessárias ao focar a aba
-//     onError: () => {
-//       toast.error('Sessão inválida. Faça login novamente.')
-//     },
-//   })
-// }

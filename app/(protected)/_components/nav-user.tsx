@@ -1,17 +1,8 @@
 'use client'
 
-import {
-  BadgeCheck,
-  Bell,
-  ChevronsUpDown,
-  CreditCard,
-  Lock,
-  LogOut,
-  Sparkles,
-  User,
-} from 'lucide-react'
 import Link from 'next/link'
 import { signOut } from 'next-auth/react'
+import { BadgeCheck, ChevronsUpDown, Lock, LogOut, User } from 'lucide-react'
 
 import {
   SidebarMenu,

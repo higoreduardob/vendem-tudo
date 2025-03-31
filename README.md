@@ -1,9 +1,11 @@
-    1 . Check todos
-
-    4 . SignOut de acordo com o role do user logado
-    5 . Add zap no plano de cadastro
-    6 . Add google smtp to send email
-    TODO: Add filter ativo/bloqueados todas tables
+    TODO:
+      1 . TODO: Check handleOpenStore -> app/(protected)/plataforma/layout.tsx: Método para habilitar o enabled da store
+      2 . Implement Recaptcha -> app/api/[...route]/authenticate.ts
+      3 . Add responsive table -> components/data-table.tsx
+      4 . Check additionals/Check ingredients -> components/order-recipiet.tsx: Verificar se tem necessidade quantidade de informação
+      5 . Change fetch in list -> features/foods/additionals/api/use-get-food-additionals.ts e features/foods/additionals/options/api/use-get-food-options.ts
+      6 . Add responsive -> features/foods/components/form-food.tsx
+      7 . Add google smtp to send email
 
     Responsivo:
       Plataforma:
@@ -13,7 +15,6 @@
         Loja: Cabeçalho/Horários/Tabela de entrega
       Loja:
         Conta/Pedidos: Tabela
-      
 
     MELHORIAS:
 
@@ -53,3 +54,71 @@
       17 . Melhorar o estilo do email enviado
       18 . Responsivo da gestão
       19 . Check all codes - refactor
+      20 . Review this code
+        // .post(
+        //   '/sign-up-information',
+        //   zValidator('json', signUpInformationSchema),
+        //   zValidator(
+        //     'query',
+        //     z.object({
+        //       token: z.string().optional(),
+        //       role: z.nativeEnum(UserRole).optional(),
+        //     })
+        //   ),
+        //   async (c) => {
+        //     const { token, role } = c.req.valid('query')
+        //     const validatedFields = c.req.valid('json')
+
+        //     if (!token || !role) return c.json({ error: 'Usuário inválido' }, 400)
+
+        //     if (!validatedFields) return c.json({ error: 'Campos inválidos' }, 400)
+        //     const { address, ...values } = validatedFields
+
+        //     const existingUserToken = await db.verificationToken.findUnique({
+        //       where: { token },
+        //     })
+        //     if (!existingUserToken)
+        //       return c.json({ error: 'Usuário não cadastrado' }, 404)
+
+        //     const hasExpired = new Date(existingUserToken.expires) < new Date()
+        //     if (hasExpired) {
+        //       return c.json({ error: 'Token expirado' }, 400)
+        //     }
+
+        //     const existingUser = await db.user.findUnique({
+        //       where: { email: existingUserToken.email },
+        //     })
+        //     if (!existingUser) {
+        //       return c.json({ error: 'Usuário não cadastrado' }, 404)
+        //     }
+
+        //     await db.user.update({
+        //       where: { email: existingUser.email, id: existingUser.id },
+        //       data: {
+        //         ...values,
+        //         completedAccount: new Date(),
+        //         address: { create: { ...address } },
+        //       },
+        //     })
+
+        //     await db.verificationToken.delete({
+        //       where: { id: existingUserToken.id, token: existingUserToken.token },
+        //     })
+
+        //     if (existingUser.role === UserRole.OWNER) {
+        //       const verificationToken = await generateVerificationToken(
+        //         existingUser.email
+        //       )
+
+        //       return c.json(
+        //         {
+        //           success: 'Cadastro completado, registre sua loja',
+        //           token: verificationToken.token,
+        //         },
+        //         200
+        //       )
+        //     }
+
+        //     return c.json({ success: 'Cadastro completado' }, 200)
+        //   }
+        // )

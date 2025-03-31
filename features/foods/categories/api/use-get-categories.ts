@@ -1,12 +1,17 @@
 import { useQuery } from '@tanstack/react-query'
 
 import { client } from '@/lib/hono'
+import { useFilterCategory } from '@/features/foods/categories/hooks/use-filter-category'
 
 export const useGetCategories = () => {
+  const { status } = useFilterCategory()
+
   const query = useQuery({
-    queryKey: ['food-categories'],
+    queryKey: ['food-categories', status],
     queryFn: async () => {
-      const response = await client.api['food-categories'].$get()
+      const response = await client.api['food-categories'].$get({
+        query: { status },
+      })
 
       if (!response.ok) {
         const data = await response.json()

@@ -1,7 +1,6 @@
 import { z } from 'zod'
 import { Hono } from 'hono'
 import { verifyAuth } from '@hono/auth-js'
-import { createId } from '@paralleldrive/cuid2'
 import { zValidator } from '@hono/zod-validator'
 import { differenceInDays, subDays } from 'date-fns'
 
@@ -14,7 +13,7 @@ import {
 } from '@prisma/client'
 
 import { db } from '@/lib/db'
-import { fillMissingDays, generateCode } from '@/lib/utils'
+import { fillMissingDays, generateCode, isStoreOpen } from '@/lib/utils'
 
 import {
   insertCheckoutSchema,
@@ -726,7 +725,7 @@ const app = new Hono()
     }
 
     const result = await db.$queryRaw<SummaryResult[]>(
-    Prisma.sql`
+      Prisma.sql`
       WITH order_data AS (
         SELECT 
           fo.id as order_id,
@@ -992,11 +991,17 @@ const app = new Hono()
           payment: true,
           shippings: true,
           shippingRole: true,
+          schedules: {
+            select: { enabled: true, day: true, open: true, close: true },
+          },
         },
       })
       if (!store) {
         return c.json({ error: 'Loja não cadastrada' }, 404)
       }
+
+      const isOpen = isStoreOpen(store.schedules)
+      if (!isOpen) return c.json({ error: 'Loja fechada' }, 400)
 
       if (!store.payment.includes(payment)) {
         return c.json({ error: 'Forma de pagamento inválida' }, 400)

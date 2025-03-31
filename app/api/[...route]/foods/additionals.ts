@@ -7,54 +7,62 @@ import { zValidator } from '@hono/zod-validator'
 import { UserRole } from '@prisma/client'
 
 import { db } from '@/lib/db'
-import { getAddedAndRemoved } from '@/lib/utils'
+import { getAddedAndRemoved, statusFilter } from '@/lib/utils'
 
 import { insertAdditionalSchema } from '@/features/foods/additionals/schema'
 
 const app = new Hono()
-  .get('/', verifyAuth(), async (c) => {
-    const auth = c.get('authUser')
+  .get(
+    '/',
+    verifyAuth(),
+    zValidator('query', z.object({ status: z.string().optional() })),
+    async (c) => {
+      const auth = c.get('authUser')
+      const { status: statusValue } = c.req.valid('query')
 
-    if (!auth.token?.sub) {
-      return c.json({ error: 'Usuário não autorizado' }, 401)
+      const status = statusFilter(statusValue)
+
+      if (!auth.token?.sub) {
+        return c.json({ error: 'Usuário não autorizado' }, 401)
+      }
+
+      if (!auth.token?.selectedStore) {
+        return c.json({ error: 'Usuário não autorizado' }, 401)
+      }
+
+      const user = await db.user.findUnique({ where: { id: auth.token.sub } })
+      if (!user) return c.json({ error: 'Usuário não autorizado' }, 401)
+
+      if (
+        ![
+          UserRole.OWNER as string,
+          UserRole.MANAGER as string,
+          UserRole.EMPLOYEE as string,
+        ].includes(user.role)
+      ) {
+        return c.json({ error: 'Usuário sem autorização' }, 400)
+      }
+      const ownerId = user.role === UserRole.OWNER ? user.id : user.ownerId!
+
+      const store = await db.store.findUnique({
+        where: { id: auth.token.selectedStore.id, ownerId },
+      })
+
+      if (!store) {
+        return c.json({ error: 'Usuário não autorizado' }, 401)
+      }
+
+      const data = await db.foodAdditional.findMany({
+        where: { storeId: store.id, status },
+        include: {
+          options: { select: { foodOption: { select: { name: true } } } },
+          _count: { select: { foods: true } },
+        },
+      })
+
+      return c.json({ data }, 200)
     }
-
-    if (!auth.token?.selectedStore) {
-      return c.json({ error: 'Usuário não autorizado' }, 401)
-    }
-
-    const user = await db.user.findUnique({ where: { id: auth.token.sub } })
-    if (!user) return c.json({ error: 'Usuário não autorizado' }, 401)
-
-    if (
-      ![
-        UserRole.OWNER as string,
-        UserRole.MANAGER as string,
-        UserRole.EMPLOYEE as string,
-      ].includes(user.role)
-    ) {
-      return c.json({ error: 'Usuário sem autorização' }, 400)
-    }
-    const ownerId = user.role === UserRole.OWNER ? user.id : user.ownerId!
-
-    const store = await db.store.findUnique({
-      where: { id: auth.token.selectedStore.id, ownerId },
-    })
-
-    if (!store) {
-      return c.json({ error: 'Usuário não autorizado' }, 401)
-    }
-
-    const data = await db.foodAdditional.findMany({
-      where: { storeId: store.id },
-      include: {
-        options: { select: { foodOption: { select: { name: true } } } },
-        _count: { select: { foods: true } },
-      },
-    })
-
-    return c.json({ data }, 200)
-  })
+  )
   .get(
     '/:id',
     verifyAuth(),

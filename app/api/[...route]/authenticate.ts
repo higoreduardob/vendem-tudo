@@ -343,7 +343,7 @@ const app = new Hono()
     }
 
     const user = await db.user.findUnique({
-      where: { id: auth.token.sub },
+      where: { id: auth.token.sub, status: true },
     })
     if (!user) return c.json({ error: 'Usuário não autorizado' }, 401)
 
@@ -399,6 +399,10 @@ const app = new Hono()
           : null
       if (!existingUser || !existingUser.email || !existingUser.password) {
         return c.json({ error: 'Email não cadastrado' }, 400)
+      }
+
+      if (!existingUser.status) {
+        return c.json({ error: 'Acesso não permitido' }, 400)
       }
 
       if (!code) {
@@ -923,71 +927,3 @@ const app = new Hono()
 // TODO: Implement Recaptcha
 
 export default app
-
-// .post(
-//   '/sign-up-information',
-//   zValidator('json', signUpInformationSchema),
-//   zValidator(
-//     'query',
-//     z.object({
-//       token: z.string().optional(),
-//       role: z.nativeEnum(UserRole).optional(),
-//     })
-//   ),
-//   async (c) => {
-//     const { token, role } = c.req.valid('query')
-//     const validatedFields = c.req.valid('json')
-
-//     if (!token || !role) return c.json({ error: 'Usuário inválido' }, 400)
-
-//     if (!validatedFields) return c.json({ error: 'Campos inválidos' }, 400)
-//     const { address, ...values } = validatedFields
-
-//     const existingUserToken = await db.verificationToken.findUnique({
-//       where: { token },
-//     })
-//     if (!existingUserToken)
-//       return c.json({ error: 'Usuário não cadastrado' }, 404)
-
-//     const hasExpired = new Date(existingUserToken.expires) < new Date()
-//     if (hasExpired) {
-//       return c.json({ error: 'Token expirado' }, 400)
-//     }
-
-//     const existingUser = await db.user.findUnique({
-//       where: { email: existingUserToken.email },
-//     })
-//     if (!existingUser) {
-//       return c.json({ error: 'Usuário não cadastrado' }, 404)
-//     }
-
-//     await db.user.update({
-//       where: { email: existingUser.email, id: existingUser.id },
-//       data: {
-//         ...values,
-//         completedAccount: new Date(),
-//         address: { create: { ...address } },
-//       },
-//     })
-
-//     await db.verificationToken.delete({
-//       where: { id: existingUserToken.id, token: existingUserToken.token },
-//     })
-
-//     if (existingUser.role === UserRole.OWNER) {
-//       const verificationToken = await generateVerificationToken(
-//         existingUser.email
-//       )
-
-//       return c.json(
-//         {
-//           success: 'Cadastro completado, registre sua loja',
-//           token: verificationToken.token,
-//         },
-//         200
-//       )
-//     }
-
-//     return c.json({ success: 'Cadastro completado' }, 200)
-//   }
-// )

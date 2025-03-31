@@ -6,6 +6,7 @@ import { zValidator } from '@hono/zod-validator'
 import { UserRole } from '@prisma/client'
 
 import { db } from '@/lib/db'
+import { statusFilter } from '@/lib/utils'
 
 import { updateSchema } from '@/features/auth/schema'
 
@@ -17,11 +18,14 @@ const app = new Hono()
       'query',
       z.object({
         role: z.nativeEnum(UserRole).optional(),
+        status: z.string().optional(),
       })
     ),
     async (c) => {
       const auth = c.get('authUser')
-      const { role } = c.req.valid('query')
+      const { role, status: statusValue } = c.req.valid('query')
+
+      const status = statusFilter(statusValue)
 
       if (!auth.token?.sub || !auth.token?.selectedStore) {
         return c.json({ error: 'Usuário não autorizado' }, 401)
@@ -50,6 +54,7 @@ const app = new Hono()
           NOT: { id: user.id },
           storeId: auth.token.selectedStore.id,
           role: { in: roles },
+          status,
         },
         include: { address: true },
         orderBy: { name: 'asc' },

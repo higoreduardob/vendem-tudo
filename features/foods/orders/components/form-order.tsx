@@ -1,9 +1,17 @@
+import {
+  Ban,
+  CreditCard,
+  HelpCircle,
+  MapPin,
+  Timer,
+  Utensils,
+} from 'lucide-react'
 import Image from 'next/image'
+import { toast } from 'sonner'
 import { create } from 'zustand'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { CreditCard, HelpCircle, MapPin, Timer, Utensils } from 'lucide-react'
 
 import { ShippingRole } from '@prisma/client'
 
@@ -11,7 +19,7 @@ import { ExtendedUser } from '@/types/next-auth'
 
 import { zipCodeMask } from '@/lib/format'
 import { translateStoreRole } from '@/lib/i18n'
-import { cn, formatCurrency } from '@/lib/utils'
+import { cn, formatCurrency, isStoreOpen } from '@/lib/utils'
 
 import { ResponseType, useOpenStore } from '@/hooks/use-store'
 import { useOpenUpdate } from '@/features/auth/hooks/use-open-update'
@@ -69,6 +77,7 @@ type OrderShippingProps = {
 
 type FormOrderComponentProps = {
   isOpen: boolean
+  isOpenStore: boolean
   handleClose: () => void
   store: ResponseType
   user: ExtendedUser
@@ -292,6 +301,7 @@ export const FormOrder = () => {
 
   const { shippings } = store
   const { address: userAddress } = user
+  const isOpenStore = isStoreOpen(store.schedules)
   const isDeliveredEnabled = store.shippingRole.includes('DELIVERY')
   const shippingAddress = isDeliveredEnabled
     ? findShippingAddress(shippings, userAddress)
@@ -320,6 +330,7 @@ export const FormOrder = () => {
   return (
     <FormOrderComponent
       isOpen={isOpen}
+      isOpenStore={isOpenStore}
       handleClose={onClose}
       store={store}
       user={user}
@@ -335,6 +346,7 @@ export const FormOrder = () => {
 
 const FormOrderComponent = ({
   isOpen,
+  isOpenStore,
   handleClose,
   store,
   user,
@@ -390,6 +402,11 @@ const FormOrderComponent = ({
   }, [watchShippingRole, shippingFee, shippingAddress, cart, form])
 
   const handleSubmit = (values: InsertOrderFormValues) => {
+    if (!isOpenStore) {
+      toast.error('Loja fechada')
+      return
+    }
+
     onSubmit(values)
   }
 
@@ -450,16 +467,18 @@ const FormOrderComponent = ({
 
         <Separator />
 
-        <ScrollArea className="h-full space-y-4 pr-2 pb-4">
+        <ScrollArea className="h-full pr-2 pb-4">
           {!isEmptyCart ? (
-            cart.map((item, index) => (
-              <OrderItem
-                key={index}
-                add={() => addCart(index)}
-                remove={() => removeCart(index)}
-                {...item}
-              />
-            ))
+            <div className="flex flex-col gap-4">
+              {cart.map((item, index) => (
+                <OrderItem
+                  key={index}
+                  add={() => addCart(index)}
+                  remove={() => removeCart(index)}
+                  {...item}
+                />
+              ))}
+            </div>
           ) : (
             <div className="flex flex-col gap-2 items-center justify-center">
               <p className="text-base leading-tight dark:text-white">
@@ -582,8 +601,19 @@ const FormOrderComponent = ({
                         {formatCurrency(minAmount)}
                       </span>
                     )}
-                    <Button variant="red" disabled={isMinAmount}>
-                      <CreditCard /> Escolher forma de pagamento
+                    <Button
+                      variant="red"
+                      disabled={isMinAmount || !isOpenStore}
+                    >
+                      {isOpenStore ? (
+                        <>
+                          <CreditCard /> Escolher forma de pagamento
+                        </>
+                      ) : (
+                        <>
+                          <Ban /> Loja fechada
+                        </>
+                      )}
                     </Button>
                   </div>
                 </SheetFooter>

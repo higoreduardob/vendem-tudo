@@ -35,12 +35,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session.user.id = token.sub
       }
 
-      if (token.role && session.user) {
-        session.user.role = token.role
-      }
-
       if (session.user) {
         session.user.name = token.name
+        session.user.role = token.role
         session.user.whatsApp = token.whatsApp
         session.user.cpfCnpj = token.cpfCnpj
         session.user.address = token.address
@@ -81,6 +78,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (!existingUser) return token
 
       token.name = existingUser.name
+      token.role = existingUser.role
       token.whatsApp = existingUser.whatsApp
       token.cpfCnpj = existingUser.cpfCnpj
       token.address = existingUser.address!

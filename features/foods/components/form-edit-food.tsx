@@ -42,11 +42,11 @@ export const FormEditFood = () => {
     name: data.name,
     image: data.image,
     description: data.description,
-    price: data.price.toString(),
+    price: String(data.price),
     ingredients: data.ingredients,
-    promotion: data.promotion.toString(),
+    promotion: String(data.promotion),
     categoryId: data.categoryId,
-    additionals: data.additionals.map(
+    additionals: data.additionals?.map(
       (additional) => additional.foodAdditionalId
     ),
   }

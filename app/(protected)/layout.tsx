@@ -2,6 +2,7 @@
 
 import dynamic from 'next/dynamic'
 import { useEffect } from 'react'
+import { signOut } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 
 import { useCurrentUser } from '@/features/auth/hooks/use-current-user'
@@ -16,6 +17,12 @@ function ProtectedLayoutComponent({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (!user) {
+      router.push('/entrar')
+    }
+
+    const allowedRoles = ['OWNER', 'MANAGER', 'EMPLOYEE']
+    if (user && user.role && !allowedRoles.includes(user.role)) {
+      signOut()
       router.push('/entrar')
     }
   }, [user, status, router])

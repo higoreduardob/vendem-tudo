@@ -1,12 +1,12 @@
 'use client'
 
-import type React from 'react'
-
 import { useEffect } from 'react'
+import { signOut } from 'next-auth/react'
 import { useParams, useRouter, usePathname } from 'next/navigation'
 
 import { useStore } from '@/hooks/use-store'
 import { useOpenStore } from '@/hooks/use-store'
+import { useCurrentUser } from '@/features/auth/hooks/use-current-user'
 
 import { DialogProvider } from '@/app/loja/_providers/dialog-provider'
 import { SheetProvider } from '@/app/loja/_providers/sheet-provider'
@@ -22,6 +22,7 @@ export default function StoreLayout({
   const router = useRouter()
   const pathname = usePathname()
   const params = useParams() as { slug?: string }
+  const { user, status } = useCurrentUser()
   useStore(params.slug)
 
   const { store } = useOpenStore()
@@ -33,6 +34,15 @@ export default function StoreLayout({
       router.push(`/loja/${store.slug}/manutencao`)
     }
   }, [router, store, isMaintenancePage, pathname])
+
+  useEffect(() => {
+    if (user) {
+      const allowedRoles = ['CUSTOMER']
+      if (user.role && !allowedRoles.includes(user.role)) {
+        signOut()
+      }
+    }
+  }, [user, status])
 
   if (!store) {
     return null

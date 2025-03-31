@@ -37,7 +37,7 @@ export const FormEditFoodAdditional = () => {
     limit: data.limit,
     role: data.role,
     minRequired: data.minRequired,
-    options: data.options.map((option) => option.foodOptionId),
+    options: data.options?.map((option) => option.foodOptionId),
   }
 
   const onSubmit = (values: InsertAdditionalFormValues) => {

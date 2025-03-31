@@ -35,7 +35,7 @@ export const FormEditFoodOption = () => {
   const defaultValues: InsertFoodOptionFormValues = {
     name: data.name,
     description: data.description,
-    price: data.price.toString(),
+    price: String(data.price),
   }
 
   const onSubmit = (values: InsertFoodOptionFormValues) => {
