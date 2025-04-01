@@ -5,6 +5,8 @@
 // } from '@radix-ui/react-icons'
 import Link from 'next/link'
 
+import { signUpWhatsAppNumber } from '@/constants'
+
 import { Container } from '@/components/container'
 
 export const Footer = () => {
@@ -84,10 +86,11 @@ export const Footer = () => {
                 Suporte
               </Link>
               <Link
-                href="/"
+                href={`https://wa.me/${signUpWhatsAppNumber}?text=Ol%C3%A1%21%20Tenho%20interesse%20em%20assinar%20a%20plataforma%20de%20delivery%20e%20gostaria%20de%20mais%20informa%C3%A7%C3%B5es.%20Poderia%20me%20ajudar%3F
+                `}
                 className="text-muted-foreground text-sm hover:text-purple-950"
               >
-                (11) 9 9999-9999
+                (27) 9 9831-1970
               </Link>
               {/* <Link
                 href="/demonstracoes"
