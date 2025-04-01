@@ -215,8 +215,8 @@ export const FormShipping = ({ isPending }: { isPending?: boolean }) => {
               Nenhum local de entrega adicionado ainda.
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <Table>
+            <div className="overflow-x-auto overflow-auto max-w-full min-w-full w-[200px]">
+              <Table className="min-w-[500px]">
                 <TableHeader>
                   <TableRow>
                     <TableHead>Bairro</TableHead>

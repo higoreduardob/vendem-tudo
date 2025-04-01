@@ -216,8 +216,8 @@ const AboutComponent = ({ isOpen, handleClose, store }: ComponentProps) => {
             <div className="space-y-4">
               <h3 className="font-medium">Bairros de entrega</h3>
 
-              <div className="border rounded-md">
-                <Table>
+              <div className="border rounded-md overflow-auto max-w-full min-w-full w-[200px]">
+                <Table className="min-w-[300px]">
                   <TableHeader>
                     <TableRow>
                       <TableHead>Bairro</TableHead>

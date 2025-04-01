@@ -62,7 +62,7 @@ export const FormStore = ({
         onSubmit={form.handleSubmit(handleSubmit)}
       >
         <Tabs defaultValue="details" className="w-full">
-          <TabsList className="grid grid-cols-4 w-full">
+          <TabsList className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 w-full h-fit">
             <TabsTrigger value="details">Informações</TabsTrigger>
             <TabsTrigger value="address">Endereço</TabsTrigger>
             <TabsTrigger value="schedules">Horários</TabsTrigger>

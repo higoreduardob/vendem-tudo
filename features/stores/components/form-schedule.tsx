@@ -63,7 +63,10 @@ export const FormSchedule = ({ isPending }: { isPending?: boolean }) => {
       </CardHeader>
       <CardContent className="flex flex-col gap-2">
         {weekDays.map((day, index) => (
-          <div key={day.value} className="grid grid-cols-4 gap-2 items-center">
+          <div
+            key={day.value}
+            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 items-center"
+          >
             <FormField
               control={form.control}
               name={`schedules.${index}.enabled`}

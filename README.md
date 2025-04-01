@@ -1,17 +1,11 @@
     TODO:
       1 . check convertAmount and calculate price
+      2 . Sidebar com Title mobile (Plataforma/Loja) no responsivo
+
       Check additionals/Check ingredients -> components/order-recipiet.tsx: Verificar se tem necessidade quantidade de informação
       Implement Recaptcha -> app/api/[...route]/authenticate.ts
       Add google smtp to send email
 
-    Responsivo:
-      Plataforma:
-        Sidebar com Title mobile
-        Painel/Alimentos/Categorias/Pedidos/Clientes/Adicionais/Opcções: Tabela
-        Adicionar Alimento: Text rich
-        Loja: Cabeçalho/Horários/Tabela de entrega
-      Loja:
-        Conta/Pedidos: Tabela
 
     MELHORIAS:
 
