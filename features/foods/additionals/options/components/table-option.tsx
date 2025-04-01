@@ -10,10 +10,10 @@ import { DataTable, DataTableLoading } from '@/components/data-table'
 
 export const TableOption = () => {
   const { isOpen, onClose } = useOpenFoodOptionData()
-  const optionsQuery = useGetFoodOptions()
+  const { onChangeStatus, status } = useFilterOption()
+  const optionsQuery = useGetFoodOptions(status)
   const options = optionsQuery.data || []
   const deleteFoodOptions = useBulkDeleteFoodOptions()
-  const { onChangeStatus, status } = useFilterOption()
 
   const isLoading = optionsQuery.isLoading || deleteFoodOptions.isPending
 

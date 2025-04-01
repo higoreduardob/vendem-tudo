@@ -8,8 +8,8 @@ import {
   XAxis,
 } from 'recharts'
 import { useState } from 'react'
-import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
+import { format, isValid } from 'date-fns'
 
 import {
   ChartConfig,
@@ -36,6 +36,18 @@ export const AreaVariant = ({ data, fields }: VariantProps) => {
     setActiveFields((prev) =>
       prev.includes(key) ? prev.filter((f) => f !== key) : [...prev, key]
     )
+  }
+
+  const formatDate = (dateString: string) => {
+    try {
+      const date = new Date(dateString)
+      if (isValid(date)) {
+        return format(date, 'dd MMM', { locale: ptBR })
+      }
+      return dateString
+    } catch (error) {
+      return dateString
+    }
   }
 
   return (
@@ -77,9 +89,7 @@ export const AreaVariant = ({ data, fields }: VariantProps) => {
               <CartesianGrid vertical={false} />
               <XAxis
                 dataKey="date"
-                tickFormatter={(value) =>
-                  format(new Date(value), 'dd MMM', { locale: ptBR })
-                }
+                tickFormatter={formatDate}
                 style={{ fontSize: '12px' }}
                 tickLine={false}
                 axisLine={false}

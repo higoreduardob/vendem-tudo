@@ -1,6 +1,5 @@
 'use client'
 
-import * as React from 'react'
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -14,19 +13,13 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
+import { useState } from 'react'
 import { Ban, ChevronDown, Trash2 } from 'lucide-react'
 
 import { useConfirm } from '@/hooks/use-confirm'
 
 import { FilterOptionsPageSize, FilterStatus } from '@/constants'
 
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
 import {
   Table,
   TableBody,
@@ -35,6 +28,13 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -70,13 +70,10 @@ export function DataTable<TData, TValue>({
   onChangeStatus,
   filters,
 }: DataTableProps<TData, TValue>) {
-  const [sorting, setSorting] = React.useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
-  )
-  const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({})
-  const [rowSelection, setRowSelection] = React.useState({})
+  const [sorting, setSorting] = useState<SortingState>([])
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+  const [rowSelection, setRowSelection] = useState({})
 
   const [ConfirmationDialog, confirm] = useConfirm(
     'Deseja realmente continuar?',
@@ -222,9 +219,8 @@ export function DataTable<TData, TValue>({
             </DropdownMenu>
           </div>
         </div>
-        {/* TODO: Add responsive table */}
-        <ScrollArea className="w-full overflow-x-auto rounded-md border">
-          <Table className="w-full min-w-[800px]">
+        <ScrollArea className="rounded-md border overflow-auto max-w-full min-w-full w-[273px]">
+          <Table className="min-w-[900px]">
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>

@@ -1,13 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
 
 import { client } from '@/lib/hono'
+import { convertAmountFromMiliunits } from '@/lib/utils'
 
-import { useFilterOption } from '@/features/foods/additionals/options/hooks/use-filter-option'
-
-// TODO: Change fetch in list
-export const useGetFoodOptions = () => {
-  const { status } = useFilterOption()
-
+export const useGetFoodOptions = (status?: string) => {
   const query = useQuery({
     queryKey: ['food-options', status],
     queryFn: async () => {
@@ -22,7 +18,10 @@ export const useGetFoodOptions = () => {
       }
 
       const { data } = await response.json()
-      return data
+      return data.map((option) => ({
+        ...option,
+        price: convertAmountFromMiliunits(option.price),
+      }))
     },
   })
 

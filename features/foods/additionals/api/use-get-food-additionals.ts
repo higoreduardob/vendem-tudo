@@ -2,12 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 
 import { client } from '@/lib/hono'
 
-import { useFilterAdditional } from '@/features/foods/additionals/hooks/use-filter-additional'
-
-// TODO: Change fetch in list
-export const useGetFoodAdditionals = () => {
-  const { status } = useFilterAdditional()
-
+export const useGetFoodAdditionals = (status?: string) => {
   const query = useQuery({
     queryKey: ['food-additionals', status],
     queryFn: async () => {

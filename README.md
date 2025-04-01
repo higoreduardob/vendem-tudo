@@ -1,10 +1,8 @@
     TODO:
-      1 . Add responsive table -> components/data-table.tsx
-      2 . Check additionals/Check ingredients -> components/order-recipiet.tsx: Verificar se tem necessidade quantidade de informação
-      3 . Change fetch in list -> features/foods/additionals/api/use-get-food-additionals.ts e features/foods/additionals/options/api/use-get-food-options.ts
-      4 . Add responsive -> features/foods/components/form-food.tsx
-      5 . Implement Recaptcha -> app/api/[...route]/authenticate.ts
-      6 . Add google smtp to send email
+      1 . check convertAmount and calculate price
+      Check additionals/Check ingredients -> components/order-recipiet.tsx: Verificar se tem necessidade quantidade de informação
+      Implement Recaptcha -> app/api/[...route]/authenticate.ts
+      Add google smtp to send email
 
     Responsivo:
       Plataforma:

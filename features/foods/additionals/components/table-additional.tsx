@@ -10,10 +10,10 @@ import { DataTable, DataTableLoading } from '@/components/data-table'
 
 export const TableAdditional = () => {
   const { isOpen, onClose } = useOpenFoodAdditionalData()
-  const additionalsQuery = useGetFoodAdditionals()
+  const { onChangeStatus, status } = useFilterAdditional()
+  const additionalsQuery = useGetFoodAdditionals(status)
   const additionals = additionalsQuery.data || []
   const deleteFoodAdditionals = useBulkDeleteFoodAdditionals()
-  const { onChangeStatus, status } = useFilterAdditional()
 
   const isLoading =
     additionalsQuery.isLoading || deleteFoodAdditionals.isPending

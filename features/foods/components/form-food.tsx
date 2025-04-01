@@ -222,15 +222,17 @@ export const FormFood = ({
               <FormItem>
                 <FormLabel>Descrição</FormLabel>
                 <FormControl>
-                  {/* TODO: Add responsive */}
                   <TooltipProvider delayDuration={0}>
                     <MinimalTiptapEditor
                       {...field}
                       throttleDelay={0}
-                      className={cn('h-full min-h-56 sm:w-full rounded-md', {
-                        'border-destructive focus-within:border-destructive':
-                          form.formState.errors.description,
-                      })}
+                      className={cn(
+                        'h-full min-h-56 max-w-full min-w-full w-[241px] rounded-md',
+                        {
+                          'border-destructive focus-within:border-destructive':
+                            form.formState.errors.description,
+                        }
+                      )}
                       editorContentClassName="overflow-auto h-full flex grow"
                       output="html"
                       placeholder="Descrição do produto"
