@@ -2,6 +2,8 @@
       1 . check convertAmount and calculate price
       2 . Sidebar com Title mobile (Plataforma/Loja) no responsivo
 
+      3 . Remover horários fechados
+
       Check additionals/Check ingredients -> components/order-recipiet.tsx: Verificar se tem necessidade quantidade de informação
       Implement Recaptcha -> app/api/[...route]/authenticate.ts
       Add google smtp to send email

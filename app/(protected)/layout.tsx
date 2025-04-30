@@ -34,7 +34,7 @@ function ProtectedLayoutComponent({ children }: { children: React.ReactNode }) {
       </section>
     )
   }
-
+// TODO: Remove this
   if (!user) {
     return (
       <section className="grid min-h-svh">
