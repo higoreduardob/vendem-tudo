@@ -1,123 +1,96 @@
-    TODO:
-      1 . check convertAmount and calculate price
-      2 . Sidebar com Title mobile (Plataforma/Loja) no responsivo
+# :desktop_computer: Vendem Tudo
 
-      3 . Remover horários fechados
+<img src="./public/cover.png" alt="Cover projeto" />
 
-      Check additionals/Check ingredients -> components/order-recipiet.tsx: Verificar se tem necessidade quantidade de informação
-      Implement Recaptcha -> app/api/[...route]/authenticate.ts
-      Add google smtp to send email
+Sistema completo para gestão de vendas, ideal para aplicações modernas com integração a diversos serviços em nuvem e autenticação segura.
 
+## :fire: Run
 
-    MELHORIAS:
+- Database (Postgres): `docker compose up -d`
+- Install: `yarn && yarn db:push && yarn db:seed`
+- Development (Port 3000): `yarn dev`
+- Build: `yarn build`
 
-    2 - Feat
-      1 . Dark mode: Melhor a loja para dark mode
-      2 . Loja: 1. Melhor o dark mode do multiselector
-      3 . Add Cupom
-        {/* <div className="flex justify-between items-center py-2">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-6 bg-gray-100 flex items-center justify-center rotate-12">
-                <div className="w-6 h-4 border border-dashed border-gray-400"></div>
-              </div>
-              <div>
-                <p className="font-medium">Cupom</p>
-                <p className="text-sm text-muted-foreground">
-                  1 cupom disponível
-                </p>
-              </div>
-            </div>
-            <ChevronRight className="h-5 w-5 text-muted-foreground" />
-          </div>
+## :triangular_flag_on_post: Environment Variables
 
-          <Separator /> */}
-      4 . Favoritos do cliente
-      5 . Adicionar nfe Focus nfe
-      6 . Adicionar paywall com plano escolhido
-      7 . Demonstrações: 1. Pesquisar como Code with Antonio faz os vídeos dele
-      8 . Definição de destaques para +vendidos e +avaliados
-      9 . No product card reaver as badges de destaques
-      10 . Suporte colocar FAQ com tempo de solucionamento
-      11 . Colocar planos para o cliente (lojista)
-      12 . Suporte integrar envio de email de perguntas
-      13 . Suporte whatsapp de contato
-      14 . Finalizar desempenho
-      15 . Change message authenticate (2 Feat)
-      16 . Notificações: 1. Fazer push notifications, e pesquisar como fazer no next para os registros de pedidos | 2 . check stages in order food
-      17 . Melhorar o estilo do email enviado
-      18 . Responsivo da gestão
-      19 . Check all codes - refactor
-      20 . Review this code
-        // .post(
-        //   '/sign-up-information',
-        //   zValidator('json', signUpInformationSchema),
-        //   zValidator(
-        //     'query',
-        //     z.object({
-        //       token: z.string().optional(),
-        //       role: z.nativeEnum(UserRole).optional(),
-        //     })
-        //   ),
-        //   async (c) => {
-        //     const { token, role } = c.req.valid('query')
-        //     const validatedFields = c.req.valid('json')
+- Batabase: `DATABASE_URL`
 
-        //     if (!token || !role) return c.json({ error: 'Usuário inválido' }, 400)
+- URL: `NEXT_PUBLIC_APP_URL`
 
-        //     if (!validatedFields) return c.json({ error: 'Campos inválidos' }, 400)
-        //     const { address, ...values } = validatedFields
+- Secret: `AUTH_SECRET`
 
-        //     const existingUserToken = await db.verificationToken.findUnique({
-        //       where: { token },
-        //     })
-        //     if (!existingUserToken)
-        //       return c.json({ error: 'Usuário não cadastrado' }, 404)
+- Resend Key: `RESEND_API_KEY`
 
-        //     const hasExpired = new Date(existingUserToken.expires) < new Date()
-        //     if (hasExpired) {
-        //       return c.json({ error: 'Token expirado' }, 400)
-        //     }
+- Cloudinay name: `CLOUDINARY_CLOUD_NAME`
+- Cloudinary Key: `CLOUDINARY_API_KEY`
+- Cloudinary Secret: `CLOUDINARY_API_SECRET`
+- Cloudinary Variable: `CLOUDINARY_ENV_VARIABLE`
 
-        //     const existingUser = await db.user.findUnique({
-        //       where: { email: existingUserToken.email },
-        //     })
-        //     if (!existingUser) {
-        //       return c.json({ error: 'Usuário não cadastrado' }, 404)
-        //     }
+## :test_tube: Test
 
-        //     await db.user.update({
-        //       where: { email: existingUser.email, id: existingUser.id },
-        //       data: {
-        //         ...values,
-        //         completedAccount: new Date(),
-        //         address: { create: { ...address } },
-        //       },
-        //     })
+Você pode utilizar os seguintes dados para acessar o sistema após executar o seed:
 
-        //     await db.verificationToken.delete({
-        //       where: { id: existingUserToken.id, token: existingUserToken.token },
-        //     })
+- Email: dono@email.com
+- Senha: pass123ASD
 
-        //     if (existingUser.role === UserRole.OWNER) {
-        //       const verificationToken = await generateVerificationToken(
-        //         existingUser.email
-        //       )
+## :globe_with_meridians: Routes
 
-        //       return c.json(
-        //         {
-        //           success: 'Cadastro completado, registre sua loja',
-        //           token: verificationToken.token,
-        //         },
-        //         200
-        //       )
-        //     }
+Rota base da plataforma de administração/gestão, voltada para clientes autenticados (como donos de lojas):
 
-        //     return c.json({ success: 'Cadastro completado' }, 200)
-        //   }
-        // )
-      21 . Enabled store
-      // TODO: Fix error in update enabled store in new owners
-      // await db.store.update({
-      //   where: { id: store.id, ownerId, enabled: false },
-      //   data: { enabled: true },
-      // })
+/plataforma/
+├── page.tsx                      # Dashboard principal
+├── alimentos/
+│   └── page.tsx                  # Lista de alimentos
+│   └── categorias.tsx            # Categorias de alimentos
+├── clientes/
+│   └── page.tsx                  # Gestão de clientes
+├── conta/
+│   └── page.tsx                  # Dados da conta
+├── pedidos/
+│   └── page.tsx                  # Histórico e gestão de pedidos
+├── seguranca/
+│   └── page.tsx                  # Configurações de segurança (senha, autenticação etc.)
+
+Acesso livre para visitantes e novos usuários da plataforma:
+
+/
+├── page.tsx                      # Landing page pública
+├── entrar.tsx                    # Login de usuários
+├── planos.tsx                    # Página de planos/assinaturas
+├── politicas-de-privacidade.tsx  # Política de privacidade
+├── termos-de-uso.tsx             # Termos de uso
+├── sobre-nos.tsx                 # Sobre a empresa/plataforma
+├── suporte.tsx                   # Ajuda/suporte
+├── recuperar-senha.tsx           # Solicitação de recuperação de senha
+├── redefinir-senha.tsx           # Redefinição com token
+
+Área pública e autenticada de cada loja individual:
+
+/loja/[slug]/
+├── index.tsx                    # Página principal da loja (vitrine, produtos etc.)
+
+├── cadastrar.tsx                # Cadastro de cliente
+├── entrar.tsx                   # Login de cliente
+├── manutencao.tsx              # Loja temporariamente fora do ar
+├── recuperar-senha.tsx         # Início da recuperação de senha
+├── refefinir-senha.tsx         # Redefinição com token
+├── verificar-email.tsx         # Verificação de e-mail após cadastro
+
+├── conta/
+│   └── index.tsx               # Painel do cliente (dados pessoais, resumo)
+│   └── pedidos.tsx             # Histórico de pedidos
+│   └── seguranca.tsx           # Alteração de senha e autenticação
+
+Erros:
+
+/error.tsx                         # Página genérica de erro (problemas do servidor, API etc.)
+/not-found.tsx                     # Página 404 personalizada (rota não encontrada)
+
+## :copyright: Author
+
+<a href="https://github.com/bhigoreduardo">
+  <img src="https://avatars.githubusercontent.com/u/96431991?v=4" width="100px;" alt="Foto do Higor Eduardo no GitHub"/><br>
+  <sub><b>Higor Eduardo</b></sub>
+</a>
+
+Desenvolvido com :heart: por **Higor Eduardo** — [@bhigoreduardo](https://github.com/bhigoreduardo)
