@@ -4,6 +4,8 @@
 
 Sistema completo para gestão de vendas, ideal para aplicações modernas com integração a diversos serviços em nuvem e autenticação segura.
 
+## :rocket: [Vendem Tudo](https://vendem-tudo.vercel.app/)
+
 ## :fire: Run
 
 - Database (Postgres): `docker compose up -d`
