@@ -95,8 +95,12 @@ Acesso livre para visitantes e novos usuários da plataforma:
 
 Erros:
 
-/error.tsx                         # Página genérica de erro (problemas do servidor, API etc.)
-/not-found.tsx                     # Página 404 personalizada (rota não encontrada)
+```
+
+  /error.tsx                         # Página genérica de erro (problemas do servidor, API etc.)
+  /not-found.tsx                     # Página 404 personalizada (rota não encontrada)
+
+```
 
 ## :copyright: Author
 
